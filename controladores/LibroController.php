@@ -1,40 +1,40 @@
 <?php
-// controladores/libroController.php
+// controladores/LibroController.php
+require_once __DIR__ . '/../modelos/Libro.php';
+require_once __DIR__ . '/../config/conexion.php';
 
-// Incluimos la clase Libro y la conexión
-require_once '../modelos/Libros.php';
-require_once '../config/conexion.php'; // ← Corrección aquí
+// Verificar si se envió el formulario
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $titulo = $_POST['titulo'] ?? '';
+    $autor = $_POST['autor'] ?? '';
+    $categoria = $_POST['categoria'] ?? '';
+    $anio = $_POST['anio'] ?? '';
 
-// Simulamos datos recibidos (luego vendrán del formulario)
-$titulo = "Criminalística Forense";
-$autor = "Dra. Ana Torres";
-$categoria = "Investigación";
-$anio = 2021;
+    // Crear el objeto
+    $libro = new Libro($titulo, $autor, $categoria, $anio);
 
-// Creamos el objeto
-$libro = new Libro($titulo, $autor, $categoria, $anio);
+    // Validar los datos
+    if ($libro->validar()) {
+        $sql = "INSERT INTO libros (titulo, autor, categoria, anio) VALUES (?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sssi", $libro->titulo, $libro->autor, $libro->categoria, $libro->anio);
 
-// Validamos los datos
-if ($libro->validar()) {
-    // Preparamos la consulta SQL
-    $sql = "INSERT INTO libros (titulo, autor, categoria, anio)
-            VALUES (?, ?, ?, ?)";
-
-    // Usamos prepared statements para seguridad
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sssi", $libro->titulo, $libro->autor, $libro->categoria, $libro->anio);
-
-    // Ejecutamos y verificamos
-    if ($stmt->execute()) {
-        echo "<p>✅ Libro guardado correctamente en la base de datos.</p>";
+        if ($stmt->execute()) {
+            $mensaje = "✅ Libro guardado correctamente en la base de datos.";
+            $tipo = "success";
+        } else {
+            $mensaje = "❌ Error al guardar el libro: " . $stmt->error;
+            $tipo = "danger";
+        }
+        $stmt->close();
     } else {
-        echo "<p>❌ Error al guardar el libro: " . $stmt->error . "</p>";
+        $mensaje = "❌ Error: Datos incompletos.";
+        $tipo = "warning";
     }
-
-    $stmt->close();
-} else {
-    echo "<p>❌ Error: Datos incompletos.</p>";
+    $conn->close();
+    
+    // Redirigir con mensaje
+    header("Location: ../vistas/form-Libro.php?mensaje=" . urlencode($mensaje) . "&tipo=" . $tipo);
+    exit;
 }
-
-$conn->close();
 ?>
