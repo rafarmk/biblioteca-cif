@@ -8,7 +8,7 @@
 <body class="bg-light">
 <div class="container mt-5">
     <h2 class="mb-4">📚 Registro de Libros</h2>
-    <form action="../controladores/LibroController.php" method="POST">
+    <form action="../controllers/LibroController.php" method="POST">
         <div class="mb-3">
             <label for="titulo" class="form-label">Título</label>
             <input type="text" class="form-control" id="titulo" name="titulo" required>
