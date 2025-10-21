@@ -1,0 +1,21 @@
+﻿# Archivos de configuración con credenciales
+config/conexion.php
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs y temporales
+*.log
+tmp/
+temp/
+
+# Dependencias (si usas Composer en el futuro)
+/vendor/
