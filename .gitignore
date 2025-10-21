@@ -15,6 +15,18 @@ Thumbs.db
 *.bak
 *.backup
 *.swp
-*~"" 
-"# Database configuration" 
-"config/conexion.php" 
+*~
+
+# Database configuration
+config/conexion.php
+
+# Archivos de prueba y temporales
+test*.php
+*_backup.php
+fix_*.sql
+database.sql
+database/*.sql
+!database/schema.sql
+
+# Archivos extraños
+origin)
