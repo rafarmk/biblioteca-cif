@@ -1,163 +1,170 @@
 <?php
 /**
- * AuthController
- * Maneja autenticación: login, logout, registro
- * Sistema de Biblioteca CIF
+ * Controlador: AuthController
+ * 
+ * Descripción: Maneja la autenticación de usuarios
+ * Autor: José Raphael Ernesto Pérez Hernández
+ * Fecha: 19 de Octubre, 2025
  */
 
-require_once __DIR__ . '/../config/conexion.php';
-require_once __DIR__ . '/../modelos/Usuario.php';
-require_once __DIR__ . '/../config/config.php'; // ✅ Incluye funciones globales
+require_once 'core/models/Administrador.php';
+require_once 'config/conexion.php';
 
 class AuthController {
-    private $usuarioModel;
-
+    private $db;
+    private $administrador;
+    
     public function __construct() {
-        $conexion = new Conexion();
-        $db = $conexion->conectar();
-        $this->usuarioModel = new Usuario($db);
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
+        $database = new Conexion();
+        $this->db = $database->conectar();
+        $this->administrador = new Administrador($this->db);
     }
-
-    public function index() {
-        // Redirigir al login por defecto
-        $this->login();
-    }
-
+    
+    /**
+     * Mostrar formulario de login
+     */
     public function login() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (!isset($_POST['csrf_token']) || !verifyCsrfToken($_POST['csrf_token'])) {
-                setFlashMessage('error', 'Token de seguridad inválido');
-                redirect('auth/login');
-                return;
-            }
-
-            $email = cleanInput($_POST['email'] ?? '');
-            $password = $_POST['password'] ?? '';
-
-            if (empty($email) || empty($password)) {
-                setFlashMessage('error', 'Por favor complete todos los campos');
-                redirect('auth/login');
-                return;
-            }
-
-            $usuario = $this->usuarioModel->login($email, $password);
-
-            if ($usuario) {
-                $_SESSION['usuario_id'] = $usuario['id'];
-                $_SESSION['nombre'] = $usuario['nombre'];
-                $_SESSION['apellidos'] = $usuario['apellidos'];
-                $_SESSION['email'] = $usuario['email'];
-                $_SESSION['rol_id'] = $usuario['rol_id'];
-                $_SESSION['rol_nombre'] = $usuario['rol_nombre'];
-                $_SESSION['foto_perfil'] = $usuario['foto_perfil'];
-                $_SESSION['last_activity'] = time();
-                $_SESSION['login_time'] = time();
-
-                setFlashMessage('success', '¡Bienvenido, ' . $usuario['nombre'] . '!');
-                $this->redirigirPorRol($usuario['rol_nombre']);
-            } else {
-                setFlashMessage('error', 'Email o contraseña incorrectos');
-                redirect('auth/login');
-            }
+        // Si ya está autenticado, redirigir al dashboard
+        if (isset($_SESSION['admin_id'])) {
+            header('Location: index.php?ruta=home');
+            exit();
+        }
+        
+        // Mostrar vista de login
+        require_once 'views/auth/login.php';
+    }
+    
+    /**
+     * Procesar login
+     */
+    public function autenticar() {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            header('Location: index.php?ruta=login');
+            exit();
+        }
+        
+        $usuario = $_POST['usuario'] ?? '';
+        $password = $_POST['password'] ?? '';
+        
+        // Validar campos
+        if (empty($usuario) || empty($password)) {
+            $_SESSION['error'] = 'Usuario y contraseña son obligatorios';
+            header('Location: index.php?ruta=login');
+            exit();
+        }
+        
+        // Intentar login
+        $admin = $this->administrador->login($usuario, $password);
+        
+        if ($admin) {
+            // Login exitoso - Crear sesión
+            $_SESSION['admin_id'] = $admin['id'];
+            $_SESSION['admin_usuario'] = $admin['usuario'];
+            $_SESSION['admin_nombre'] = $admin['nombre'];
+            $_SESSION['admin_rol'] = $admin['rol'];
+            $_SESSION['admin_email'] = $admin['email'];
+            $_SESSION['login_time'] = time();
+            
+            // Redirigir al dashboard
+            header('Location: index.php?ruta=home');
+            exit();
         } else {
-            require_once __DIR__ . '/../views/auth/login.php';
+            // Login fallido
+            $_SESSION['error'] = 'Usuario o contraseña incorrectos';
+            header('Location: index.php?ruta=login');
+            exit();
         }
     }
-
-    public function registrar() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if (!isset($_POST['csrf_token']) || !verifyCsrfToken($_POST['csrf_token'])) {
-                setFlashMessage('error', 'Token de seguridad inválido');
-                redirect('auth/registrar');
-                return;
-            }
-
-            $datos = [
-                'nombre' => cleanInput($_POST['nombre'] ?? ''),
-                'apellidos' => cleanInput($_POST['apellidos'] ?? ''),
-                'email' => cleanInput($_POST['email'] ?? ''),
-                'password' => $_POST['password'] ?? '',
-                'password_confirm' => $_POST['password_confirm'] ?? '',
-                'documento' => cleanInput($_POST['documento'] ?? ''),
-                'telefono' => cleanInput($_POST['telefono'] ?? ''),
-                'rol_id' => 4
-            ];
-
-            if ($datos['password'] !== $datos['password_confirm']) {
-                setFlashMessage('error', 'Las contraseñas no coinciden');
-                redirect('auth/registrar');
-                return;
-            }
-
-            $errores = $this->usuarioModel->validar($datos);
-
-            if (!empty($errores)) {
-                setFlashMessage('error', implode('<br>', $errores));
-                redirect('auth/registrar');
-                return;
-            }
-
-            $resultado = $this->usuarioModel->registrar($datos);
-
-            if ($resultado['success']) {
-                setFlashMessage('success', 'Registro exitoso. Por favor, inicia sesión.');
-                redirect('auth/login');
-            } else {
-                setFlashMessage('error', $resultado['message']);
-                redirect('auth/registrar');
-            }
-        } else {
-            require_once __DIR__ . '/../views/auth/registro.php';
-        }
-    }
-
+    
+    /**
+     * Cerrar sesión
+     */
     public function logout() {
-        session_unset();
+        // Destruir todas las variables de sesión
+        $_SESSION = array();
+        
+        // Destruir la cookie de sesión si existe
+        if (isset($_COOKIE[session_name()])) {
+            setcookie(session_name(), '', time() - 3600, '/');
+        }
+        
+        // Destruir la sesión
         session_destroy();
-
-        session_start();
-        setFlashMessage('success', 'Has cerrado sesión correctamente');
-        redirect('auth/login');
+        
+        // Redirigir al login
+        header('Location: index.php?ruta=login');
+        exit();
     }
-
-    public function verificarAutenticacion() {
-        if (!isLoggedIn()) {
-            setFlashMessage('warning', 'Debes iniciar sesión para acceder');
-            redirect('auth/login');
+    
+    /**
+     * Verificar si el usuario está autenticado
+     */
+    public static function verificarAutenticacion() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        
+        if (!isset($_SESSION['admin_id'])) {
+            $_SESSION['error'] = 'Debe iniciar sesión para acceder';
+            header('Location: index.php?ruta=login');
             exit();
         }
+        
+        // Verificar tiempo de sesión (opcional - 2 horas)
+        if (isset($_SESSION['login_time'])) {
+            $tiempoTranscurrido = time() - $_SESSION['login_time'];
+            $tiempoMaximo = 2 * 60 * 60; // 2 horas
+            
+            if ($tiempoTranscurrido > $tiempoMaximo) {
+                // Sesión expirada
+                session_destroy();
+                $_SESSION['error'] = 'Su sesión ha expirado. Por favor, inicie sesión nuevamente';
+                header('Location: index.php?ruta=login');
+                exit();
+            }
+        }
+        
+        return true;
     }
-
-    public function verificarRol($rolesPermitidos = []) {
-        $this->verificarAutenticacion();
-        $rolActual = getUserRole();
-
-        if (!in_array($rolActual, $rolesPermitidos)) {
-            setFlashMessage('error', 'No tienes permisos para acceder a esta sección');
-            $this->redirigirPorRol($rolActual);
+    
+    /**
+     * Verificar si el usuario es administrador
+     */
+    public static function verificarAdmin() {
+        self::verificarAutenticacion();
+        
+        if ($_SESSION['admin_rol'] !== 'admin') {
+            $_SESSION['error'] = 'No tiene permisos para acceder a esta sección';
+            header('Location: index.php?ruta=home');
             exit();
         }
+        
+        return true;
     }
-
-    private function redirigirPorRol($rol) {
-        switch ($rol) {
-            case 'administrador':
-            case 'bibliotecario':
-                redirect('dashboard/admin');
-                break;
-            case 'docente':
-            case 'estudiante':
-            default:
-                redirect('dashboard/usuario');
-                break;
+    
+    /**
+     * Obtener datos del usuario autenticado
+     */
+    public static function obtenerUsuarioActual() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
         }
-    }
-
-    public function obtenerUsuarioActual() {
-        if (!isLoggedIn()) {
+        
+        if (!isset($_SESSION['admin_id'])) {
             return null;
         }
-
-        return $this->usuarioModel->obtenerPorId(getUserId());
+        
+        return [
+            'id' => $_SESSION['admin_id'],
+            'usuario' => $_SESSION['admin_usuario'],
+            'nombre' => $_SESSION['admin_nombre'],
+            'rol' => $_SESSION['admin_rol'],
+            'email' => $_SESSION['admin_email'] ?? null
+        ];
     }
 }
+?>
