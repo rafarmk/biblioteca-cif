@@ -15,4 +15,6 @@ Thumbs.db
 *.bak
 *.backup
 *.swp
-*~
+*~"" 
+"# Database configuration" 
+"config/conexion.php" 
