@@ -1,45 +1,91 @@
 <?php
-// Mostrar errores para depuración (desactivar en producción)
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+session_start();
 
-// Obtener controlador y acción desde la URL con valores por defecto
-$controlador = $_GET['c'] ?? 'libro';
-$accion = $_GET['a'] ?? 'form';
+// Obtener la ruta solicitada
+$ruta = $_GET['ruta'] ?? 'login';
+$accion = $_GET['accion'] ?? 'index';
 
-// Sanitizar entradas para evitar inyección de código
-$controlador = preg_replace('/[^a-zA-Z0-9_-]/', '', $controlador);
-$accion = preg_replace('/[^a-zA-Z0-9_-]/', '', $accion);
+// Rutas públicas (no requieren autenticación)
+$rutasPublicas = ['login'];
 
-// Lista blanca de controladores permitidos (seguridad)
-$controladoresPermitidos = ['libro'];
-
-if (!in_array($controlador, $controladoresPermitidos)) {
-    die("<p>✗ Controlador no permitido.</p>");
-}
-
-// Construir nombre de clase y archivo
-$archivoControlador = "controladores/" . ucfirst($controlador) . "Controller.php";
-$nombreClase = ucfirst($controlador) . "Controller";
-
-// Verificar que el archivo exista
-if (file_exists($archivoControlador)) {
-    require_once $archivoControlador;
-
-    // Verificar que la clase exista
-    if (class_exists($nombreClase)) {
-        $objeto = new $nombreClase();
-
-        // Verificar que el método exista
-        if (method_exists($objeto, $accion)) {
-            $objeto->$accion();
-        } else {
-            echo "<p>✗ Método '$accion' no encontrado en el controlador '$nombreClase'.</p>";
-        }
-    } else {
-        echo "<p>✗ Clase '$nombreClase' no encontrada.</p>";
+// Verificar autenticación para rutas protegidas
+if (!in_array($ruta, $rutasPublicas)) {
+    if (!isset($_SESSION['logueado']) || $_SESSION['logueado'] !== true) {
+        header('Location: index.php?ruta=login');
+        exit();
     }
-} else {
-    echo "<p>✗ Controlador '$archivoControlador' no encontrado.</p>";
 }
-?>
+
+// Enrutamiento
+switch ($ruta) {
+    case 'login':
+        if (isset($_SESSION['logueado']) && $_SESSION['logueado'] === true) {
+            header('Location: index.php?ruta=landing');
+            exit();
+        }
+        require_once 'controllers/AuthController.php';
+        $controller = new AuthController();
+        $controller->login();
+        break;
+        
+    case 'logout':
+        require_once 'controllers/AuthController.php';
+        $controller = new AuthController();
+        $controller->logout();
+        break;
+    
+    case 'landing':
+        require_once 'views/landing.php';
+        break;
+        
+    case 'home':
+        require_once 'controllers/HomeController.php';
+        $controller = new HomeController();
+        $controller->index();
+        break;
+        
+    case 'usuarios':
+        require_once 'controllers/UsuarioController.php';
+        $controller = new UsuarioController();
+        
+        switch ($accion) {
+            case 'crear':
+                $controller->crear();
+                break;
+            case 'editar':
+                $controller->editar();
+                break;
+            case 'eliminar':
+                $controller->eliminar();
+                break;
+            default:
+                $controller->index();
+                break;
+        }
+        break;
+        
+    case 'libros':
+        require_once 'controllers/LibroController.php';
+        $controller = new LibroController();
+        
+        switch ($accion) {
+            case 'crear':
+                $controller->crear();
+                break;
+            case 'editar':
+                $controller->editar();
+                break;
+            case 'eliminar':
+                $controller->eliminar();
+                break;
+            default:
+                $controller->index();
+                break;
+        }
+        break;
+        
+    default:
+        header('Location: index.php?ruta=landing');
+        exit();
+        break;
+}
