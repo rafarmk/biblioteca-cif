@@ -27,7 +27,7 @@ switch ($ruta) {
         $controller = new AuthController();
         $controller->login();
         break;
-    
+        
     case 'logout':
         require_once 'controllers/AuthController.php';
         $controller = new AuthController();
@@ -37,16 +37,17 @@ switch ($ruta) {
     case 'landing':
         require_once 'views/landing.php';
         break;
-    
+        
     case 'home':
         require_once 'controllers/HomeController.php';
         $controller = new HomeController();
         $controller->index();
         break;
-    
+        
     case 'usuarios':
         require_once 'controllers/UsuarioController.php';
         $controller = new UsuarioController();
+        
         switch ($accion) {
             case 'crear':
                 $controller->crear();
@@ -62,10 +63,11 @@ switch ($ruta) {
                 break;
         }
         break;
-    
+        
     case 'libros':
         require_once 'controllers/LibroController.php';
         $controller = new LibroController();
+        
         switch ($accion) {
             case 'crear':
                 $controller->crear();
@@ -81,41 +83,7 @@ switch ($ruta) {
                 break;
         }
         break;
-    
-    case 'prestamos':
-    case 'prestamos/activos':
-    case 'prestamos/atrasados':
-    case 'prestamos/crear':
-    case 'prestamos/guardar':
-    case 'prestamos/ver':
-    case 'prestamos/devolver':
-    case 'prestamos/historialUsuario':
-    case 'prestamos/historialLibro':
-        require_once 'controllers/PrestamoController.php';
-        $controller = new PrestamoController();
         
-        // Determinar la acción según la ruta
-        if ($ruta == 'prestamos/activos') {
-            $controller->activos();
-        } elseif ($ruta == 'prestamos/atrasados') {
-            $controller->atrasados();
-        } elseif ($ruta == 'prestamos/crear') {
-            $controller->crear();
-        } elseif ($ruta == 'prestamos/guardar') {
-            $controller->guardar();
-        } elseif ($ruta == 'prestamos/ver') {
-            $controller->ver();
-        } elseif ($ruta == 'prestamos/devolver') {
-            $controller->devolver();
-        } elseif ($ruta == 'prestamos/historialUsuario') {
-            $controller->historialUsuario();
-        } elseif ($ruta == 'prestamos/historialLibro') {
-            $controller->historialLibro();
-        } else {
-            $controller->index();
-        }
-        break;
-    
     default:
         header('Location: index.php?ruta=landing');
         exit();

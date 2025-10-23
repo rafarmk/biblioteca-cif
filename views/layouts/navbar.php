@@ -138,12 +138,12 @@ if (session_status() === PHP_SESSION_NONE) {
         flex-direction: column;
         gap: 15px;
     }
-    
+
     .navbar-menu {
         width: 100%;
         justify-content: center;
     }
-    
+
     .nav-link {
         font-size: 13px;
         padding: 8px 15px;
@@ -159,7 +159,7 @@ if (session_status() === PHP_SESSION_NONE) {
             </div>
             <span>Biblioteca CIF</span>
         </a>
-        
+
         <div class="navbar-menu">
             <?php if (isset($_SESSION['admin_nombre'])): ?>
                 <div class="nav-user">
@@ -167,27 +167,32 @@ if (session_status() === PHP_SESSION_NONE) {
                     <span><?php echo htmlspecialchars($_SESSION['admin_nombre']); ?></span>
                 </div>
             <?php endif; ?>
-            
+
             <a href="index.php?ruta=landing" class="nav-link">
                 <i class="fas fa-home"></i>
                 <span>Inicio</span>
             </a>
-            
+
             <a href="index.php?ruta=home" class="nav-link">
                 <i class="fas fa-tachometer-alt"></i>
                 <span>Dashboard</span>
             </a>
-            
+
             <a href="index.php?ruta=libros" class="nav-link">
                 <i class="fas fa-book"></i>
                 <span>Libros</span>
             </a>
-            
+
             <a href="index.php?ruta=usuarios" class="nav-link">
                 <i class="fas fa-users"></i>
                 <span>Usuarios</span>
             </a>
-            
+
+            <a href="index.php?ruta=prestamos" class="nav-link">
+                <i class="fas fa-handshake"></i>
+                <span>Préstamos</span>
+            </a>
+
             <a href="index.php?ruta=logout" class="nav-link nav-logout" onclick="return confirm('¿Cerrar sesión?')">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Salir</span>

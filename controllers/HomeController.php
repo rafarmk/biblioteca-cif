@@ -1,17 +1,25 @@
 <?php
 require_once 'models/Libro.php';
 require_once 'models/Usuario.php';
+require_once 'core/models/Prestamo.php';
 
 class HomeController {
-    
     public function index() {
-        $libroModel = new Libro();
-        $usuarioModel = new Usuario();
+        // Obtener estadísticas
+        $libro = new Libro();
+        $usuario = new Usuario();
+        $prestamo = new Prestamo();
         
-        $totalLibros = count($libroModel->listar());
-        $totalUsuarios = count($usuarioModel->listar());
+        // Contar totales
+        $libros = $libro->listar();
+        $usuarios = $usuario->listar();
+        $stats_prestamos = $prestamo->obtenerEstadisticas();
         
-        $librosRecientes = array_slice($libroModel->listar(), 0, 5);
+        // Obtener préstamos activos recientes
+        $prestamos_activos = $prestamo->listarActivos();
+        
+        // Obtener préstamos atrasados
+        $prestamos_atrasados = $prestamo->listarAtrasados();
         
         require_once 'views/home.php';
     }
