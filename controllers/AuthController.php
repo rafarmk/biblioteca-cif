@@ -1,8 +1,7 @@
-<?php
+﻿<?php
 require_once 'core/models/Administrador.php';
 
 class AuthController {
-    
     public function login() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $email = $_POST['email'] ?? '';
@@ -18,6 +17,7 @@ class AuthController {
                 $_SESSION['admin_rol'] = $resultado['rol'];
                 $_SESSION['logueado'] = true;
                 
+                // Redirigir al LANDING (página de bienvenida bonita)
                 header('Location: index.php?ruta=landing');
                 exit();
             } else {

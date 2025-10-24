@@ -1,404 +1,289 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Usuarios - Biblioteca CIF</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        .page-header {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            padding: 40px 0;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        
-        .page-title {
-            color: white;
-            font-size: 2.5rem;
-            font-weight: 800;
-            text-align: center;
-            margin: 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        }
-        
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-            animation: fadeInUp 0.6s ease-out;
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .stat-card {
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 2px solid transparent;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, var(--card-color-1), var(--card-color-2));
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-            border-color: var(--card-color-1);
-        }
-        
-        .stat-card.cyan {
-            --card-color-1: #4facfe;
-            --card-color-2: #00f2fe;
-        }
-        
-        .stat-card.purple {
-            --card-color-1: #a8c0ff;
-            --card-color-2: #3f2b96;
-        }
-        
-        .stat-card.orange {
-            --card-color-1: #fa709a;
-            --card-color-2: #fee140;
-        }
-        
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            margin-bottom: 15px;
-            background: linear-gradient(135deg, var(--card-color-1), var(--card-color-2));
-            color: white;
-        }
-        
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--card-color-1), var(--card-color-2));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            line-height: 1;
-            margin-bottom: 5px;
-        }
-        
-        .stat-label {
-            color: #666;
-            font-size: 0.95rem;
-            font-weight: 600;
-        }
-        
-        .search-section {
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        }
-        
-        .search-bar {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-        
-        .search-input {
-            flex: 1;
-            padding: 15px 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 15px;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-        
-        .search-input:focus {
-            outline: none;
-            border-color: #4facfe;
-            box-shadow: 0 0 0 4px rgba(79, 172, 254, 0.1);
-        }
-        
-        .btn-modern {
-            padding: 15px 30px;
-            border-radius: 15px;
-            border: none;
-            font-weight: 700;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .btn-primary-modern {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-        }
-        
-        .btn-primary-modern:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(79, 172, 254, 0.4);
-        }
-        
-        .btn-success-modern {
-            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
-            color: white;
-        }
-        
-        .btn-success-modern:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(86, 171, 47, 0.4);
-        }
-        
-        .table-container {
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        }
-        
-        .modern-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 10px;
-        }
-        
-        .modern-table thead th {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            padding: 15px;
-            font-weight: 700;
-            text-align: left;
-            border: none;
-        }
-        
-        .modern-table thead th:first-child {
-            border-radius: 10px 0 0 10px;
-        }
-        
-        .modern-table thead th:last-child {
-            border-radius: 0 10px 10px 0;
-        }
-        
-        .modern-table tbody tr {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            transition: all 0.3s;
-        }
-        
-        .modern-table tbody tr:hover {
-            transform: scale(1.01);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-        
-        .modern-table tbody td {
-            padding: 18px 15px;
-            border-top: 1px solid #f0f0f0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        
-        .modern-table tbody td:first-child {
-            border-left: 1px solid #f0f0f0;
-            border-radius: 10px 0 0 10px;
-        }
-        
-        .modern-table tbody td:last-child {
-            border-right: 1px solid #f0f0f0;
-            border-radius: 0 10px 10px 0;
-        }
-        
-        .btn-action {
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            border: none;
-            color: white;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-            margin: 0 3px;
-        }
-        
-        .btn-edit {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-        }
-        
-        .btn-delete {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        }
-        
-        .btn-action:hover {
-            transform: translateY(-3px) scale(1.1);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-        
-        .alert-modern {
-            border-radius: 15px;
-            border: none;
-            padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-    </style>
-</head>
-<body>
-    <?php require_once 'views/layouts/navbar.php'; ?>
-    
+﻿<?php require_once __DIR__ . '/../layouts/navbar.php'; ?>
+
+<style>
+.main-container {
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.page-header {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px var(--shadow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    border: 2px solid var(--border-color);
+}
+
+[data-theme="premium"] .page-header {
+    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
+    border-color: rgba(56, 189, 248, 0.2);
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    color: var(--text-primary);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 4px 15px var(--shadow);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+}
+
+.btn-success {
+    background: var(--success);
+    color: white;
+}
+
+.btn-danger {
+    background: var(--accent);
+    color: white;
+}
+
+.content-card {
+    background: var(--bg-card);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px var(--shadow);
+    overflow: hidden;
+    border: 2px solid var(--border-color);
+}
+
+[data-theme="premium"] .content-card {
+    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
+    border-color: rgba(56, 189, 248, 0.2);
+}
+
+.card-header {
+    padding: 25px 30px;
+    background: var(--bg-secondary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.card-header h2 {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.search-input {
+    padding: 12px 20px;
+    border: 2px solid var(--border-color);
+    background: var(--bg-primary);
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-size: 14px;
+    width: 300px;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.table-container {
+    overflow-x: auto;
+    padding: 30px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table thead th {
+    background: var(--bg-secondary);
+    padding: 15px 20px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 13px;
+    text-transform: uppercase;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.table tbody tr:hover {
+    background: var(--bg-secondary);
+}
+
+.table tbody td {
+    padding: 18px 20px;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.badge-estudiante {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.badge-docente {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.badge-personal {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 13px;
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-input {
+        width: 100%;
+    }
+
+    .table-container {
+        padding: 15px;
+    }
+}
+</style>
+
+<div class="main-container">
     <div class="page-header">
-        <h1 class="page-title">
-            <i class="fas fa-users"></i> Gestión de Usuarios
-        </h1>
+        <h1> Gestión de Usuarios</h1>
+        <a href="index.php?ruta=usuarios&accion=crear" class="btn btn-primary">
+             Agregar Usuario
+        </a>
     </div>
-    
-    <div class="container">
-        <?php if (isset($_GET['msg'])): ?>
-            <div class="alert alert-success alert-modern alert-dismissible fade show">
-                <i class="fas fa-check-circle"></i>
-                <?php
-                $mensajes = [
-                    'creado' => '¡Usuario creado exitosamente!',
-                    'actualizado' => '¡Usuario actualizado exitosamente!',
-                    'eliminado' => '¡Usuario eliminado exitosamente!'
-                ];
-                echo $mensajes[$_GET['msg']] ?? 'Operación exitosa';
-                ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        <?php endif; ?>
-        
-        <!-- Tarjetas de Estadísticas -->
-        <div class="stats-container">
-            <div class="stat-card cyan">
-                <div class="stat-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <div class="stat-value"><?php echo count($usuarios); ?></div>
-                <div class="stat-label">Total de Usuarios</div>
-            </div>
-            
-            <div class="stat-card purple">
-                <div class="stat-icon">
-                    <i class="fas fa-user-plus"></i>
-                </div>
-                <div class="stat-value">
-                    <?php 
-                    $hoy = date('Y-m-d');
-                    $nuevos = array_filter($usuarios, function($u) use ($hoy) {
-                        return date('Y-m-d', strtotime($u['fecha_registro'])) == $hoy;
-                    });
-                    echo count($nuevos);
-                    ?>
-                </div>
-                <div class="stat-label">Nuevos Hoy</div>
-            </div>
-            
-            <div class="stat-card orange">
-                <div class="stat-icon">
-                    <i class="fas fa-book-reader"></i>
-                </div>
-                <div class="stat-value">0</div>
-                <div class="stat-label">Con Préstamos</div>
-            </div>
+
+    <div class="content-card">
+        <div class="card-header">
+            <h2>Lista de Usuarios</h2>
+            <input type="text" id="searchInput" placeholder=" Buscar usuario..." class="search-input">
         </div>
         
-        <!-- Búsqueda -->
-        <div class="search-section">
-            <form method="GET" class="search-bar">
-                <input type="hidden" name="ruta" value="usuarios">
-                <input type="text" name="buscar" class="search-input" 
-                       placeholder="🔍 Buscar por nombre o email..." 
-                       value="<?php echo $_GET['buscar'] ?? ''; ?>">
-                <button type="submit" class="btn-modern btn-primary-modern">
-                    <i class="fas fa-search"></i>
-                    Buscar
-                </button>
-                <a href="index.php?ruta=usuarios&accion=crear" class="btn-modern btn-success-modern">
-                    <i class="fas fa-user-plus"></i>
-                    Nuevo Usuario
-                </a>
-            </form>
-        </div>
-        
-        <!-- Tabla de Usuarios -->
         <div class="table-container">
-            <table class="modern-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>Email</th>
-                        <th>Teléfono</th>
-                        <th>Dirección</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (empty($usuarios)): ?>
+            <?php if (isset($usuarios) && count($usuarios) > 0): ?>
+                <table class="table">
+                    <thead>
                         <tr>
-                            <td colspan="6" style="text-align: center; padding: 40px;">
-                                <i class="fas fa-user-slash" style="font-size: 50px; color: #ccc; display: block; margin-bottom: 15px;"></i>
-                                <span style="color: #999; font-size: 18px;">No hay usuarios registrados</span>
-                            </td>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Correo</th>
+                            <th>Teléfono</th>
+                            <th>Tipo</th>
+                            <th>Acciones</th>
                         </tr>
-                    <?php else: ?>
+                    </thead>
+                    <tbody id="usuariosTable">
                         <?php foreach ($usuarios as $usuario): ?>
-                        <tr>
-                            <td><strong>#<?php echo $usuario['id']; ?></strong></td>
-                            <td><strong><?php echo htmlspecialchars($usuario['nombre']); ?></strong></td>
-                            <td><?php echo htmlspecialchars($usuario['email']); ?></td>
-                            <td><?php echo htmlspecialchars($usuario['telefono']); ?></td>
-                            <td><?php echo htmlspecialchars($usuario['direccion']); ?></td>
-                            <td>
-                                <a href="index.php?ruta=usuarios&accion=editar&id=<?php echo $usuario['id']; ?>" 
-                                   class="btn-action btn-edit" title="Editar">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <a href="index.php?ruta=usuarios&accion=eliminar&id=<?php echo $usuario['id']; ?>" 
-                                   class="btn-action btn-delete" 
-                                   title="Eliminar"
-                                   onclick="return confirm('¿Estás seguro de eliminar este usuario?')">
-                                    <i class="fas fa-trash"></i>
-                                </a>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td><?php echo htmlspecialchars($usuario['id']); ?></td>
+                                <td><?php echo htmlspecialchars($usuario['nombre']); ?></td>
+                                <td><?php echo htmlspecialchars($usuario['correo'] ?? 'N/A'); ?></td>
+                                <td><?php echo htmlspecialchars($usuario['telefono'] ?? 'N/A'); ?></td>
+                                <td>
+                                    <?php 
+                                    $tipo = $usuario['tipo_usuario'] ?? 'estudiante';
+                                    $badgeClass = 'badge-' . strtolower($tipo);
+                                    ?>
+                                    <span class="badge <?php echo $badgeClass; ?>">
+                                        <?php echo ucfirst($tipo); ?>
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a href="index.php?ruta=usuarios&accion=editar&id=<?php echo $usuario['id']; ?>" 
+                                           class="btn btn-success btn-sm">
+                                             Editar
+                                        </a>
+                                        <a href="index.php?ruta=usuarios&accion=eliminar&id=<?php echo $usuario['id']; ?>" 
+                                           class="btn btn-danger btn-sm" 
+                                           onclick="return confirm('¿Estás seguro de eliminar este usuario?')">
+                                             Eliminar
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
                         <?php endforeach; ?>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            <?php else: ?>
+                <div style="text-align: center; padding: 60px 20px; color: var(--text-secondary);">
+                    <div style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;"></div>
+                    <h3 style="color: var(--text-primary);">No hay usuarios registrados</h3>
+                    <p>Comienza agregando el primer usuario</p>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
+</div>
+
+<script>
+document.getElementById('searchInput').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const rows = document.querySelectorAll('#usuariosTable tr');
     
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+    });
+});
+</script>
+
+<?php require_once __DIR__ . '/../layouts/footer.php'; ?>

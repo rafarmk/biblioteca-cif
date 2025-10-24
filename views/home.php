@@ -1,395 +1,396 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Biblioteca CIF</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        .dashboard-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 50px 0;
-            margin-bottom: 40px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            position: relative;
-            overflow: hidden;
-        }
-        .dashboard-header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 500px;
-            height: 500px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50%;
-        }
-        .welcome-text {
-            color: white;
-            text-align: center;
-            position: relative;
-            z-index: 10;
-        }
-        .welcome-text h1 {
-            font-size: 3rem;
-            font-weight: 800;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        }
-        .welcome-text p {
-            font-size: 1.2rem;
-            opacity: 0.95;
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
-        .stat-card-large {
-            background: white;
-            border-radius: 25px;
-            padding: 35px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-        .stat-card-large::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 6px;
-            background: linear-gradient(90deg, var(--card-color-1), var(--card-color-2));
-        }
-        .stat-card-large::after {
-            content: '';
-            position: absolute;
-            bottom: -50px;
-            right: -50px;
-            width: 150px;
-            height: 150px;
-            background: linear-gradient(135deg, var(--card-color-1), var(--card-color-2));
-            opacity: 0.1;
-            border-radius: 50%;
-            transition: all 0.4s;
-        }
-        .stat-card-large:hover {
-            transform: translateY(-15px);
-            box-shadow: 0 25px 60px rgba(0,0,0,0.2);
-        }
-        .stat-card-large:hover::after {
-            bottom: -30px;
-            right: -30px;
-            width: 180px;
-            height: 180px;
-        }
-        .stat-card-large.blue { --card-color-1: #667eea; --card-color-2: #764ba2; }
-        .stat-card-large.green { --card-color-1: #56ab2f; --card-color-2: #a8e063; }
-        .stat-card-large.orange { --card-color-1: #fa709a; --card-color-2: #fee140; }
-        .stat-card-large.red { --card-color-1: #f093fb; --card-color-2: #f5576c; }
-        .stat-card-large.purple { --card-color-1: #667eea; --card-color-2: #764ba2; }
-        
-        .stat-icon-large {
-            width: 80px;
-            height: 80px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, var(--card-color-1), var(--card-color-2));
-            color: white;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        .stat-number {
-            font-size: 3.5rem;
-            font-weight: 900;
-            background: linear-gradient(135deg, var(--card-color-1), var(--card-color-2));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            line-height: 1;
-            margin-bottom: 10px;
-        }
-        .stat-text {
-            color: #666;
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 20px;
-        }
-        .stat-btn {
-            padding: 12px 25px;
-            border-radius: 15px;
-            border: 2px solid;
-            border-color: var(--card-color-1);
-            background: white;
-            color: var(--card-color-1);
-            font-weight: 700;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .stat-btn:hover {
-            background: linear-gradient(135deg, var(--card-color-1), var(--card-color-2));
-            color: white;
-            transform: scale(1.05);
-            border-color: transparent;
-        }
-        .alert-danger-custom {
-            background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%);
-            border-left: 5px solid #f5576c;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            box-shadow: 0 5px 15px rgba(245,87,108,0.3);
-        }
-        .recent-section {
-            background: white;
-            border-radius: 25px;
-            padding: 35px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-        .section-title {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #333;
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .section-title i {
-            width: 45px;
-            height: 45px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 20px;
-        }
-        .recent-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 8px;
-        }
-        .recent-table thead th {
-            background: #f8f9fa;
-            padding: 15px;
-            font-weight: 700;
-            color: #666;
-            border: none;
-            text-align: left;
-        }
-        .recent-table tbody tr {
-            background: #fafbfc;
-            transition: all 0.3s;
-        }
-        .recent-table tbody tr:hover {
-            background: #f0f3f7;
-            transform: translateX(5px);
-        }
-        .recent-table tbody td {
-            padding: 18px 15px;
-            border-top: 1px solid #e9ecef;
-            border-bottom: 1px solid #e9ecef;
-        }
-        .recent-table tbody td:first-child {
-            border-left: 1px solid #e9ecef;
-            border-radius: 10px 0 0 10px;
-        }
-        .recent-table tbody td:last-child {
-            border-right: 1px solid #e9ecef;
-            border-radius: 0 10px 10px 0;
-        }
-        .badge-mini {
-            padding: 6px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 700;
-        }
-        .badge-green { background: linear-gradient(135deg, #56ab2f, #a8e063); color: white; }
-        .badge-red { background: linear-gradient(135deg, #f093fb, #f5576c); color: white; }
-        .badge-orange { background: linear-gradient(135deg, #fa709a, #fee140); color: white; }
-    </style>
-</head>
-<body>
-    <?php require_once 'views/layouts/navbar.php'; ?>
+﻿<?php require_once __DIR__ . '/layouts/navbar.php'; ?>
 
+<style>
+.dashboard-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.dashboard-header {
+    background: var(--bg-card);
+    border-radius: 20px;
+    padding: 40px;
+    margin-bottom: 40px;
+    box-shadow: 0 10px 40px var(--shadow);
+    text-align: center;
+    border: 2px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+}
+
+[data-theme="premium"] .dashboard-header {
+    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
+    border-color: rgba(56, 189, 248, 0.3);
+    box-shadow: 0 10px 40px rgba(56, 189, 248, 0.3);
+}
+
+.dashboard-header::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    font-size: 150px;
+    opacity: 0.05;
+}
+
+.dashboard-header h1 {
+    font-size: 2.5rem;
+    color: var(--text-primary);
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.dashboard-header p {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 4px 20px var(--shadow);
+    border: 2px solid var(--border-color);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+[data-theme="premium"] .stat-card {
+    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
+    border-color: rgba(56, 189, 248, 0.2);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px var(--shadow);
+}
+
+[data-theme="premium"] .stat-card:hover {
+    box-shadow: 0 8px 30px rgba(56, 189, 248, 0.4);
+    border-color: rgba(56, 189, 248, 0.5);
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--primary);
+}
+
+.stat-card-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+.stat-card-icon.blue {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.stat-card-icon.green {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.stat-card-icon.orange {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.stat-card-icon.pink {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.stat-card-icon.purple {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+}
+
+.stat-card-icon.cyan {
+    background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+}
+
+[data-theme="premium"] .stat-card-icon {
+    box-shadow: 0 8px 25px rgba(56, 189, 248, 0.4);
+    animation: icon-glow 3s ease-in-out infinite;
+}
+
+@keyframes icon-glow {
+    0%, 100% {
+        box-shadow: 0 8px 25px rgba(56, 189, 248, 0.4);
+    }
+    50% {
+        box-shadow: 0 8px 35px rgba(56, 189, 248, 0.6);
+    }
+}
+
+.stat-card-number {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 10px 0;
+}
+
+.stat-card-label {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.stat-card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.stat-card-link:hover {
+    gap: 12px;
+}
+
+.section-title {
+    font-size: 1.8rem;
+    color: var(--text-primary);
+    font-weight: 700;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.section-title::before {
+    content: '';
+    width: 4px;
+    height: 30px;
+    background: var(--primary);
+    border-radius: 2px;
+}
+
+.recent-activity {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 4px 20px var(--shadow);
+    border: 2px solid var(--border-color);
+}
+
+[data-theme="premium"] .recent-activity {
+    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
+    border-color: rgba(56, 189, 248, 0.2);
+}
+
+.activity-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.activity-item {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.activity-item:hover {
+    background: var(--bg-secondary);
+    margin: 0 -10px;
+    padding: 20px 30px;
+    border-radius: 10px;
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-info h4 {
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.activity-info p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.activity-badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.badge-active {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.badge-overdue {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+@media (max-width: 768px) {
+    .dashboard-header h1 {
+        font-size: 2rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-card-number {
+        font-size: 2.5rem;
+    }
+}
+</style>
+
+<div class="dashboard-container">
+    <!-- Header -->
     <div class="dashboard-header">
-        <div class="welcome-text">
-            <h1><i class="fas fa-chart-line"></i> Panel de Control</h1>
-            <p>Bienvenido de vuelta, <?php echo htmlspecialchars($_SESSION['admin_nombre']); ?></p>
+        <h1> Panel de Control</h1>
+        <p>Bienvenido de vuelta, Administrador</p>
+    </div>
+
+    <!-- Statistics Grid -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-card-icon blue"></div>
+            <div class="stat-card-number"><?php echo count($libros ?? []); ?></div>
+            <div class="stat-card-label">Total de Libros</div>
+            <a href="index.php?ruta=libros" class="stat-card-link">
+                Ver Catálogo 
+            </a>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-card-icon green"></div>
+            <div class="stat-card-number"><?php echo count($usuarios ?? []); ?></div>
+            <div class="stat-card-label">Usuarios Registrados</div>
+            <a href="index.php?ruta=usuarios" class="stat-card-link">
+                Ver Usuarios 
+            </a>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-card-icon orange"></div>
+            <div class="stat-card-number"><?php echo $stats_prestamos['activos'] ?? 0; ?></div>
+            <div class="stat-card-label">Préstamos Activos</div>
+            <a href="index.php?ruta=prestamos/activos" class="stat-card-link">
+                Ver Activos 
+            </a>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-card-icon pink"></div>
+            <div class="stat-card-number"><?php echo $stats_prestamos['atrasados'] ?? 0; ?></div>
+            <div class="stat-card-label">Préstamos Atrasados</div>
+            <a href="index.php?ruta=prestamos/atrasados" class="stat-card-link">
+                Ver Atrasados 
+            </a>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-card-icon purple"></div>
+            <div class="stat-card-number"><?php echo $stats_prestamos['total'] ?? 0; ?></div>
+            <div class="stat-card-label">Total Préstamos</div>
+            <a href="index.php?ruta=prestamos" class="stat-card-link">
+                Ver Todos 
+            </a>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-card-icon cyan"></div>
+            <div class="stat-card-number"><?php 
+                $disponibles = 0;
+                foreach ($libros ?? [] as $libro) {
+                    if ($libro['cantidad_disponible'] > 0) $disponibles++;
+                }
+                echo $disponibles;
+            ?></div>
+            <div class="stat-card-label">Libros Devueltos</div>
+            <a href="index.php?ruta=prestamos&accion=crear" class="stat-card-link">
+                + Nuevo Préstamo 
+            </a>
         </div>
     </div>
 
-    <div class="container">
-        <!-- Alerta de Préstamos Atrasados -->
-        <?php if (!empty($prestamos_atrasados)): ?>
-            <div class="alert-danger-custom">
-                <h5 style="margin: 0; color: #c62828;">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <strong>¡Alerta!</strong> Hay <?php echo count($prestamos_atrasados); ?> préstamo(s) atrasado(s).
-                    <a href="index.php?ruta=prestamos/atrasados" style="color: #c62828; text-decoration: underline; margin-left: 10px;">Ver detalles</a>
-                </h5>
-            </div>
-        <?php endif; ?>
-
-        <!-- Estadísticas Principales -->
-        <div class="stats-grid">
-            <div class="stat-card-large blue">
-                <div class="stat-icon-large">
-                    <i class="fas fa-book"></i>
-                </div>
-                <div class="stat-number"><?php echo count($libros); ?></div>
-                <div class="stat-text">Total de Libros</div>
-                <a href="index.php?ruta=libros" class="stat-btn">
-                    <i class="fas fa-arrow-right"></i> Ver Catálogo
-                </a>
-            </div>
-
-            <div class="stat-card-large green">
-                <div class="stat-icon-large">
-                    <i class="fas fa-users"></i>
-                </div>
-                <div class="stat-number"><?php echo count($usuarios); ?></div>
-                <div class="stat-text">Usuarios Registrados</div>
-                <a href="index.php?ruta=usuarios" class="stat-btn">
-                    <i class="fas fa-arrow-right"></i> Ver Usuarios
-                </a>
-            </div>
-
-            <div class="stat-card-large orange">
-                <div class="stat-icon-large">
-                    <i class="fas fa-book-open"></i>
-                </div>
-                <div class="stat-number"><?php echo $stats_prestamos['prestamos_activos']; ?></div>
-                <div class="stat-text">Préstamos Activos</div>
-                <a href="index.php?ruta=prestamos/activos" class="stat-btn">
-                    <i class="fas fa-arrow-right"></i> Ver Activos
-                </a>
-            </div>
-
-            <div class="stat-card-large red">
-                <div class="stat-icon-large">
-                    <i class="fas fa-exclamation-triangle"></i>
-                </div>
-                <div class="stat-number"><?php echo $stats_prestamos['prestamos_atrasados']; ?></div>
-                <div class="stat-text">Préstamos Atrasados</div>
-                <a href="index.php?ruta=prestamos/atrasados" class="stat-btn">
-                    <i class="fas fa-arrow-right"></i> Ver Atrasados
-                </a>
-            </div>
-
-            <div class="stat-card-large purple">
-                <div class="stat-icon-large">
-                    <i class="fas fa-handshake"></i>
-                </div>
-                <div class="stat-number"><?php echo $stats_prestamos['total_prestamos']; ?></div>
-                <div class="stat-text">Total Préstamos</div>
-                <a href="index.php?ruta=prestamos" class="stat-btn">
-                    <i class="fas fa-arrow-right"></i> Ver Todos
-                </a>
-            </div>
-
-            <div class="stat-card-large green">
-                <div class="stat-icon-large">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="stat-number"><?php echo $stats_prestamos['prestamos_devueltos']; ?></div>
-                <div class="stat-text">Libros Devueltos</div>
-                <a href="index.php?ruta=prestamos/crear" class="stat-btn">
-                    <i class="fas fa-plus"></i> Nuevo Préstamo
-                </a>
-            </div>
-        </div>
-
-        <!-- Préstamos Activos Recientes -->
-        <?php if (!empty($prestamos_activos)): ?>
-            <div class="recent-section">
-                <div class="section-title">
-                    <i><i class="fas fa-clock"></i></i>
-                    <span>Préstamos Activos Recientes</span>
-                </div>
-                <table class="recent-table">
-                    <thead>
-                        <tr>
-                            <th>Usuario</th>
-                            <th>Libro</th>
-                            <th>Fecha Préstamo</th>
-                            <th>Devolución Esperada</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php 
-                        $count = 0;
-                        foreach ($prestamos_activos as $prestamo): 
-                            if ($count >= 5) break; // Mostrar solo los primeros 5
-                            $count++;
-                            $fecha_esperada = strtotime($prestamo['fecha_devolucion_esperada']);
-                            $hoy = strtotime(date('Y-m-d'));
-                            $dias_diferencia = ($fecha_esperada - $hoy) / 86400;
-                        ?>
-                        <tr>
-                            <td><strong><?php echo htmlspecialchars($prestamo['usuario_nombre']); ?></strong></td>
-                            <td><?php echo htmlspecialchars($prestamo['libro_titulo']); ?></td>
-                            <td><?php echo date('d/m/Y', strtotime($prestamo['fecha_prestamo'])); ?></td>
-                            <td><?php echo date('d/m/Y', strtotime($prestamo['fecha_devolucion_esperada'])); ?></td>
-                            <td>
-                                <?php if ($dias_diferencia < 0): ?>
-                                    <span class="badge-mini badge-red">
-                                        <i class="fas fa-exclamation-triangle"></i> Atrasado
-                                    </span>
-                                <?php elseif ($dias_diferencia <= 3): ?>
-                                    <span class="badge-mini badge-orange">
-                                        <i class="fas fa-clock"></i> Próximo a vencer
-                                    </span>
-                                <?php else: ?>
-                                    <span class="badge-mini badge-green">
-                                        <i class="fas fa-check"></i> Activo
-                                    </span>
-                                <?php endif; ?>
-                            </td>
-                        </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-                <div style="text-align: center; margin-top: 20px;">
-                    <a href="index.php?ruta=prestamos/activos" class="stat-btn" style="border-color: #667eea; color: #667eea;">
-                        Ver Todos los Préstamos Activos <i class="fas fa-arrow-right"></i>
-                    </a>
-                </div>
-            </div>
+    <!-- Recent Activity -->
+    <h2 class="section-title"> Préstamos Activos Recientes</h2>
+    <div class="recent-activity">
+        <?php if (isset($prestamos_activos) && count($prestamos_activos) > 0): ?>
+            <ul class="activity-list">
+                <?php foreach (array_slice($prestamos_activos, 0, 5) as $prestamo): ?>
+                    <li class="activity-item">
+                        <div class="activity-info">
+                            <h4><?php echo htmlspecialchars($prestamo['libro_titulo'] ?? 'Libro desconocido'); ?></h4>
+                            <p>
+                                Prestado a: <strong><?php echo htmlspecialchars($prestamo['usuario_nombre'] ?? 'Usuario desconocido'); ?></strong> |
+                                Fecha préstamo: <?php echo date('d/m/Y', strtotime($prestamo['fecha_prestamo'])); ?> |
+                                Vence: <?php echo date('d/m/Y', strtotime($prestamo['fecha_devolucion_estimada'])); ?>
+                            </p>
+                        </div>
+                        <span class="activity-badge badge-active">Activo</span>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
         <?php else: ?>
-            <div class="recent-section">
-                <div class="section-title">
-                    <i><i class="fas fa-clock"></i></i>
-                    <span>Préstamos Activos</span>
-                </div>
-                <div style="text-align: center; padding: 40px; color: #999;">
-                    <i class="fas fa-inbox" style="font-size: 50px; display: block; margin-bottom: 15px;"></i>
-                    <p style="font-size: 18px;">No hay préstamos activos en este momento.</p>
-                    <a href="index.php?ruta=prestamos/crear" class="stat-btn" style="border-color: #56ab2f; color: #56ab2f; margin-top: 15px;">
-                        <i class="fas fa-plus"></i> Crear Nuevo Préstamo
-                    </a>
-                </div>
-            </div>
+            <p style="text-align: center; color: var(--text-secondary); padding: 40px;">
+                No hay préstamos activos en este momento
+            </p>
         <?php endif; ?>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    <?php if (isset($prestamos_atrasados) && count($prestamos_atrasados) > 0): ?>
+        <h2 class="section-title" style="margin-top: 40px;"> Préstamos Atrasados</h2>
+        <div class="recent-activity">
+            <ul class="activity-list">
+                <?php foreach (array_slice($prestamos_atrasados, 0, 5) as $prestamo): ?>
+                    <li class="activity-item">
+                        <div class="activity-info">
+                            <h4><?php echo htmlspecialchars($prestamo['libro_titulo'] ?? 'Libro desconocido'); ?></h4>
+                            <p>
+                                Usuario: <strong><?php echo htmlspecialchars($prestamo['usuario_nombre'] ?? 'Usuario desconocido'); ?></strong> |
+                                Debió devolverse: <?php echo date('d/m/Y', strtotime($prestamo['fecha_devolucion_estimada'])); ?> |
+                                Días de retraso: <?php 
+                                    $dias = (time() - strtotime($prestamo['fecha_devolucion_estimada'])) / (60 * 60 * 24);
+                                    echo floor($dias);
+                                ?> días
+                            </p>
+                        </div>
+                        <span class="activity-badge badge-overdue">Atrasado</span>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
+</div>
+
+<?php require_once __DIR__ . '/layouts/footer.php'; ?>
