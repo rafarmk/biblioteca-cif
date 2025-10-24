@@ -1,0 +1,489 @@
+<?php
+/**
+ * Front Controller - Sistema Biblioteca CIF
+ * 
+ * Descripción: Enrutador principal del sistema
+ * Autor: José Raphael Ernesto Pérez Hernández
+ * Fecha: 20 de Octubre, 2025
+ * Versión: 3.2 - Enrutamiento Corregido
+ */
+
+// ========================================
+// CONFIGURACIÓN INICIAL
+// ========================================
+
+// Iniciar sesión
+session_start();
+
+// Mostrar errores en desarrollo (cambiar a 0 en producción)
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Definir la ruta base del proyecto
+define('BASE_PATH', __DIR__);
+
+// ========================================
+// ENRUTAMIENTO
+// ========================================
+
+$ruta = $_GET['ruta'] ?? '';
+
+// Si no hay ruta, redirigir según autenticación
+if (empty($ruta)) {
+    if (!isset($_SESSION['admin_id'])) {
+        header('Location: index.php?ruta=login');
+        exit;
+    }
+    $ruta = 'home';
+}
+
+// ========================================
+// PARSEAR RUTA
+// ========================================
+
+$partes = explode('/', $ruta);
+$controlador = $partes[0] ?? 'home';
+$accion = $partes[1] ?? 'index';
+$id = $_GET['id'] ?? null;
+
+// ========================================
+// PROTECCIÓN DE RUTAS
+// ========================================
+// Rutas públicas que NO requieren autenticación
+$rutasPublicas = ['auth', 'login', 'autenticar'];
+
+// Si NO es una ruta pública, verificar que esté autenticado
+if (!in_array($controlador, $rutasPublicas)) {
+    require_once 'controllers/AuthController.php';
+    AuthController::verificarAutenticacion();
+}
+
+// ========================================
+// ENRUTAMIENTO POR CONTROLADOR
+// ========================================
+
+switch ($controlador) {
+    
+    // ========================================
+    // CONTROLADOR: AUTENTICACIÓN
+    // ========================================
+    case 'auth':
+    case 'login':
+        require_once 'controllers/AuthController.php';
+        $controller = new AuthController();
+        $controller->login();
+        break;
+    
+    case 'autenticar':
+        require_once 'controllers/AuthController.php';
+        $controller = new AuthController();
+        $controller->autenticar();
+        break;
+    
+    case 'logout':
+    case 'salir':
+        require_once 'controllers/AuthController.php';
+        $controller = new AuthController();
+        $controller->logout();
+        break;
+    
+    // ========================================
+    // CONTROLADOR: HOME
+    // ========================================
+    case 'home':
+        if (file_exists(BASE_PATH . '/views/home.php')) {
+            require_once BASE_PATH . '/views/home.php';
+        } else {
+            echo "<!DOCTYPE html>
+            <html lang='es'>
+            <head>
+                <meta charset='UTF-8'>
+                <title>Sistema Biblioteca CIF</title>
+                <link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css' rel='stylesheet'>
+            </head>
+            <body class='bg-light'>
+                <div class='container mt-5'>
+                    <div class='alert alert-info'>
+                        <h4>👋 Bienvenido, " . htmlspecialchars($_SESSION['admin_nombre']) . "</h4>
+                        <p>Por favor, crea el archivo: <code>views/home.php</code></p>
+                        <hr>
+                        <a href='?ruta=libros' class='btn btn-primary'>Ver Libros</a>
+                        <a href='?ruta=usuarios' class='btn btn-success'>Ver Usuarios</a>
+                        <a href='?ruta=logout' class='btn btn-danger'>Cerrar Sesión</a>
+                    </div>
+                </div>
+            </body>
+            </html>";
+        }
+        break;
+    
+    // ========================================
+    // CONTROLADOR: LIBROS
+    // ========================================
+    case 'libros':
+        $controllerPath = BASE_PATH . '/controllers/LibroController.php';
+        
+        if (!file_exists($controllerPath)) {
+            die("Error: No se encontró el controlador LibroController.php en " . $controllerPath);
+        }
+        
+        require_once $controllerPath;
+        
+        if (!class_exists('LibroController')) {
+            die("Error: La clase LibroController no existe");
+        }
+        
+        $controller = new LibroController();
+        
+        switch ($accion) {
+            case 'index':
+            case 'listar':
+                $controller->index();
+                break;
+            
+            case 'crear':
+            case 'nuevo':
+                $controller->crear();
+                break;
+            
+            case 'guardar':
+            case 'store':
+                $controller->guardar();
+                break;
+            
+            case 'editar':
+            case 'edit':
+                if ($id) {
+                    $controller->editar($id);
+                } else {
+                    $_SESSION['error'] = "❌ ID no proporcionado para editar";
+                    header('Location: ?ruta=libros');
+                    exit;
+                }
+                break;
+            
+            case 'actualizar':
+            case 'update':
+                if ($id) {
+                    $controller->actualizar($id);
+                } else {
+                    $_SESSION['error'] = "❌ ID no proporcionado para actualizar";
+                    header('Location: ?ruta=libros');
+                    exit;
+                }
+                break;
+            
+            case 'eliminar':
+            case 'delete':
+                if ($id) {
+                    $controller->eliminar($id);
+                } else {
+                    $_SESSION['error'] = "❌ ID no proporcionado para eliminar";
+                    header('Location: ?ruta=libros');
+                    exit;
+                }
+                break;
+            
+            case 'buscar':
+            case 'search':
+                $controller->buscar();
+                break;
+            
+            case 'categoria':
+                $controller->categoria();
+                break;
+            
+            case 'ver':
+            case 'show':
+                if ($id) {
+                    $controller->ver($id);
+                } else {
+                    $_SESSION['error'] = "❌ ID no proporcionado";
+                    header('Location: ?ruta=libros');
+                    exit;
+                }
+                break;
+            
+            default:
+                $controller->index();
+        }
+        break;
+    
+    // ========================================
+    // CONTROLADOR: USUARIOS
+    // ========================================
+    case 'usuarios':
+        $controllerPath = BASE_PATH . '/controllers/UsuarioController.php';
+        
+        if (!file_exists($controllerPath)) {
+            die("Error: No se encontró el controlador UsuarioController.php en " . $controllerPath);
+        }
+        
+        require_once $controllerPath;
+        
+        if (!class_exists('UsuarioController')) {
+            die("Error: La clase UsuarioController no existe");
+        }
+        
+        $controller = new UsuarioController();
+        
+        switch ($accion) {
+            case 'index':
+            case 'listar':
+                $controller->index();
+                break;
+            
+            case 'crear':
+            case 'nuevo':
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    $controller->guardar();
+                } else {
+                    $controller->crear();
+                }
+                break;
+            
+            case 'guardar':
+            case 'store':
+                $controller->guardar();
+                break;
+            
+            case 'editar':
+            case 'edit':
+                if ($id) {
+                    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                        $controller->actualizar();
+                    } else {
+                        $controller->editar();
+                    }
+                } else {
+                    $_SESSION['error'] = "❌ ID no proporcionado para editar";
+                    header('Location: ?ruta=usuarios');
+                    exit;
+                }
+                break;
+            
+            case 'actualizar':
+            case 'update':
+                $controller->actualizar();
+                break;
+            
+            case 'eliminar':
+            case 'delete':
+                if ($id) {
+                    $controller->eliminar();
+                } else {
+                    $_SESSION['error'] = "❌ ID no proporcionado para eliminar";
+                    header('Location: ?ruta=usuarios');
+                    exit;
+                }
+                break;
+            
+            case 'buscar':
+            case 'search':
+                $controller->buscar();
+                break;
+            
+            case 'ver':
+            case 'show':
+                if ($id) {
+                    $controller->ver();
+                } else {
+                    $_SESSION['error'] = "❌ ID no proporcionado";
+                    header('Location: ?ruta=usuarios');
+                    exit;
+                }
+                break;
+            
+            default:
+                $controller->index();
+        }
+        break;
+    
+    // ========================================
+    // CONTROLADOR: PRÉSTAMOS (Próximamente)
+    // ========================================
+    case 'prestamos':
+        mostrarProximamente('Préstamos', 'hand-holding-heart', 'Registrar préstamos, devoluciones y controlar multas');
+        break;
+    
+    // ========================================
+    // CONTROLADOR: DASHBOARD (Próximamente)
+    // ========================================
+    case 'dashboard':
+        mostrarProximamente('Dashboard', 'chart-line', 'Ver gráficas, reportes y análisis del sistema');
+        break;
+    
+    // ========================================
+    // RUTA POR DEFECTO (404)
+    // ========================================
+    default:
+        http_response_code(404);
+        ?>
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>404 - Página No Encontrada</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+            <style>
+                body {
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    min-height: 100vh;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .error-card {
+                    background: white;
+                    padding: 60px;
+                    border-radius: 20px;
+                    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                    text-align: center;
+                    max-width: 500px;
+                }
+                .error-card h1 {
+                    font-size: 120px;
+                    color: #667eea;
+                    margin: 0;
+                    font-weight: bold;
+                }
+                .btn-custom {
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    padding: 12px 30px;
+                    border-radius: 10px;
+                    text-decoration: none;
+                    display: inline-block;
+                    margin-top: 20px;
+                    font-weight: 600;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="error-card">
+                <h1>404</h1>
+                <h3 class="mt-3">Página No Encontrada</h3>
+                <p class="text-muted mt-3">La ruta "<?= htmlspecialchars($ruta) ?>" no existe en el sistema.</p>
+                <a href="?ruta=home" class="btn-custom">
+                    🏠 Ir al Inicio
+                </a>
+                <a href="?ruta=libros" class="btn-custom">
+                    📚 Ver Libros
+                </a>
+                <a href="?ruta=usuarios" class="btn-custom">
+                    👥 Ver Usuarios
+                </a>
+                <a href="?ruta=logout" class="btn-custom" style="background: #dc3545;">
+                    🚪 Cerrar Sesión
+                </a>
+            </div>
+        </body>
+        </html>
+        <?php
+        break;
+}
+
+// ========================================
+// FUNCIONES AUXILIARES
+// ========================================
+
+function mostrarProximamente($titulo, $icono, $descripcion) {
+    ?>
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title><?= $titulo ?> - Próximamente</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            body {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .prox-card {
+                background: white;
+                padding: 60px;
+                border-radius: 20px;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                text-align: center;
+                max-width: 500px;
+                animation: fadeIn 0.5s ease;
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .prox-card i {
+                font-size: 5rem;
+                color: #667eea;
+                margin-bottom: 20px;
+            }
+            .prox-card h1 {
+                color: #667eea;
+                margin-bottom: 20px;
+                font-weight: bold;
+            }
+            .prox-card .badge {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                padding: 8px 20px;
+                font-size: 0.9rem;
+                margin-bottom: 20px;
+            }
+            .btn-custom {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 12px 30px;
+                border-radius: 10px;
+                text-decoration: none;
+                display: inline-block;
+                margin-top: 20px;
+                font-weight: 600;
+                transition: transform 0.3s ease;
+            }
+            .btn-custom:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+                color: white;
+            }
+            .btn-logout {
+                background: #dc3545 !important;
+            }
+            .btn-logout:hover {
+                background: #c82333 !important;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="prox-card">
+            <i class="fas fa-<?= $icono ?>"></i>
+            <span class="badge">Próximamente</span>
+            <h1><?= $titulo ?></h1>
+            <p class="lead">Esta funcionalidad estará disponible pronto.</p>
+            <p class="text-muted"><?= $descripcion ?></p>
+            <div class="mt-4">
+                <a href="?ruta=home" class="btn-custom">
+                    <i class="fas fa-home"></i> Inicio
+                </a>
+                <a href="?ruta=libros" class="btn-custom">
+                    <i class="fas fa-book"></i> Libros
+                </a>
+                <a href="?ruta=usuarios" class="btn-custom">
+                    <i class="fas fa-users"></i> Usuarios
+                </a>
+                <a href="?ruta=logout" class="btn-custom btn-logout" onclick="return confirm('¿Cerrar sesión?')">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </a>
+            </div>
+        </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    </body>
+    </html>
+    <?php
+    exit;
+}
+?>
