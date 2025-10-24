@@ -1,0 +1,20 @@
+# Logs
+*.log
+logs/
+
+# IDEs
+.idea/
+.vscode/
+.history/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Backup files
+*.bak
+*.backup
+*.swp
+*~"" 
+"# Database configuration" 
+"config/conexion.php" 
