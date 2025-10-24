@@ -1,960 +1,499 @@
+﻿<?php
+// No llamar session_start() porque ya se inició en index.php
+$isLoggedIn = isset($_SESSION['logueado']) && $_SESSION['logueado'] === true;
+
+// Si está logueado, incluir el navbar
+if ($isLoggedIn) {
+    require_once __DIR__ . '/layouts/navbar.php';
+}
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biblioteca CIF - Sistema de Gestión</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        /* ========== VARIABLES DE COLOR ========== */
-        :root {
-            /* Modo Claro */
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8f9fa;
-            --text-primary: #1e3c72;
-            --text-secondary: #666;
-            --card-bg: #ffffff;
-            --card-shadow: rgba(0,0,0,0.1);
-            --gradient-1: #1e3c72;
-            --gradient-2: #2a5298;
-            --gradient-3: #7e22ce;
-        }
-
-        /* Modo Oscuro */
-        body.dark-mode {
-            --bg-primary: #0a0f1e;
-            --bg-secondary: #111827;
-            --text-primary: #e5e7eb;
-            --text-secondary: #9ca3af;
-            --card-bg: #1f2937;
-            --card-shadow: rgba(59, 130, 246, 0.15);
-            --gradient-1: #1e3a8a;
-            --gradient-2: #3b82f6;
-            --gradient-3: #60a5fa;
-            --accent-1: #2563eb;
-            --accent-2: #3b82f6;
-            --silver: #d1d5db;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow-x: hidden;
-            background: var(--bg-primary);
-            transition: background 0.5s ease, color 0.5s ease;
-        }
-
-        /* ========== TOGGLE MODO OSCURO ESPECTACULAR ========== */
-        .dark-mode-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            border-radius: 50px;
-            padding: 12px 25px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: white;
-            font-weight: 600;
-            font-size: 16px;
-            box-shadow: 
-                0 10px 30px rgba(0,0,0,0.3),
-                0 0 20px rgba(102, 126, 234, 0.4);
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            overflow: hidden;
-        }
-
-        body.dark-mode .dark-mode-toggle {
-            background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 50%, #3b82f6 100%);
-            box-shadow: 
-                0 10px 40px rgba(37, 99, 235, 0.4),
-                0 0 30px rgba(30, 58, 138, 0.3),
-                inset 0 0 20px rgba(209, 213, 219, 0.15);
-            animation: silverPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes silverPulse {
-            0%, 100% { 
-                box-shadow: 
-                    0 10px 40px rgba(37, 99, 235, 0.4),
-                    0 0 30px rgba(30, 58, 138, 0.3),
-                    inset 0 0 20px rgba(209, 213, 219, 0.15);
-            }
-            50% { 
-                box-shadow: 
-                    0 10px 50px rgba(37, 99, 235, 0.6),
-                    0 0 40px rgba(30, 58, 138, 0.5),
-                    inset 0 0 30px rgba(209, 213, 219, 0.25);
-            }
-        }
-
-        .dark-mode-toggle::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
-            transform: rotate(45deg);
-            animation: shine-toggle 3s linear infinite;
-        }
-
-        @keyframes shine-toggle {
-            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-        }
-
-        .dark-mode-toggle:hover {
-            transform: scale(1.1) translateY(-3px);
-            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
-        }
-
-        body.dark-mode .dark-mode-toggle:hover {
-            transform: scale(1.1) translateY(-3px) rotate(5deg);
-            box-shadow: 
-                0 15px 50px rgba(37, 99, 235, 0.6),
-                0 0 60px rgba(30, 58, 138, 0.5);
-        }
-
-        .toggle-icon {
-            font-size: 20px;
-            transition: transform 0.4s ease;
-            filter: drop-shadow(0 0 5px rgba(255,255,255,0.5));
-        }
-
-        .dark-mode-toggle:hover .toggle-icon {
-            transform: rotate(20deg) scale(1.2);
-        }
-
-        body.dark-mode .dark-mode-toggle:hover .toggle-icon {
-            transform: rotate(-20deg) scale(1.2);
-            filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.9));
-        }
-        
-        /* ========== HERO SECTION CON PARTÍCULAS ========== */
-        .hero-section {
-            background: linear-gradient(135deg, var(--gradient-1) 0%, var(--gradient-2) 50%, var(--gradient-3) 100%);
-            min-height: 70vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.5s ease;
-        }
-
-        body.dark-mode .hero-section {
-            box-shadow: 
-                inset 0 0 100px rgba(88, 166, 255, 0.08),
-                inset 0 0 50px rgba(31, 111, 235, 0.05);
-        }
-        
-        /* Partículas flotantes animadas */
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background-image: 
-                radial-gradient(2px 2px at 20% 30%, white, transparent),
-                radial-gradient(2px 2px at 60% 70%, white, transparent),
-                radial-gradient(1px 1px at 50% 50%, white, transparent),
-                radial-gradient(1px 1px at 80% 10%, white, transparent),
-                radial-gradient(2px 2px at 90% 60%, white, transparent),
-                radial-gradient(1px 1px at 33% 80%, white, transparent),
-                radial-gradient(2px 2px at 15% 90%, white, transparent);
-            background-size: 200% 200%;
-            background-position: 0% 0%;
-            opacity: 0.5;
-            animation: particles 20s linear infinite;
-        }
-
-        @keyframes particles {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            100% { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-
-        /* Ondas animadas en el fondo */
-        .hero-section::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 200%;
-            height: 100%;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%23ffffff" fill-opacity="0.1" d="M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,112C672,96,768,96,864,112C960,128,1056,160,1152,165.3C1248,171,1344,149,1392,138.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') repeat-x;
-            background-size: 50% 100%;
-            animation: wave 15s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite;
-            z-index: 1;
-        }
-
-        @keyframes wave {
-            0%, 100% { 
-                transform: translateX(0) translateY(0);
-            }
-            50% { 
-                transform: translateX(-25%) translateY(-10px);
-            }
-        }
-
-        .hero-content {
-            text-align: center;
-            color: white;
-            z-index: 10;
-            padding: 40px 20px;
-            animation: fadeInUp 1.2s ease-out;
-            position: relative;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Icono con efecto de brillo giratorio */
-        .hero-icon {
-            font-size: 80px;
-            margin-bottom: 20px;
-            animation: float 3s ease-in-out infinite, glow 2s ease-in-out infinite alternate;
-            filter: drop-shadow(0 0 20px rgba(255,255,255,0.5));
-            position: relative;
-        }
-
-        @keyframes float {
-            0%, 100% { 
-                transform: translateY(0) rotate(0deg); 
-            }
-            25% { 
-                transform: translateY(-15px) rotate(-5deg); 
-            }
-            75% { 
-                transform: translateY(-10px) rotate(5deg); 
-            }
-        }
-
-        @keyframes glow {
-            from {
-                text-shadow: 
-                    0 0 10px rgba(255,255,255,0.8),
-                    0 0 20px rgba(255,255,255,0.6),
-                    0 0 30px rgba(255,255,255,0.4);
-            }
-            to {
-                text-shadow: 
-                    0 0 20px rgba(255,255,255,1),
-                    0 0 40px rgba(255,255,255,0.8),
-                    0 0 60px rgba(255,255,255,0.6);
-            }
-        }
-
-        .hero-title {
-            font-size: 3.5rem;
-            font-weight: 800;
-            margin-bottom: 15px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            animation: fadeInUp 1.4s ease-out;
-            background: linear-gradient(45deg, #fff, #f0f0f0, #fff);
-            background-size: 200% 200%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradientShift 3s ease infinite, fadeInUp 1.4s ease-out;
-        }
-
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-
-        .hero-subtitle {
-            font-size: 1.3rem;
-            margin-bottom: 30px;
-            opacity: 0.95;
-            animation: fadeInUp 1.6s ease-out;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            flex-wrap: wrap;
-            animation: fadeInUp 1.8s ease-out;
-        }
-
-        .btn-hero {
-            padding: 15px 40px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            border-radius: 50px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Efecto de brillo que se mueve */
-        .btn-hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn-hero:hover::before {
-            left: 100%;
-        }
-
-        .btn-primary-hero {
-            background: white;
-            color: #1e3c72;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        .btn-primary-hero:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-            color: #1e3c72;
-        }
-
-        .btn-secondary-hero {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: 2px solid white;
-            backdrop-filter: blur(10px);
-        }
-
-        .btn-secondary-hero:hover {
-            background: white;
-            color: #1e3c72;
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 15px 35px rgba(255,255,255,0.4);
-        }
-
-        /* ========== FEATURES SECTION ========== */
-        .features-section {
-            padding: 80px 20px;
-            background: linear-gradient(to bottom, var(--bg-secondary), var(--bg-primary));
-            position: relative;
-            transition: all 0.5s ease;
-        }
-
-        body.dark-mode .features-section {
-            background: linear-gradient(to bottom, var(--bg-secondary), var(--bg-primary));
-            box-shadow: inset 0 0 100px rgba(88, 166, 255, 0.03);
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 60px;
-            color: var(--text-primary);
-            position: relative;
-            animation: fadeInDown 1s ease-out;
-            transition: all 0.5s ease;
-        }
-
-        body.dark-mode .section-title {
-            text-shadow: 
-                0 0 20px rgba(59, 130, 246, 0.5),
-                0 0 40px rgba(30, 58, 138, 0.3);
-        }
-
-        @keyframes fadeInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Subrayado animado del título */
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 4px;
-            background: linear-gradient(90deg, var(--gradient-1), var(--gradient-3));
-            border-radius: 2px;
-            animation: underlineGrow 1.5s ease-out;
-            transition: all 0.5s ease;
-        }
-
-        body.dark-mode .section-title::after {
-            box-shadow: 
-                0 0 20px rgba(59, 130, 246, 0.7),
-                0 0 40px rgba(30, 58, 138, 0.4);
-        }
-
-        @keyframes underlineGrow {
-            from { width: 0; }
-            to { width: 100px; }
-        }
-
-        .feature-card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 10px 30px var(--card-shadow);
-            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            height: 100%;
-            border: 2px solid transparent;
-            position: relative;
-            overflow: hidden;
-            animation: fadeInUp 1s ease-out backwards;
-        }
-
-        body.dark-mode .feature-card {
-            box-shadow: 
-                0 10px 40px rgba(37, 99, 235, 0.2),
-                0 0 30px rgba(30, 58, 138, 0.15),
-                inset 0 0 20px rgba(59, 130, 246, 0.05);
-            border: 1px solid rgba(59, 130, 246, 0.15);
-        }
-
-        /* Efecto de brillo que pasa por la tarjeta */
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                45deg,
-                transparent,
-                rgba(126, 34, 206, 0.1),
-                transparent
-            );
-            transform: rotate(45deg);
-            animation: shine 15s ease-in-out infinite;
-            transition: all 0.5s ease;
-        }
-
-        body.dark-mode .feature-card::before {
-            background: linear-gradient(
-                45deg,
-                transparent,
-                rgba(59, 130, 246, 0.2),
-                rgba(209, 213, 219, 0.15),
-                transparent
-            );
-        }
-
-        @keyframes shine {
-            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-            50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-            100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-        }
-
-        /* Animación escalonada para las tarjetas */
-        .feature-card:nth-child(1) { animation-delay: 0.2s; }
-        .feature-card:nth-child(2) { animation-delay: 0.4s; }
-        .feature-card:nth-child(3) { animation-delay: 0.6s; }
-
-        .feature-card:hover {
-            transform: translateY(-15px) scale(1.02) rotateX(5deg);
-            box-shadow: 
-                0 25px 50px rgba(0,0,0,0.15),
-                0 0 0 1px rgba(126, 34, 206, 0.1),
-                inset 0 0 20px rgba(126, 34, 206, 0.05);
-            border-color: #7e22ce;
-        }
-
-        body.dark-mode .feature-card:hover {
-            transform: translateY(-15px) scale(1.02) rotateX(5deg);
-            box-shadow: 
-                0 25px 60px rgba(37, 99, 235, 0.4),
-                0 0 50px rgba(30, 58, 138, 0.3),
-                inset 0 0 40px rgba(59, 130, 246, 0.1);
-            border-color: var(--gradient-1);
-        }
-
-        /* Icono con animación de rotación 3D */
-        .feature-icon {
-            font-size: 60px;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-3));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            display: inline-block;
-            animation: iconPulse 6s ease-in-out infinite;
-            transition: all 0.8s ease;
-        }
-
-        body.dark-mode .feature-icon {
-            filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.6));
-        }
-
-        @keyframes iconPulse {
-            0%, 100% { 
-                transform: scale(1) rotateY(0deg);
-            }
-            50% { 
-                transform: scale(1.05) rotateY(180deg);
-            }
-        }
-
-        .feature-card:hover .feature-icon {
-            animation: iconSpin 3s ease-in-out infinite;
-            filter: drop-shadow(0 0 10px rgba(126, 34, 206, 0.5));
-        }
-
-        body.dark-mode .feature-card:hover .feature-icon {
-            filter: drop-shadow(0 0 25px rgba(59, 130, 246, 0.9)) 
-                    drop-shadow(0 0 50px rgba(30, 58, 138, 0.6));
-        }
-
-        @keyframes iconSpin {
-            0% { transform: rotateY(0deg) scale(1); }
-            50% { transform: rotateY(180deg) scale(1.1); }
-            100% { transform: rotateY(360deg) scale(1); }
-        }
-
-        .feature-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 15px;
-            color: var(--text-primary);
-            transition: all 0.5s ease;
-        }
-
-        .feature-card:hover .feature-title {
-            color: var(--gradient-3);
-            transform: translateX(5px);
-        }
-
-        body.dark-mode .feature-card:hover .feature-title {
-            text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-        }
-
-        .feature-description {
-            color: var(--text-secondary);
-            line-height: 1.6;
-            transition: all 0.5s ease;
-        }
-
-        body.dark-mode .feature-description {
-            color: var(--text-secondary);
-        }
-
-        .feature-btn {
-            margin-top: 20px;
-            padding: 12px 30px;
-            border-radius: 25px;
-            border: 2px solid var(--gradient-3);
-            background: var(--card-bg);
-            color: var(--gradient-3);
-            font-weight: 600;
-            transition: all 0.5s ease;
-            text-decoration: none;
-            display: inline-block;
-            position: relative;
-            overflow: hidden;
-        }
-
-        body.dark-mode .feature-btn {
-            border-color: var(--gradient-1);
-            color: var(--gradient-1);
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
-        }
-
-        .feature-btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: var(--gradient-3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s ease, height 0.6s ease;
-            z-index: -1;
-        }
-
-        body.dark-mode .feature-btn::before {
-            background: linear-gradient(135deg, var(--gradient-1), var(--gradient-2));
-        }
-
-        .feature-btn:hover {
-            color: white;
-            transform: scale(1.05);
-            box-shadow: 0 5px 20px rgba(126, 34, 206, 0.4);
-        }
-
-        .feature-btn:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-
-        body.dark-mode .feature-btn:hover {
-            color: white;
-            box-shadow: 
-                0 5px 30px rgba(59, 130, 246, 0.6),
-                0 0 40px rgba(30, 58, 138, 0.4);
-        }
-
-        /* ========== RESPONSIVE DESIGN ========== */
-        
-        /* Tablets (768px - 991px) */
-        @media (max-width: 991px) {
-            .hero-title {
-                font-size: 2.5rem;
-            }
-            
-            .hero-subtitle {
-                font-size: 1.1rem;
-            }
-            
-            .hero-icon {
-                font-size: 60px;
-            }
-            
-            .section-title {
-                font-size: 2rem;
-            }
-            
-            .feature-icon {
-                font-size: 50px;
-            }
-            
-            .features-section {
-                padding: 60px 20px;
-            }
-        }
-        
-        /* Móviles (576px - 767px) */
-        @media (max-width: 767px) {
-            .hero-section {
-                min-height: 60vh;
-            }
-            
-            .hero-title {
-                font-size: 2rem;
-            }
-            
-            .hero-subtitle {
-                font-size: 1rem;
-            }
-            
-            .hero-icon {
-                font-size: 50px;
-            }
-            
-            .btn-hero {
-                padding: 12px 30px;
-                font-size: 1rem;
-            }
-            
-            .hero-buttons {
-                gap: 15px;
-            }
-            
-            .section-title {
-                font-size: 1.8rem;
-                margin-bottom: 40px;
-            }
-            
-            .feature-card {
-                padding: 30px;
-                margin-bottom: 20px;
-            }
-            
-            .feature-icon {
-                font-size: 45px;
-            }
-            
-            .feature-title {
-                font-size: 1.3rem;
-            }
-            
-            .features-section {
-                padding: 50px 15px;
-            }
-        }
-        
-        /* Móviles pequeños (hasta 575px) */
-        @media (max-width: 575px) {
-            .hero-content {
-                padding: 30px 15px;
-            }
-            
-            .hero-title {
-                font-size: 1.6rem;
-                line-height: 1.3;
-            }
-            
-            .hero-subtitle {
-                font-size: 0.9rem;
-                margin-bottom: 20px;
-            }
-            
-            .hero-icon {
-                font-size: 45px;
-                margin-bottom: 15px;
-            }
-            
-            .btn-hero {
-                padding: 10px 25px;
-                font-size: 0.9rem;
-                width: 100%;
-                max-width: 250px;
-            }
-            
-            .hero-buttons {
-                gap: 10px;
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .section-title {
-                font-size: 1.5rem;
-                margin-bottom: 30px;
-            }
-            
-            .feature-card {
-                padding: 25px;
-            }
-            
-            .feature-icon {
-                font-size: 40px;
-            }
-            
-            .feature-title {
-                font-size: 1.2rem;
-            }
-            
-            .feature-description {
-                font-size: 0.95rem;
-            }
-            
-            .feature-btn {
-                padding: 10px 25px;
-                font-size: 0.9rem;
-            }
-        }
-
-        /* ========== ANIMACIÓN DE ENTRADA SUAVE ========== */
-        @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-    </style>
+    <title>Sistema de Biblioteca CIF</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Botón de Modo Oscuro -->
-    <button class="dark-mode-toggle" id="darkModeToggle">
-        <i class="fas fa-moon toggle-icon" id="toggleIcon"></i>
-        <span id="toggleText">Modo Oscuro</span>
-    </button>
 
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="hero-content">
-            <div class="hero-icon">
-                <i class="fas fa-book-reader"></i>
-            </div>
-            <h1 class="hero-title">Sistema de Biblioteca CIF</h1>
-            <p class="hero-subtitle">Gestión moderna y eficiente de préstamos bibliotecarios</p>
-            <div class="hero-buttons">
-                <a href="index.php?ruta=libros" class="btn-hero btn-primary-hero">
-                    <i class="fas fa-search"></i>
-                    Ver Catálogo
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary: #3498db;
+    --secondary: #2c3e50;
+    --accent: #e74c3c;
+    --light: #ecf0f1;
+    --dark: #34495e;
+    --success: #27ae60;
+    --transition: all 0.3s ease;
+
+    /* Light mode colors */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --bg-card: #ffffff;
+    --text-primary: #2c3e50;
+    --text-secondary: #5a6c7d;
+    --border-color: #e1e8ed;
+    --shadow: rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode */
+[data-theme="dark"] {
+    --bg-primary: #0a0f1e;
+    --bg-secondary: #121829;
+    --bg-card: #1a2332;
+    --text-primary: #e5e7eb;
+    --text-secondary: #9ca3af;
+    --border-color: #2d3748;
+    --shadow: rgba(0, 0, 0, 0.3);
+    --primary: #3b82f6;
+    --accent: #ef4444;
+}
+
+/* Original mode */
+[data-theme="original"] {
+    --bg-primary: #f0f4f8;
+    --bg-secondary: #e3e8ef;
+    --bg-card: #ffffff;
+    --text-primary: #2c3e50;
+    --text-secondary: #5a6c7d;
+    --border-color: #d1dce5;
+    --shadow: rgba(52, 152, 219, 0.15);
+    --primary: #3498db;
+    --secondary: #2c3e50;
+    --accent: #e74c3c;
+}
+
+/* Premium mode - SUPER VISTOSO */
+[data-theme="premium"] {
+    --bg-primary: #0f1419;
+    --bg-secondary: #1a1f29;
+    --bg-card: #1e2533;
+    --text-primary: #c9d1d9;
+    --text-secondary: #8b93a0;
+    --border-color: #30363d;
+    --shadow: rgba(56, 189, 248, 0.3);
+    --primary: #38bdf8;
+    --secondary: #0ea5e9;
+    --accent: #60a5fa;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: var(--transition);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Premium mode effects */
+[data-theme="premium"] body {
+    background: linear-gradient(135deg, #0f1419 0%, #1a1f29 50%, #0f1419 100%);
+}
+
+[data-theme="premium"] body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        radial-gradient(circle at 20% 50%, rgba(56, 189, 248, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(96, 165, 250, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(14, 165, 233, 0.15) 0%, transparent 50%);
+    animation: premium-glow 15s ease-in-out infinite alternate;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes premium-glow {
+    0%, 100% { opacity: 0.8; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.1); }
+}
+
+[data-theme="premium"] body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent 0%, rgba(56, 189, 248, 0.05) 50%, transparent 100%);
+    animation: premium-scan 8s linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes premium-scan {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    min-height: <?php echo $isLoggedIn ? '80vh' : '100vh'; ?>;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px 20px;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+}
+
+[data-theme="dark"] .hero {
+    background: linear-gradient(135deg, #1e3a8a 0%, #0a0f1e 100%);
+}
+
+[data-theme="original"] .hero {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+}
+
+[data-theme="premium"] .hero {
+    background: linear-gradient(135deg, #0c4a6e 0%, #1e293b 50%, #0f172a 100%);
+    box-shadow: 0 20px 60px rgba(56, 189, 248, 0.3);
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: grid-move 20s linear infinite;
+    opacity: 0.3;
+}
+
+@keyframes grid-move {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(50px, 50px); }
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+}
+
+.hero-icon {
+    font-size: 5rem;
+    margin-bottom: 30px;
+    animation: float 3s ease-in-out infinite;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.hero-icon:hover {
+    transform: scale(1.2) rotate(10deg);
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-20px) rotate(-5deg); }
+    50% { transform: translateY(-10px) rotate(5deg); }
+    75% { transform: translateY(-25px) rotate(-3deg); }
+}
+
+.hero h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+.hero p {
+    font-size: 1.4rem;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 40px;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 15px 35px;
+    border: none;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-primary {
+    background: white;
+    color: var(--primary);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.btn-primary:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 2px solid white;
+}
+
+.btn-secondary:hover {
+    background: white;
+    color: var(--primary);
+    transform: translateY(-5px);
+}
+
+/* Features Section */
+.features {
+    padding: 100px 20px;
+    background: var(--bg-primary);
+    position: relative;
+    z-index: 1;
+}
+
+.features-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.features h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+}
+
+.features-subtitle {
+    text-align: center;
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 60px;
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 40px;
+}
+
+.feature-card {
+    background: var(--bg-card);
+    padding: 50px 40px;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px var(--shadow);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 2px solid var(--border-color);
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.feature-card:hover::before {
+    left: 100%;
+}
+
+[data-theme="premium"] .feature-card {
+    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
+    border-color: rgba(56, 189, 248, 0.2);
+}
+
+.feature-card:hover {
+    transform: translateY(-20px) scale(1.05);
+    box-shadow: 0 25px 70px var(--shadow);
+}
+
+[data-theme="premium"] .feature-card:hover {
+    box-shadow: 0 25px 70px rgba(56, 189, 248, 0.6);
+    border-color: var(--primary);
+}
+
+.feature-card:hover .feature-icon {
+    transform: scale(1.4) rotate(360deg);
+    filter: drop-shadow(0 0 20px var(--primary));
+}
+
+.feature-icon {
+    font-size: 4.5rem;
+    margin-bottom: 30px;
+    transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    display: inline-block;
+}
+
+.feature-card h3 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+}
+
+.feature-card p {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    font-size: 1rem;
+}
+
+/* Footer */
+.footer {
+    background: var(--bg-card);
+    padding: 40px 20px;
+    text-align: center;
+    border-top: 2px solid var(--border-color);
+    position: relative;
+    z-index: 1;
+}
+
+[data-theme="premium"] .footer {
+    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
+    border-top-color: rgba(56, 189, 248, 0.3);
+}
+
+.footer p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero p {
+        font-size: 1.1rem;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .features h2 {
+        font-size: 2rem;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-icon"></div>
+        <h1>Sistema de Biblioteca CIF</h1>
+        <p>Gestión moderna y eficiente de préstamos bibliotecarios</p>
+        <div class="hero-buttons">
+            <?php if ($isLoggedIn): ?>
+                <a href="index.php?ruta=libros" class="btn btn-primary">
+                     Ver Catálogo
                 </a>
-                <a href="index.php?ruta=home" class="btn-hero btn-secondary-hero">
-                    <i class="fas fa-tachometer-alt"></i>
-                    Dashboard
+                <a href="index.php?ruta=home" class="btn btn-secondary">
+                     Ir al Dashboard
                 </a>
-            </div>
+            <?php else: ?>
+                <a href="index.php?ruta=login" class="btn btn-primary">
+                     Iniciar Sesión
+                </a>
+                <a href="#features" class="btn btn-secondary">
+                    ℹ Conocer Más
+                </a>
+            <?php endif; ?>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Features Section -->
-    <section class="features-section">
-        <div class="container">
-            <h2 class="section-title">Funcionalidades Principales</h2>
-            <div class="row g-4">
-                <div class="col-lg-4 col-md-6 col-sm-12">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-book"></i>
-                        </div>
-                        <h3 class="feature-title">Gestión de Libros</h3>
-                        <p class="feature-description">
-                            Administra el catálogo completo de libros de la biblioteca con facilidad. Registra, edita y elimina libros con toda la información necesaria.
-                        </p>
-                        <a href="index.php?ruta=libros" class="btn feature-btn">
-                            Ver Libros <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
+<!-- Features Section -->
+<section class="features" id="features">
+    <div class="features-container">
+        <h2>Funcionalidades Principales</h2>
+        <p class="features-subtitle">Explora todas las herramientas disponibles para gestionar tu biblioteca</p>
+        <div class="features-grid">
+            <?php if ($isLoggedIn): ?>
+                <a href="index.php?ruta=libros" class="feature-card">
+                    <div class="feature-icon"></div>
+                    <h3>Gestión de Libros</h3>
+                    <p>Administra el catálogo completo de libros de la biblioteca con facilidad. Agrega, edita y elimina registros de manera eficiente.</p>
+                </a>
+                <a href="index.php?ruta=usuarios" class="feature-card">
+                    <div class="feature-icon"></div>
+                    <h3>Control de Usuarios</h3>
+                    <p>Registra y gestiona estudiantes, docentes y personal. Mantén un control completo de los miembros de tu biblioteca.</p>
+                </a>
+                <a href="index.php?ruta=prestamos" class="feature-card">
+                    <div class="feature-icon"></div>
+                    <h3>Préstamos</h3>
+                    <p>Controla préstamos y devoluciones con seguimiento en tiempo real. Gestiona multas y fechas de vencimiento automáticamente.</p>
+                </a>
+            <?php else: ?>
+                <div class="feature-card" style="cursor: default;">
+                    <div class="feature-icon"></div>
+                    <h3>Gestión de Libros</h3>
+                    <p>Administra el catálogo completo de libros de la biblioteca con facilidad. Agrega, edita y elimina registros de manera eficiente.</p>
                 </div>
-
-                <div class="col-lg-4 col-md-6 col-sm-12">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <h3 class="feature-title">Control de Usuarios</h3>
-                        <p class="feature-description">
-                            Registra y gestiona estudiantes, docentes y personal administrativo. Mantén un control completo de todos los usuarios del sistema.
-                        </p>
-                        <a href="index.php?ruta=usuarios" class="btn feature-btn">
-                            Ver Usuarios <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
+                <div class="feature-card" style="cursor: default;">
+                    <div class="feature-icon"></div>
+                    <h3>Control de Usuarios</h3>
+                    <p>Registra y gestiona estudiantes, docentes y personal. Mantén un control completo de los miembros de tu biblioteca.</p>
                 </div>
-
-                <div class="col-lg-4 col-md-6 col-sm-12">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-exchange-alt"></i>
-                        </div>
-                        <h3 class="feature-title">Préstamos</h3>
-                        <p class="feature-description">
-                            Controla préstamos y devoluciones con registro detallado de fechas. Sistema inteligente de alertas y recordatorios.
-                        </p>
-                        <a href="index.php?ruta=prestamos" class="btn feature-btn">
-                            Ver Préstamos <i class="fas fa-arrow-right"></i>
-                        </a>
-                    </div>
+                <div class="feature-card" style="cursor: default;">
+                    <div class="feature-icon"></div>
+                    <h3>Préstamos</h3>
+                    <p>Controla préstamos y devoluciones con seguimiento en tiempo real. Gestiona multas y fechas de vencimiento automáticamente.</p>
                 </div>
-            </div>
+            <?php endif; ?>
         </div>
-    </section>
+    </div>
+</section>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Sistema de Modo Oscuro con Animaciones
-        const darkModeToggle = document.getElementById('darkModeToggle');
-        const toggleIcon = document.getElementById('toggleIcon');
-        const toggleText = document.getElementById('toggleText');
-        const body = document.body;
+<!-- Footer -->
+<footer class="footer">
+    <p>&copy; <?php echo date('Y'); ?> Sistema de Biblioteca CIF. Todos los derechos reservados.</p>
+</footer>
 
-        // Verificar modo guardado en localStorage
-        const savedMode = localStorage.getItem('darkMode');
-        
-        // Aplicar modo guardado al cargar la página
-        if (savedMode === 'enabled') {
-            body.classList.add('dark-mode');
-            toggleIcon.classList.remove('fa-moon');
-            toggleIcon.classList.add('fa-sun');
-            toggleText.textContent = 'Modo Claro';
-        }
-
-        // Toggle entre modos
-        darkModeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            
-            if (body.classList.contains('dark-mode')) {
-                // Activar modo oscuro
-                toggleIcon.classList.remove('fa-moon');
-                toggleIcon.classList.add('fa-sun');
-                toggleText.textContent = 'Modo Claro';
-                localStorage.setItem('darkMode', 'enabled');
-                
-                // Efecto de explosión de partículas
-                createParticles(darkModeToggle);
-            } else {
-                // Activar modo claro
-                toggleIcon.classList.remove('fa-sun');
-                toggleIcon.classList.add('fa-moon');
-                toggleText.textContent = 'Modo Oscuro';
-                localStorage.setItem('darkMode', 'disabled');
-                
-                // Efecto de explosión de partículas
-                createParticles(darkModeToggle);
-            }
-        });
-
-        // Función para crear efecto de partículas al cambiar modo
-        function createParticles(element) {
-            const rect = element.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-            
-            for (let i = 0; i < 20; i++) {
-                const particle = document.createElement('div');
-                particle.style.position = 'fixed';
-                particle.style.left = centerX + 'px';
-                particle.style.top = centerY + 'px';
-                particle.style.width = '10px';
-                particle.style.height = '10px';
-                particle.style.borderRadius = '50%';
-                particle.style.pointerEvents = 'none';
-                particle.style.zIndex = '9999';
-                
-                if (body.classList.contains('dark-mode')) {
-                    particle.style.background = `linear-gradient(135deg, #3b82f6, #60a5fa)`;
-                    particle.style.boxShadow = '0 0 10px rgba(59, 130, 246, 0.8)';
-                } else {
-                    particle.style.background = `linear-gradient(135deg, #667eea, #764ba2)`;
-                    particle.style.boxShadow = '0 0 10px rgba(102, 126, 234, 0.8)';
-                }
-                
-                document.body.appendChild(particle);
-                
-                const angle = (Math.PI * 2 * i) / 20;
-                const velocity = 100 + Math.random() * 100;
-                const tx = Math.cos(angle) * velocity;
-                const ty = Math.sin(angle) * velocity;
-                
-                particle.animate([
-                    {
-                        transform: 'translate(0, 0) scale(1)',
-                        opacity: 1
-                    },
-                    {
-                        transform: `translate(${tx}px, ${ty}px) scale(0)`,
-                        opacity: 0
-                    }
-                ], {
-                    duration: 800,
-                    easing: 'cubic-bezier(0, .9, .57, 1)',
-                    fill: 'forwards'
-                });
-                
-                setTimeout(() => particle.remove(), 800);
-            }
-        }
-    </script>
 </body>
 </html>

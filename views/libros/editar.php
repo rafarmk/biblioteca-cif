@@ -1,98 +1,292 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Libro - Biblioteca CIF</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
-<body>
-    <?php require_once 'views/layouts/navbar.php'; ?>
-    
-    <div class="container mt-4">
-        <div class="row">
-            <div class="col-md-8 mx-auto">
-                <div class="card">
-                    <div class="card-header bg-warning text-dark">
-                        <h4 class="mb-0"><i class="fas fa-book-open"></i> Editar Libro</h4>
-                    </div>
-                    <div class="card-body">
-                        <?php if (isset($error)): ?>
-                            <div class="alert alert-danger">
-                                <i class="fas fa-exclamation-circle"></i> <?php echo $error; ?>
-                            </div>
-                        <?php endif; ?>
-                        
-                        <form method="POST" action="index.php?ruta=libros&accion=editar">
-                            <input type="hidden" name="id" value="<?php echo $libroData['id']; ?>">
-                            
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Título *</label>
-                                    <input type="text" name="titulo" class="form-control" value="<?php echo htmlspecialchars($libroData['titulo']); ?>" required>
-                                </div>
-                                
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Autor *</label>
-                                    <input type="text" name="autor" class="form-control" value="<?php echo htmlspecialchars($libroData['autor']); ?>" required>
-                                </div>
-                            </div>
-                            
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">ISBN</label>
-                                    <input type="text" name="isbn" class="form-control" value="<?php echo htmlspecialchars($libroData['isbn']); ?>">
-                                </div>
-                                
-                                <div class="col-md-6 mb-3">
-                                    <label class="form-label">Editorial</label>
-                                    <input type="text" name="editorial" class="form-control" value="<?php echo htmlspecialchars($libroData['editorial']); ?>">
-                                </div>
-                            </div>
-                            
-                            <div class="row">
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label">Año de Publicación</label>
-                                    <input type="number" name="anio_publicacion" class="form-control" value="<?php echo $libroData['anio_publicacion']; ?>" min="1900" max="<?php echo date('Y'); ?>">
-                                </div>
-                                
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label">Categoría</label>
-                                    <select name="categoria" class="form-select">
-                                        <option value="">Seleccione...</option>
-                                        <option value="Derecho" <?php echo ($libroData['categoria'] == 'Derecho') ? 'selected' : ''; ?>>Derecho</option>
-                                        <option value="Criminología" <?php echo ($libroData['categoria'] == 'Criminología') ? 'selected' : ''; ?>>Criminología</option>
-                                        <option value="Procedimientos" <?php echo ($libroData['categoria'] == 'Procedimientos') ? 'selected' : ''; ?>>Procedimientos</option>
-                                        <option value="Investigación" <?php echo ($libroData['categoria'] == 'Investigación') ? 'selected' : ''; ?>>Investigación</option>
-                                        <option value="Otro" <?php echo ($libroData['categoria'] == 'Otro') ? 'selected' : ''; ?>>Otro</option>
-                                    </select>
-                                </div>
-                                
-                                <div class="col-md-4 mb-3">
-                                    <label class="form-label">Cantidad Disponible</label>
-                                    <input type="number" name="cantidad_disponible" class="form-control" value="<?php echo $libroData['cantidad_disponible']; ?>" min="0">
-                                </div>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label class="form-label">Ubicación</label>
-                                <input type="text" name="ubicacion" class="form-control" value="<?php echo htmlspecialchars($libroData['ubicacion']); ?>" placeholder="Ej: Estante A1">
-                            </div>
-                            
-                            <div class="d-flex gap-2">
-                                <button type="submit" class="btn btn-warning">
-                                    <i class="fas fa-save"></i> Actualizar
-                                </button>
-                                <a href="index.php?ruta=libros" class="btn btn-secondary">
-                                    <i class="fas fa-times"></i> Cancelar
-                                </a>
-                            </div>
-                        </form>
-                    </div>
+﻿<?php require_once __DIR__ . '/../layouts/navbar.php'; ?>
+
+<style>
+.main-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px 40px 20px;
+    position: relative;
+    z-index: 1;
+}
+
+.page-header {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px var(--shadow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    border: 2px solid var(--border-color);
+}
+
+[data-theme="premium"] .page-header {
+    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
+    border-color: rgba(56, 189, 248, 0.2);
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    color: var(--text-primary);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-secondary {
+    background: var(--secondary);
+    color: white;
+}
+
+.btn-secondary:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+    width: 100%;
+    justify-content: center;
+    padding: 15px;
+    font-size: 16px;
+}
+
+.btn-primary:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+.content-card {
+    background: var(--bg-card);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px var(--shadow);
+    border: 2px solid var(--border-color);
+    padding: 40px;
+}
+
+[data-theme="premium"] .content-card {
+    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
+    border-color: rgba(56, 189, 248, 0.2);
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.form-group select,
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.form-group select:focus,
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.alert {
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    font-weight: 500;
+}
+
+.alert-error {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 2px solid #fecaca;
+}
+
+.info-badge {
+    display: inline-block;
+    padding: 8px 16px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 5px;
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .content-card {
+        padding: 25px;
+    }
+}
+</style>
+
+<div class="main-container">
+    <div class="page-header">
+        <h1> Editar Libro</h1>
+        <a href="index.php?ruta=libros" class="btn btn-secondary">
+             Volver
+        </a>
+    </div>
+
+    <?php if (isset($_SESSION['error'])): ?>
+        <div class="alert alert-error">
+            <?php 
+            echo $_SESSION['error'];
+            unset($_SESSION['error']);
+            ?>
+        </div>
+    <?php endif; ?>
+
+    <div class="content-card">
+        <?php if (isset($libro)): ?>
+        <form action="index.php?ruta=libros&accion=editar" method="POST" id="formLibro">
+            <input type="hidden" name="id" value="<?php echo $libro['id']; ?>">
+            
+            <div class="form-group">
+                <label for="titulo"> Título del Libro *</label>
+                <input type="text" name="titulo" id="titulo" required 
+                       value="<?php echo htmlspecialchars($libro['titulo']); ?>"
+                       placeholder="Ingrese el título del libro">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="autor"> Autor *</label>
+                    <input type="text" name="autor" id="autor" required 
+                           value="<?php echo htmlspecialchars($libro['autor']); ?>"
+                           placeholder="Nombre del autor">
+                </div>
+
+                <div class="form-group">
+                    <label for="isbn"> ISBN</label>
+                    <input type="text" name="isbn" id="isbn" 
+                           value="<?php echo htmlspecialchars($libro['isbn'] ?? ''); ?>"
+                           placeholder="978-0-00-000000-0">
                 </div>
             </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="editorial"> Editorial</label>
+                    <input type="text" name="editorial" id="editorial" 
+                           value="<?php echo htmlspecialchars($libro['editorial'] ?? ''); ?>"
+                           placeholder="Nombre de la editorial">
+                </div>
+
+                <div class="form-group">
+                    <label for="anio_publicacion"> Año de Publicación</label>
+                    <input type="number" name="anio_publicacion" id="anio_publicacion" 
+                           value="<?php echo htmlspecialchars($libro['anio_publicacion'] ?? ''); ?>"
+                           min="1800" max="<?php echo date('Y'); ?>" 
+                           placeholder="<?php echo date('Y'); ?>">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="categoria"> Categoría</label>
+                    <input type="text" name="categoria" id="categoria" 
+                           value="<?php echo htmlspecialchars($libro['categoria'] ?? ''); ?>"
+                           placeholder="Ej: Ficción, Historia, Ciencia">
+                </div>
+
+                <div class="form-group">
+                    <label for="cantidad_total"> Cantidad Total *</label>
+                    <input type="number" name="cantidad_total" id="cantidad_total" required 
+                           value="<?php echo $libro['cantidad_total']; ?>"
+                           min="1" placeholder="Número de ejemplares">
+                    <?php if (isset($libro['cantidad_disponible'])): ?>
+                    <span class="info-badge">
+                         Disponibles: <?php echo $libro['cantidad_disponible']; ?>
+                    </span>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="ubicacion"> Ubicación en Biblioteca</label>
+                <input type="text" name="ubicacion" id="ubicacion" 
+                       value="<?php echo htmlspecialchars($libro['ubicacion'] ?? ''); ?>"
+                       placeholder="Ej: Estante A - Nivel 2">
+            </div>
+
+            <div class="form-group">
+                <label for="descripcion"> Descripción</label>
+                <textarea name="descripcion" id="descripcion" 
+                          placeholder="Breve descripción del libro (opcional)"><?php echo htmlspecialchars($libro['descripcion'] ?? ''); ?></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                 Actualizar Libro
+            </button>
+        </form>
+        <?php else: ?>
+        <div style="text-align: center; padding: 60px 20px; color: var(--text-secondary);">
+            <div style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;"></div>
+            <h3 style="color: var(--text-primary);">Libro no encontrado</h3>
         </div>
+        <?php endif; ?>
     </div>
-</body>
-</html>
+</div>
+
+<script>
+document.getElementById('formLibro')?.addEventListener('submit', function(e) {
+    if (!confirm('¿Confirmar actualización del libro?')) {
+        e.preventDefault();
+    }
+});
+</script>
+
+<?php require_once __DIR__ . '/../layouts/footer.php'; ?>

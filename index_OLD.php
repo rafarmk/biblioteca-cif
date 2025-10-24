@@ -1,9 +1,9 @@
-﻿<?php
+<?php
 session_start();
 
 // Obtener la ruta solicitada
-$ruta = $_GET['ruta'] ?? 'landing';
-$accion = $_GET['accion'] ?? 'index';
+$ruta = $_GET['ruta'] ?? 'landing';  // Ruta por defecto: landing
+$accion = $_GET['accion'] ?? 'index';  // Acción por defecto: index
 
 // Rutas públicas (no requieren autenticación)
 $rutasPublicas = ['login', 'landing'];
@@ -19,7 +19,6 @@ if (!in_array($ruta, $rutasPublicas)) {
 // Enrutamiento principal
 switch ($ruta) {
     case 'login':
-        // Si ya está logueado, redirigir al LANDING
         if (isset($_SESSION['logueado']) && $_SESSION['logueado'] === true) {
             header('Location: index.php?ruta=landing');
             exit();
@@ -36,7 +35,6 @@ switch ($ruta) {
         break;
 
     case 'landing':
-        // PERMITIR que usuarios logueados vean el landing
         require_once 'views/landing.php';
         break;
 
@@ -96,6 +94,7 @@ switch ($ruta) {
         require_once 'controllers/PrestamoController.php';
         $controller = new PrestamoController();
 
+        // Enrutamiento específico para préstamos
         switch ($ruta) {
             case 'prestamos/activos':
                 $controller->activos();
@@ -128,7 +127,6 @@ switch ($ruta) {
         break;
 
     default:
-        // Siempre redirigir al landing como página de inicio
         header('Location: index.php?ruta=landing');
         exit();
 }
