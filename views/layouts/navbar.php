@@ -89,15 +89,11 @@ body {
     min-height: 100vh;
     position: relative;
     overflow-x: hidden;
-
-    padding-top: 80px !important;
 }
 
 /* Premium mode - EFECTOS VISUALES INCREÍBLES */
 [data-theme="premium"] body {
     background: linear-gradient(135deg, #0f1419 0%, #1a1f29 50%, #0f1419 100%);
-
-    padding-top: 80px !important;
 }
 
 [data-theme="premium"] body::before {
@@ -155,8 +151,6 @@ body {
 /* Partículas flotantes para Premium */
 [data-theme="premium"] body {
     overflow: hidden;
-
-    padding-top: 80px !important;
 }
 
 [data-theme="premium"]::before {
@@ -273,62 +267,32 @@ body {
 
 /* Navbar con efectos Premium */
 .modern-navbar {
-    background: var(--bg-card);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
     backdrop-filter: blur(10px);
-    padding: 15px 0;
+    padding: 18px 0;
     box-shadow: 0 8px 32px var(--shadow);
-    position: fixed;
+    position: sticky;
     top: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
     z-index: 1000;
     border-bottom: 1px solid var(--border-color);
-    margin: 0;
-    display: flex;
-    justify-content: center;
 }
 
 [data-theme="dark"] .modern-navbar {
-    background: var(--bg-card);
-    backdrop-filter: blur(10px);
-    padding: 15px 0;
-    box-shadow: 0 8px 32px var(--shadow);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    z-index: 1000;
-    border-bottom: 1px solid var(--border-color);
-    margin: 0;
-    display: flex;
-    justify-content: center;
+    background: linear-gradient(135deg, #1e3a8a 0%, #0a0f1e 100%);
 }
 
 [data-theme="original"] .modern-navbar {
-    background: var(--bg-card);
-    backdrop-filter: blur(10px);
-    padding: 15px 0;
-    box-shadow: 0 8px 32px var(--shadow);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    z-index: 1000;
-    border-bottom: 1px solid var(--border-color);
-    margin: 0;
-    display: flex;
-    justify-content: center;
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
 }
 
 [data-theme="premium"] .modern-navbar {
-    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
-    border-bottom-color: rgba(56, 189, 248, 0.3);
-    box-shadow:
+    background: linear-gradient(135deg, #0c4a6e 0%, #1e293b 50%, #0f172a 100%);
+    box-shadow: 
         0 8px 32px rgba(56, 189, 248, 0.4),
         0 4px 100px rgba(56, 189, 248, 0.2);
+    border-bottom: 1px solid rgba(56, 189, 248, 0.3);
+    position: relative;
+    overflow: hidden;
 }
 
 [data-theme="premium"] .modern-navbar::before {
@@ -351,13 +315,14 @@ body {
 }
 
 .navbar-container {
-    width: 100%;
     max-width: 1400px;
     margin: 0 auto;
+    padding: 0 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 30px;
+    position: relative;
+    z-index: 1;
 }
 
 .navbar-logo {
@@ -494,14 +459,9 @@ body {
 
 @media (max-width: 768px) {
     .navbar-container {
-    width: 100%;
-    max-width: 1400px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 30px;
-}
+        flex-direction: column;
+        gap: 15px;
+    }
 
     .navbar-menu {
         width: 100%;
@@ -516,167 +476,6 @@ body {
     .theme-toggle-text {
         display: none;
     }
-}
-
-/* Colores del navbar según el tema */
-[data-theme="dark"] .modern-navbar {
-    background: #1a2332;
-    border-bottom-color: #2d3748;
-}
-
-[data-theme="original"] .modern-navbar {
-    background: #ffffff;
-    border-bottom-color: #d1dce5;
-    box-shadow: 0 4px 20px rgba(52, 152, 219, 0.15);
-}
-
-[data-theme="premium"] .modern-navbar {
-    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
-    border-bottom-color: rgba(56, 189, 248, 0.3);
-    box-shadow:
-        0 8px 32px rgba(56, 189, 248, 0.4),
-        0 4px 100px rgba(56, 189, 248, 0.2);
-}
-
-/* Colores del navbar según el tema */
-[data-theme="dark"] .modern-navbar {
-    background: #1a2332;
-    border-bottom-color: #2d3748;
-}
-
-[data-theme="original"] .modern-navbar {
-    background: #ffffff;
-    border-bottom-color: #d1dce5;
-    box-shadow: 0 4px 20px rgba(52, 152, 219, 0.15);
-}
-
-[data-theme="premium"] .modern-navbar {
-    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
-    border-bottom-color: rgba(56, 189, 248, 0.3);
-    box-shadow:
-        0 8px 32px rgba(56, 189, 248, 0.4),
-        0 4px 100px rgba(56, 189, 248, 0.2);
-}
-
-/* MEJORA DE COLORES DE TEXTO EN TODO EL SISTEMA */
-
-/* Títulos principales más visibles */
-h1, .page-title, .card-title {
-    color: var(--text-primary) !important;
-    font-weight: 700 !important;
-}
-
-/* Subtítulos y encabezados */
-h2, h3, h4, h5, h6 {
-    color: var(--text-primary) !important;
-    font-weight: 600 !important;
-}
-
-/* Labels y etiquetas más legibles */
-label, .form-label {
-    color: var(--text-primary) !important;
-    font-weight: 600 !important;
-}
-
-/* Texto de tablas */
-table th {
-    color: var(--text-primary) !important;
-    font-weight: 700 !important;
-}
-
-table td {
-    color: var(--text-primary) !important;
-}
-
-/* Texto de cards */
-.card-text, .card-description, .card-info {
-    color: var(--text-primary) !important;
-}
-
-/* Autor, categoría, editorial */
-.libro-autor, .libro-categoria, .libro-editorial,
-.usuario-tipo, .usuario-info,
-.prestamo-usuario, .prestamo-libro {
-    color: var(--text-primary) !important;
-    font-weight: 500 !important;
-}
-
-/* Stats y números */
-.stat-value, .stat-number {
-    color: var(--primary) !important;
-    font-weight: 700 !important;
-}
-
-.stat-label {
-    color: var(--text-primary) !important;
-    font-weight: 600 !important;
-}
-
-/* Inputs más legibles */
-input, select, textarea {
-    color: var(--text-primary) !important;
-}
-
-/* Placeholders más visibles */
-::placeholder {
-    color: var(--text-secondary) !important;
-    opacity: 0.7 !important;
-}
-
-/* Links más visibles */
-a {
-    color: var(--primary) !important;
-}
-
-a:hover {
-    color: var(--secondary) !important;
-}
-
-/* Badges y estados */
-.badge, .estado-badge {
-    font-weight: 600 !important;
-}
-
-/* Colores específicos por tema */
-[data-theme="dark"] h1,
-[data-theme="dark"] h2,
-[data-theme="dark"] h3,
-[data-theme="dark"] label,
-[data-theme="dark"] td,
-[data-theme="dark"] th {
-    color: #e5e7eb !important;
-}
-
-[data-theme="premium"] h1,
-[data-theme="premium"] h2,
-[data-theme="premium"] h3,
-[data-theme="premium"] label,
-[data-theme="premium"] td,
-[data-theme="premium"] th {
-    color: #c9d1d9 !important;
-}
-
-[data-theme="premium"] .stat-value,
-[data-theme="premium"] .stat-number {
-    color: #38bdf8 !important;
-    text-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
-}
-
-/* Mejorar contraste en inputs */
-[data-theme="dark"] input,
-[data-theme="dark"] select,
-[data-theme="dark"] textarea {
-    background: #0a0f1e !important;
-    color: #e5e7eb !important;
-    border-color: #2d3748 !important;
-}
-
-[data-theme="premium"] input,
-[data-theme="premium"] select,
-[data-theme="premium"] textarea {
-    background: #0f1419 !important;
-    color: #c9d1d9 !important;
-    border-color: #30363d !important;
 }
 </style>
 
@@ -810,13 +609,3 @@ function createParticle(x, y) {
     setTimeout(() => particle.remove(), 1200);
 }
 </script>
-
-
-
-
-
-
-
-
-
-

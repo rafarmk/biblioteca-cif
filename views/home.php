@@ -270,6 +270,227 @@
         font-size: 2.5rem;
     }
 }
+
+/* Mejorar formato de Préstamos Activos */
+.activity-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px;
+    background: var(--bg-primary);
+    border-radius: 12px;
+    border: 2px solid var(--border-color);
+    transition: all 0.3s ease;
+    gap: 20px;
+}
+
+.activity-item:hover {
+    transform: translateY(-3px);
+    border-color: var(--primary);
+    box-shadow: 0 8px 20px var(--shadow);
+}
+
+.activity-info h3 {
+    font-size: 1.3rem;
+    color: var(--text-primary);
+    font-weight: 700;
+    margin: 0 0 10px 0;
+}
+
+.activity-info p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.6;
+}
+
+.activity-info p strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.activity-badge {
+    padding: 10px 25px;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.badge-active {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    color: #065f46;
+    box-shadow: 0 4px 10px rgba(6, 95, 70, 0.2);
+}
+
+/* Adaptación por tema */
+[data-theme="dark"] .activity-item {
+    background: #0f1419;
+    border-color: #2d3748;
+}
+
+[data-theme="dark"] .activity-item:hover {
+    border-color: #3b82f6;
+}
+
+[data-theme="premium"] .activity-item {
+    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
+    border-color: rgba(56, 189, 248, 0.2);
+}
+
+[data-theme="premium"] .activity-item:hover {
+    border-color: rgba(56, 189, 248, 0.6);
+    box-shadow: 0 8px 20px rgba(56, 189, 248, 0.3);
+}
+
+[data-theme="premium"] .badge-active {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(96, 165, 250, 0.2) 100%);
+    color: #38bdf8;
+    border: 2px solid rgba(56, 189, 248, 0.3);
+}
+
+/* PRÉSTAMOS ACTIVOS - DISEÑO MEJORADO */
+.activity-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    background: var(--bg-primary);
+    border-radius: 12px;
+    border: 2px solid var(--border-color);
+    transition: all 0.3s ease;
+    gap: 20px;
+}
+
+.activity-item:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+    box-shadow: 0 6px 20px var(--shadow);
+}
+
+.activity-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+}
+
+.activity-icon {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.activity-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.activity-title {
+    font-size: 1.2rem;
+    color: var(--text-primary);
+    font-weight: 700;
+    margin: 0;
+}
+
+.activity-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+}
+
+.meta-item {
+    color: var(--text-secondary);
+}
+
+.meta-item strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.meta-separator {
+    color: var(--border-color);
+    font-weight: bold;
+}
+
+.activity-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.activity-badge {
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.badge-active {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    color: #065f46;
+    border: 2px solid #10b981;
+}
+
+.btn-view {
+    padding: 8px 20px;
+    background: var(--primary);
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-view:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+}
+
+/* Adaptación por tema */
+[data-theme="dark"] .activity-item {
+    background: #0f1419;
+}
+
+[data-theme="premium"] .activity-item {
+    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
+    border-color: rgba(56, 189, 248, 0.2);
+}
+
+[data-theme="premium"] .activity-icon {
+    background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+}
+
+[data-theme="premium"] .badge-active {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(96, 165, 250, 0.2));
+    color: #38bdf8;
+    border-color: rgba(56, 189, 248, 0.5);
+}
+
+@media (max-width: 768px) {
+    .activity-item {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .activity-actions {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
 </style>
 
 <div class="dashboard-container">
@@ -349,15 +570,29 @@
             <ul class="activity-list">
                 <?php foreach (array_slice($prestamos_activos, 0, 5) as $prestamo): ?>
                     <li class="activity-item">
-                        <div class="activity-info">
-                            <h4><?php echo htmlspecialchars($prestamo['libro_titulo'] ?? 'Libro desconocido'); ?></h4>
-                            <p>
-                                Prestado a: <strong><?php echo htmlspecialchars($prestamo['usuario_nombre'] ?? 'Usuario desconocido'); ?></strong> |
-                                Fecha préstamo: <?php echo date('d/m/Y', strtotime($prestamo['fecha_prestamo'])); ?> |
-                                Vence: <?php echo date('d/m/Y', strtotime($prestamo['fecha_devolucion_estimada'])); ?>
-                            </p>
+                        <div class="activity-content">
+                            <div class="activity-icon"></div>
+                            <div class="activity-details">
+                                <h3 class="activity-title"><?php echo htmlspecialchars($prestamo['titulo'] ?? 'Libro desconocido'); ?></h3>
+                                <div class="activity-meta">
+                                    <span class="meta-item">
+                                        <strong> Usuario:</strong> <?php echo htmlspecialchars($prestamo['usuario_nombre'] ?? 'Usuario desconocido'); ?>
+                                    </span>
+                                    <span class="meta-separator">•</span>
+                                    <span class="meta-item">
+                                        <strong> Préstamo:</strong> <?php echo date('d/m/Y', strtotime($prestamo['fecha_prestamo'])); ?>
+                                    </span>
+                                    <span class="meta-separator"></span>
+                                    <span class="meta-item">
+                                        <strong> Vence:</strong> <?php echo !empty($prestamo["fecha_devolucion_estimada"]) ? date("d/m/Y", strtotime($prestamo["fecha_devolucion_estimada"])) : date("d/m/Y", strtotime($prestamo["fecha_prestamo"] . " +7 days")); ?>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
-                        <span class="activity-badge badge-active">Activo</span>
+                        <div class="activity-actions">
+                            <span class="activity-badge badge-active"> Activo</span>
+                            <a href="index.php?ruta=prestamos&accion=ver&id=<?php echo $prestamo['id']; ?>" class="btn-view">Ver Detalles</a>
+                        </div>
                     </li>
                 <?php endforeach; ?>
             </ul>
@@ -374,18 +609,29 @@
             <ul class="activity-list">
                 <?php foreach (array_slice($prestamos_atrasados, 0, 5) as $prestamo): ?>
                     <li class="activity-item">
-                        <div class="activity-info">
-                            <h4><?php echo htmlspecialchars($prestamo['libro_titulo'] ?? 'Libro desconocido'); ?></h4>
-                            <p>
-                                Usuario: <strong><?php echo htmlspecialchars($prestamo['usuario_nombre'] ?? 'Usuario desconocido'); ?></strong> |
-                                Debió devolverse: <?php echo date('d/m/Y', strtotime($prestamo['fecha_devolucion_estimada'])); ?> |
-                                Días de retraso: <?php 
-                                    $dias = (time() - strtotime($prestamo['fecha_devolucion_estimada'])) / (60 * 60 * 24);
-                                    echo floor($dias);
-                                ?> días
-                            </p>
+                        <div class="activity-content">
+                            <div class="activity-icon"></div>
+                            <div class="activity-details">
+                                <h3 class="activity-title"><?php echo htmlspecialchars($prestamo['titulo'] ?? 'Libro desconocido'); ?></h3>
+                                <div class="activity-meta">
+                                    <span class="meta-item">
+                                        <strong> Usuario:</strong> <?php echo htmlspecialchars($prestamo['usuario_nombre'] ?? 'Usuario desconocido'); ?>
+                                    </span>
+                                    <span class="meta-separator">•</span>
+                                    <span class="meta-item">
+                                        <strong> Préstamo:</strong> <?php echo date('d/m/Y', strtotime($prestamo['fecha_prestamo'])); ?>
+                                    </span>
+                                    <span class="meta-separator"></span>
+                                    <span class="meta-item">
+                                        <strong> Vence:</strong> <?php echo !empty($prestamo["fecha_devolucion_estimada"]) ? date("d/m/Y", strtotime($prestamo["fecha_devolucion_estimada"])) : date("d/m/Y", strtotime($prestamo["fecha_prestamo"] . " +7 days")); ?>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
-                        <span class="activity-badge badge-overdue">Atrasado</span>
+                        <div class="activity-actions">
+                            <span class="activity-badge badge-active"> Activo</span>
+                            <a href="index.php?ruta=prestamos&accion=ver&id=<?php echo $prestamo['id']; ?>" class="btn-view">Ver Detalles</a>
+                        </div>
                     </li>
                 <?php endforeach; ?>
             </ul>
@@ -394,3 +640,6 @@
 </div>
 
 <?php require_once __DIR__ . '/layouts/footer.php'; ?>
+
+
+
