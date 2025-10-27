@@ -1,6 +1,37 @@
 ﻿<?php require_once __DIR__ . '/../layouts/navbar.php'; ?>
 
 <style>
+/* Centrado para esta vista */
+body > div:not(.modern-navbar) {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Forzar footer al final de la página */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main-container,
+body > div:first-of-type {
+    flex: 1 0 auto;
+}
+
+footer {
+    flex-shrink: 0;
+    margin-top: auto !important;
+}
+</style>
+
+<style>
 .main-container {
     max-width: 1400px;
     margin: 40px auto;
@@ -171,6 +202,28 @@
     padding: 8px 16px;
     font-size: 13px;
 }
+
+/* Forzar footer al final de la página */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main-container,
+body > div:first-of-type {
+    flex: 1 0 auto;
+}
+
+footer {
+    flex-shrink: 0;
+    margin-top: auto !important;
+}
 </style>
 
 <div class="main-container">
@@ -257,3 +310,5 @@ document.getElementById('searchInput').addEventListener('input', function(e) {
 </script>
 
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>
+
+

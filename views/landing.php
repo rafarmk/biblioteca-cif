@@ -73,7 +73,7 @@
 
         /* Hero Section */
         .hero {
-            min-height: 90vh;
+    min-height: auto;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -287,14 +287,17 @@
 
         /* Footer */
         footer {
-            background: var(--bg-card);
-            color: var(--text-secondary);
-            text-align: center;
-            padding: 30px 20px;
-            margin-top: 80px;
-            border-top: 3px solid var(--primary);
-            box-shadow: 0 -6px 25px var(--shadow);
-        }
+    background: transparent;
+    color: var(--text-secondary);
+    text-align: center;
+    padding: 25px 20px;
+    margin-top: 80px;
+    border-top: none;
+    box-shadow: none;
+    position: relative;
+    z-index: 100;
+    width: 100%;
+}
 
         footer p:first-child {
             margin: 0;
@@ -394,10 +397,7 @@
         <span style="font-weight: 700; font-size: 16px; color: var(--text-primary);">Modo Claro</span>
     </div>
 
-    <footer>
-        <p> Gestión de Infraestructura</p>
-        <p> 2025 Sistema de Biblioteca CIF. Todos los derechos reservados.</p>
-    </footer>
+    <?php require_once __DIR__ . "/layouts/footer.php"; ?>
 
     <script>
         const themeToggle = document.getElementById('themeToggle');
@@ -444,3 +444,5 @@
     </script>
 </body>
 </html>
+
+

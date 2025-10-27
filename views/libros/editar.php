@@ -1,4 +1,87 @@
 ﻿<?php require_once __DIR__ . '/../layouts/navbar.php'; ?>
+<style id="input-fix">
+input[type="text"],
+input[type="number"],
+textarea,
+select {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 2px solid #d1d5db !important;
+    padding: 12px 16px !important;
+    border-radius: 8px !important;
+    font-size: 16px !important;
+}
+
+::placeholder {
+    color: #9ca3af !important;
+}
+
+label {
+    color: #374151 !important;
+    font-weight: 600 !important;
+}
+
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+    background-color: #374151 !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] label {
+    color: #f3f4f6 !important;
+}
+</style>
+<style>
+/* FORZAR VISIBILIDAD DE INPUTS */
+input[type="text"],
+input[type="email"], 
+input[type="tel"],
+select,
+textarea {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 2px solid #cbd5e0 !important;
+}
+
+input::placeholder {
+    color: #a0aec0 !important;
+}
+
+label {
+    color: #2d3748 !important;
+}
+
+/* Modo Oscuro */
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="email"],
+[data-theme="dark"] input[type="tel"],
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+    background-color: #2d3748 !important;
+    color: #ffffff !important;
+    border-color: #4a5568 !important;
+}
+
+[data-theme="dark"] label {
+    color: #e2e8f0 !important;
+}
+
+/* Modo Premium */
+[data-theme="premium"] input[type="text"],
+[data-theme="premium"] input[type="email"],
+[data-theme="premium"] input[type="tel"],
+[data-theme="premium"] select,
+[data-theme="premium"] textarea {
+    background-color: #1a202c !important;
+    color: #e2e8f0 !important;
+    border-color: rgba(56, 189, 248, 0.4) !important;
+}
+
+[data-theme="premium"] label {
+    color: #c9d1d9 !important;
+}
+</style>
 
 <style>
 .main-container {
@@ -245,7 +328,7 @@
                 <div class="form-group">
                     <label for="cantidad_total"> Cantidad Total *</label>
                     <input type="number" name="cantidad_total" id="cantidad_total" required 
-                           value="<?php echo $libro['cantidad_total']; ?>"
+                           value="<?php echo htmlspecialchars($libro['cantidad_total'] ?? ''); ?>"
                            min="1" placeholder="Número de ejemplares">
                     <?php if (isset($libro['cantidad_disponible'])): ?>
                     <span class="info-badge">
@@ -290,3 +373,4 @@ document.getElementById('formLibro')?.addEventListener('submit', function(e) {
 </script>
 
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>
+
