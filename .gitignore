@@ -19,3 +19,14 @@ temp/
 
 # Dependencias (si usas Composer en el futuro)
 /vendor/
+# Archivos de prueba y debug
+test*.php
+debug*.log
+generar_hash.php
+
+# Configuración local
+config/database.php
+
+# Archivos temporales
+*.backup
+*.log
