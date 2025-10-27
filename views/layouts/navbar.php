@@ -89,11 +89,15 @@ body {
     min-height: 100vh;
     position: relative;
     overflow-x: hidden;
+
+    padding-top: 80px !important;
 }
 
 /* Premium mode - EFECTOS VISUALES INCREÍBLES */
 [data-theme="premium"] body {
     background: linear-gradient(135deg, #0f1419 0%, #1a1f29 50%, #0f1419 100%);
+
+    padding-top: 80px !important;
 }
 
 [data-theme="premium"] body::before {
@@ -151,6 +155,8 @@ body {
 /* Partículas flotantes para Premium */
 [data-theme="premium"] body {
     overflow: hidden;
+
+    padding-top: 80px !important;
 }
 
 [data-theme="premium"]::before {
@@ -267,32 +273,62 @@ body {
 
 /* Navbar con efectos Premium */
 .modern-navbar {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    background: var(--bg-card);
     backdrop-filter: blur(10px);
-    padding: 18px 0;
+    padding: 15px 0;
     box-shadow: 0 8px 32px var(--shadow);
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
     z-index: 1000;
     border-bottom: 1px solid var(--border-color);
+    margin: 0;
+    display: flex;
+    justify-content: center;
 }
 
 [data-theme="dark"] .modern-navbar {
-    background: linear-gradient(135deg, #1e3a8a 0%, #0a0f1e 100%);
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    padding: 15px 0;
+    box-shadow: 0 8px 32px var(--shadow);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1000;
+    border-bottom: 1px solid var(--border-color);
+    margin: 0;
+    display: flex;
+    justify-content: center;
 }
 
 [data-theme="original"] .modern-navbar {
-    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    padding: 15px 0;
+    box-shadow: 0 8px 32px var(--shadow);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 1000;
+    border-bottom: 1px solid var(--border-color);
+    margin: 0;
+    display: flex;
+    justify-content: center;
 }
 
 [data-theme="premium"] .modern-navbar {
-    background: linear-gradient(135deg, #0c4a6e 0%, #1e293b 50%, #0f172a 100%);
-    box-shadow: 
+    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
+    border-bottom-color: rgba(56, 189, 248, 0.3);
+    box-shadow:
         0 8px 32px rgba(56, 189, 248, 0.4),
         0 4px 100px rgba(56, 189, 248, 0.2);
-    border-bottom: 1px solid rgba(56, 189, 248, 0.3);
-    position: relative;
-    overflow: hidden;
 }
 
 [data-theme="premium"] .modern-navbar::before {
@@ -315,14 +351,13 @@ body {
 }
 
 .navbar-container {
+    width: 100%;
     max-width: 1400px;
     margin: 0 auto;
-    padding: 0 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: relative;
-    z-index: 1;
+    padding: 0 30px;
 }
 
 .navbar-logo {
@@ -459,9 +494,14 @@ body {
 
 @media (max-width: 768px) {
     .navbar-container {
-        flex-direction: column;
-        gap: 15px;
-    }
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+}
 
     .navbar-menu {
         width: 100%;
@@ -476,6 +516,46 @@ body {
     .theme-toggle-text {
         display: none;
     }
+}
+
+/* Colores del navbar según el tema */
+[data-theme="dark"] .modern-navbar {
+    background: #1a2332;
+    border-bottom-color: #2d3748;
+}
+
+[data-theme="original"] .modern-navbar {
+    background: #ffffff;
+    border-bottom-color: #d1dce5;
+    box-shadow: 0 4px 20px rgba(52, 152, 219, 0.15);
+}
+
+[data-theme="premium"] .modern-navbar {
+    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
+    border-bottom-color: rgba(56, 189, 248, 0.3);
+    box-shadow:
+        0 8px 32px rgba(56, 189, 248, 0.4),
+        0 4px 100px rgba(56, 189, 248, 0.2);
+}
+
+/* Colores del navbar según el tema */
+[data-theme="dark"] .modern-navbar {
+    background: #1a2332;
+    border-bottom-color: #2d3748;
+}
+
+[data-theme="original"] .modern-navbar {
+    background: #ffffff;
+    border-bottom-color: #d1dce5;
+    box-shadow: 0 4px 20px rgba(52, 152, 219, 0.15);
+}
+
+[data-theme="premium"] .modern-navbar {
+    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
+    border-bottom-color: rgba(56, 189, 248, 0.3);
+    box-shadow:
+        0 8px 32px rgba(56, 189, 248, 0.4),
+        0 4px 100px rgba(56, 189, 248, 0.2);
 }
 </style>
 
@@ -609,3 +689,12 @@ function createParticle(x, y) {
     setTimeout(() => particle.remove(), 1200);
 }
 </script>
+
+
+
+
+
+
+
+
+
