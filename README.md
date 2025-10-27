@@ -1,217 +1,219 @@
-﻿# 📚 Sistema de Gestión de Biblioteca CIF
+﻿#  Sistema de Biblioteca CIF
 
-Sistema web moderno y completo para la gestión de bibliotecas, desarrollado con PHP, MySQL y arquitectura MVC.
+Sistema moderno de gestión bibliotecaria desarrollado con PHP y MySQL, utilizando arquitectura MVC.
 
-![Version](https://img.shields.io/badge/version-2.0-blue)
-![PHP](https://img.shields.io/badge/PHP-8.0%2B-777BB4)
-![MySQL](https://img.shields.io/badge/MySQL-8.0%2B-4479A1)
+![Landing Page](screenshots/landing.png)
 
-## ✨ Características
+##  Características
 
-- 🔐 **Sistema de autenticación** completo con roles de administrador
-- 📖 **Gestión de libros** - CRUD completo con búsqueda avanzada
-- 👥 **Gestión de usuarios** - Registro y control de usuarios
-- 📊 **Dashboard interactivo** con estadísticas en tiempo real
-- 🎨 **Diseño moderno** con animaciones y efectos glassmorphism
-- 📱 **Responsive** - Funciona en dispositivos móviles y escritorio
-- 🔍 **Búsqueda avanzada** por título, autor, ISBN, nombre o email
-- 📈 **Tarjetas de estadísticas** interactivas y animadas
+###  Funcionalidades Principales
+- **Gestión de Libros**: CRUD completo con información detallada (ISBN, autor, editorial, etc.)
+- **Gestión de Usuarios**: Registro y control de estudiantes y personal
+- **Sistema de Préstamos**: Control de préstamos y devoluciones con alertas de vencimiento
+- **Dashboard Interactivo**: Estadísticas en tiempo real y actividad reciente
+- **4 Temas Visuales**: Light, Dark, Original y Premium
 
-## 🚀 Instalación
+###  Diseño Moderno
+- Interfaz responsive y moderna
+- Animaciones suaves y transiciones fluidas
+- Diseño adaptable a todos los dispositivos
+- Cambio de tema en tiempo real
 
-### Requisitos
+###  Seguridad
+- Sistema de autenticación robusto
+- Sesiones seguras
+- Validación de datos
+- Protección contra inyección SQL
 
-- PHP 8.0 o superior
-- MySQL 8.0 o superior
-- Servidor web (Apache, Nginx) o Laragon/XAMPP
-- Extensiones PHP: PDO, pdo_mysql
+##  Tecnologías Utilizadas
 
-### Paso 1: Clonar el repositorio
+- **Backend**: PHP 8.x
+- **Base de Datos**: MySQL 8.x
+- **Frontend**: 
+  - HTML5, CSS3, JavaScript
+  - Bootstrap 5
+  - Font Awesome 6
+- **Arquitectura**: MVC (Modelo-Vista-Controlador)
+
+##  Instalación
+
+### Requisitos Previos
+- XAMPP/WAMP/Laragon con PHP 8.x
+- MySQL 8.x
+- Navegador web moderno
+
+### Pasos de Instalación
+
+1. **Clonar el repositorio**
 ```bash
-git clone https://github.com/rafarmk/biblioteca-cif.git
+git clone https://github.com/tuusuario/biblioteca-cif.git
 cd biblioteca-cif
 ```
 
-### Paso 2: Configurar la base de datos
-
-**Opción A: Línea de comandos**
+2. **Importar la base de datos**
 ```bash
-mysql -u root -p < database/schema.sql
+# Abrir phpMyAdmin
+# Crear base de datos: biblioteca_cif
+# Importar el archivo: database/biblioteca_cif.sql
 ```
 
-**Opción B: phpMyAdmin**
-
-1. Accede a phpMyAdmin
-2. La base de datos se creará automáticamente al importar
-3. Importa el archivo `database/schema.sql`
-
-### Paso 3: Configurar la conexión (si es necesario)
-
-El archivo `config/Database.php` ya está configurado con valores por defecto:
+3. **Configurar la conexión**
 ```php
-private $host = 'localhost';
-private $db_name = 'bibloteca_cif';
-private $username = 'root';
-private $password = '';
+// Editar config/Database.php
+private $host = "localhost";
+private $db_name = "biblioteca_cif";
+private $username = "root";
+private $password = "";
 ```
 
-Si necesitas cambiar las credenciales, edita `config/Database.php`.
-
-### Paso 4: Ejecutar el proyecto
-
-**Opción A: Con Laragon (Windows)**
-
-1. Coloca el proyecto en `C:\laragon\www\biblioteca-cif`
-2. Inicia Laragon (Apache y MySQL)
-3. Accede a: `http://localhost/biblioteca-cif`
-
-**Opción B: Con PHP Built-in Server**
+4. **Iniciar el servidor**
 ```bash
-php -S localhost:8080
+# Con Laragon: Simplemente inicia Laragon
+# Con XAMPP: Inicia Apache y MySQL
+# Accede a: http://localhost/biblioteca-cif
 ```
 
-Accede a: `http://localhost:8080`
+##  Credenciales de Acceso
 
-**Opción C: Con XAMPP**
+**Administrador:**
+- Usuario: `admin@biblioteca.com`
+- Contraseña: `admin123`
 
-1. Coloca el proyecto en `C:\xampp\htdocs\biblioteca-cif`
-2. Inicia Apache y MySQL desde XAMPP
-3. Accede a: `http://localhost/biblioteca-cif`
-
-## 🔑 Credenciales por Defecto
-
-- **Email:** `admin@cif.edu.sv`
-- **Contraseña:** `admin123`
-
-⚠️ **IMPORTANTE:** Cambia estas credenciales en producción por seguridad.
-
-## 📁 Estructura del Proyecto
-```
-biblioteca-cif/
-├── config/
-│   ├── Database.php              # Clase de conexión PDO
-│   ├── conexion.php              # Conexión antigua (legacy)
-│   └── conexion.example.php      # Template de configuración
-├── controllers/
-│   ├── AuthController.php        # Autenticación y sesiones
-│   ├── HomeController.php        # Dashboard principal
-│   ├── LibroController.php       # CRUD de libros
-│   └── UsuarioController.php     # CRUD de usuarios
-├── models/
-│   ├── Libro.php                 # Modelo de libros
-│   └── Usuario.php               # Modelo de usuarios
-├── core/
-│   └── models/
-│       └── Administrador.php     # Modelo de administradores
-├── views/
-│   ├── auth/
-│   │   └── login.php             # Vista de login
-│   ├── layouts/
-│   │   └── navbar.php            # Navbar moderno
-│   ├── libros/
-│   │   ├── index.php             # Listado de libros
-│   │   ├── crear.php             # Crear libro
-│   │   └── editar.php            # Editar libro
-│   ├── usuarios/
-│   │   ├── index.php             # Listado de usuarios
-│   │   ├── crear.php             # Crear usuario
-│   │   └── editar.php            # Editar usuario
-│   ├── home.php                  # Dashboard
-│   └── landing.php               # Página principal
-├── database/
-│   └── schema.sql                # Esquema completo de BD
-├── index.php                     # Punto de entrada (Router)
-├── .gitignore
-└── README.md
-```
-
-## 🎨 Capturas de Pantalla
+##  Capturas del Sistema
 
 ### Landing Page
-Diseño moderno con gradientes y animaciones
+![Landing](screenshots/landing.png)
 
 ### Dashboard
-Tarjetas interactivas con estadísticas en tiempo real
-
-### Catálogo de Libros
-Sistema completo de gestión con búsqueda avanzada
-
-### Gestión de Usuarios
-CRUD completo con interfaz intuitiva
-
-## 🔧 Uso del Sistema
+![Dashboard](screenshots/dashboard.png)
 
 ### Gestión de Libros
-
-1. Accede a **Libros** desde el navbar
-2. Ver estadísticas: Total de libros, copias disponibles, categorías
-3. **Buscar** por título, autor o ISBN
-4. **Crear** nuevos libros con toda la información
-5. **Editar** o **Eliminar** libros existentes
+![Libros](screenshots/libros.png)
 
 ### Gestión de Usuarios
+![Usuarios](screenshots/usuarios.png)
 
-1. Accede a **Usuarios** desde el navbar
-2. Ver estadísticas: Total de usuarios, nuevos hoy
-3. **Buscar** por nombre o email
-4. **Registrar** nuevos usuarios
-5. **Editar** o **Eliminar** usuarios
+### Gestión de Préstamos
+![Préstamos](screenshots/prestamos.png)
 
-### Dashboard
+### Temas
+| Light | Dark | Original | Premium |
+|-------|------|----------|---------|
+| ![Light](screenshots/tema-light.png) | ![Dark](screenshots/tema-dark.png) | ![Original](screenshots/tema-original.png) | ![Premium](screenshots/tema-premium.png) |
 
-- Visualiza estadísticas generales del sistema
-- Acceso rápido a todas las secciones
-- Tabla de libros recientemente agregados
+##  Estructura del Proyecto
+```
+biblioteca-cif/
+ config/
+    Database.php          # Configuración de BD
+ controllers/
+    LibroController.php
+    UsuarioController.php
+    PrestamoController.php
+ models/
+    Libro.php
+    Usuario.php
+    Prestamo.php
+ views/
+    layouts/
+       navbar.php
+       footer.php
+    libros/
+    usuarios/
+    prestamos/
+ assets/
+    css/
+    js/
+    images/
+ database/
+    biblioteca_cif.sql
+ index.php
+```
 
-## 🛡️ Seguridad
+##  Características Técnicas
 
-- ✅ Contraseñas hasheadas con `password_hash()`
-- ✅ Consultas preparadas (PDO) para prevenir SQL Injection
-- ✅ Validación de sesiones en rutas protegidas
-- ✅ Sanitización de entradas con `htmlspecialchars()`
-- ✅ Archivo de configuración fuera del repositorio
+### Arquitectura MVC
+- **Modelos**: Gestión de datos y lógica de negocio
+- **Vistas**: Presentación e interfaz de usuario
+- **Controladores**: Coordinación entre modelos y vistas
 
-## 🚧 Características Próximamente
+### Base de Datos
+- Diseño normalizado
+- Relaciones optimizadas
+- Integridad referencial
+- Consultas optimizadas con PDO
 
-- 📚 Sistema completo de préstamos
-- 📧 Notificaciones por email
-- 📊 Reportes y estadísticas avanzadas
-- 🔔 Alertas de devoluciones pendientes
-- 📱 App móvil
+### Frontend
+- Diseño responsive (Mobile First)
+- Componentes reutilizables
+- Animaciones CSS3
+- JavaScript vanilla para interactividad
 
-## 👨‍💻 Desarrollo
+##  Funcionalidades Detalladas
 
-### Tecnologías Utilizadas
+###  Gestión de Libros
+- Agregar nuevos libros con información completa
+- Editar información existente
+- Eliminar libros (con validación de préstamos activos)
+- Búsqueda y filtrado
+- Control de inventario (cantidad total vs disponible)
 
-- **Backend:** PHP 8+ con PDO
-- **Base de Datos:** MySQL 8+
-- **Frontend:** HTML5, CSS3, JavaScript
-- **Framework CSS:** Bootstrap 5
-- **Iconos:** Font Awesome 6
-- **Arquitectura:** MVC (Model-View-Controller)
+###  Gestión de Usuarios
+- Registro de estudiantes y personal
+- Información de contacto completa
+- Historial de préstamos por usuario
+- Estados: Activo/Inactivo
 
-### Contribuir
+###  Sistema de Préstamos
+- Registro de préstamos con fecha estimada de devolución
+- Control de devoluciones
+- Alertas de préstamos vencidos
+- Historial completo de transacciones
+- Estados: Activo/Devuelto/Atrasado
+
+###  Dashboard
+- Estadísticas en tiempo real:
+  - Total de libros
+  - Usuarios registrados
+  - Préstamos activos
+  - Préstamos atrasados
+  - Libros devueltos
+- Actividad reciente
+- Gráficos visuales
+
+##  Temas Disponibles
+
+1. **Modo Claro**: Diseño limpio y profesional
+2. **Modo Oscuro**: Perfecto para trabajo nocturno
+3. **Modo Original**: Colores clásicos de biblioteca
+4. **Modo Premium**: Diseño moderno con efectos brillantes
+
+##  Contribuciones
+
+Las contribuciones son bienvenidas. Para cambios importantes:
 
 1. Fork el proyecto
-2. Crea una rama: `git checkout -b feature/nueva-funcionalidad`
-3. Commit: `git commit -m 'Agregar nueva funcionalidad'`
-4. Push: `git push origin feature/nueva-funcionalidad`
+2. Crea una rama (`git checkout -b feature/mejora`)
+3. Commit tus cambios (`git commit -m 'Agregar mejora'`)
+4. Push a la rama (`git push origin feature/mejora`)
 5. Abre un Pull Request
 
-## 📝 Licencia
+##  Licencia
 
-Este proyecto es de código abierto y está disponible bajo la licencia MIT.
+Este proyecto está bajo la Licencia MIT.
 
-## 📧 Contacto
+##  Autor
 
-- **Desarrollador:** Rafael
-- **GitHub:** [@rafarmk](https://github.com/rafarmk)
-- **Proyecto:** [biblioteca-cif](https://github.com/rafarmk/biblioteca-cif)
+**Tu Nombre**
+- GitHub: [@tuusuario](https://github.com/tuusuario)
+- Email: tuemail@ejemplo.com
 
-## 🙏 Agradecimientos
+##  Agradecimientos
 
-Proyecto desarrollado para la **Biblioteca del CIF** (Centro de Investigación Forense) de El Salvador.
+- Font Awesome por los iconos
+- Bootstrap por el framework CSS
+- Google Fonts por la tipografía Poppins
 
 ---
 
-⭐ Si te gusta este proyecto, dale una estrella en GitHub!
+ Si te gustó este proyecto, dale una estrella en GitHub!
