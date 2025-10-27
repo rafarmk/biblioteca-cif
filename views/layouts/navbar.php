@@ -557,6 +557,127 @@ body {
         0 8px 32px rgba(56, 189, 248, 0.4),
         0 4px 100px rgba(56, 189, 248, 0.2);
 }
+
+/* MEJORA DE COLORES DE TEXTO EN TODO EL SISTEMA */
+
+/* Títulos principales más visibles */
+h1, .page-title, .card-title {
+    color: var(--text-primary) !important;
+    font-weight: 700 !important;
+}
+
+/* Subtítulos y encabezados */
+h2, h3, h4, h5, h6 {
+    color: var(--text-primary) !important;
+    font-weight: 600 !important;
+}
+
+/* Labels y etiquetas más legibles */
+label, .form-label {
+    color: var(--text-primary) !important;
+    font-weight: 600 !important;
+}
+
+/* Texto de tablas */
+table th {
+    color: var(--text-primary) !important;
+    font-weight: 700 !important;
+}
+
+table td {
+    color: var(--text-primary) !important;
+}
+
+/* Texto de cards */
+.card-text, .card-description, .card-info {
+    color: var(--text-primary) !important;
+}
+
+/* Autor, categoría, editorial */
+.libro-autor, .libro-categoria, .libro-editorial,
+.usuario-tipo, .usuario-info,
+.prestamo-usuario, .prestamo-libro {
+    color: var(--text-primary) !important;
+    font-weight: 500 !important;
+}
+
+/* Stats y números */
+.stat-value, .stat-number {
+    color: var(--primary) !important;
+    font-weight: 700 !important;
+}
+
+.stat-label {
+    color: var(--text-primary) !important;
+    font-weight: 600 !important;
+}
+
+/* Inputs más legibles */
+input, select, textarea {
+    color: var(--text-primary) !important;
+}
+
+/* Placeholders más visibles */
+::placeholder {
+    color: var(--text-secondary) !important;
+    opacity: 0.7 !important;
+}
+
+/* Links más visibles */
+a {
+    color: var(--primary) !important;
+}
+
+a:hover {
+    color: var(--secondary) !important;
+}
+
+/* Badges y estados */
+.badge, .estado-badge {
+    font-weight: 600 !important;
+}
+
+/* Colores específicos por tema */
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] label,
+[data-theme="dark"] td,
+[data-theme="dark"] th {
+    color: #e5e7eb !important;
+}
+
+[data-theme="premium"] h1,
+[data-theme="premium"] h2,
+[data-theme="premium"] h3,
+[data-theme="premium"] label,
+[data-theme="premium"] td,
+[data-theme="premium"] th {
+    color: #c9d1d9 !important;
+}
+
+[data-theme="premium"] .stat-value,
+[data-theme="premium"] .stat-number {
+    color: #38bdf8 !important;
+    text-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+}
+
+/* Mejorar contraste en inputs */
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+    background: #0a0f1e !important;
+    color: #e5e7eb !important;
+    border-color: #2d3748 !important;
+}
+
+[data-theme="premium"] input,
+[data-theme="premium"] select,
+[data-theme="premium"] textarea {
+    background: #0f1419 !important;
+    color: #c9d1d9 !important;
+    border-color: #30363d !important;
+}
 </style>
 
 <!-- Theme Toggle Button -->
@@ -689,6 +810,7 @@ function createParticle(x, y) {
     setTimeout(() => particle.remove(), 1200);
 }
 </script>
+
 
 
 
