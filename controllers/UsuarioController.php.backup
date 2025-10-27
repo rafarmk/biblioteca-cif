@@ -1,0 +1,99 @@
+﻿<?php
+require_once 'models/Usuario.php';
+
+class UsuarioController {
+    private $db;
+    private $usuario;
+    
+    public function __construct($db) {
+        $this->db = $db;
+        $this->usuario = new Usuario($db);
+    }
+    
+    // Listar todos los usuarios
+    public function index() {
+        $stmt = $this->usuario->leer();
+        $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        require_once 'views/usuarios/index.php';
+    }
+    
+    // Mostrar formulario de crear
+    public function crear() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Asignar valores del formulario
+            $this->usuario->tipo_usuario = $_POST['tipo_usuario'] ?? 'estudiante_mayor';
+            $this->usuario->nombre = $_POST['nombre'];
+            $this->usuario->email = $_POST['email'] ?? null;
+            $this->usuario->telefono = $_POST['telefono'] ?? null;
+            $this->usuario->direccion = $_POST['direccion'] ?? null;
+            $this->usuario->oni = $_POST['oni'] ?? null;
+            $this->usuario->dui = $_POST['dui'] ?? null;
+            $this->usuario->password = $_POST['password'] ?? 'password123';
+            $this->usuario->estado = 'activo';
+            
+            if ($this->usuario->crear()) {
+                header("Location: index.php?ruta=usuarios&mensaje=Usuario creado exitosamente");
+                exit();
+            } else {
+                $error = "Error al crear el usuario";
+            }
+        }
+        require_once 'views/usuarios/crear.php';
+    }
+    
+    // Mostrar formulario de editar
+    public function editar() {
+        if (isset($_GET['id'])) {
+            $this->usuario->id = $_GET['id'];
+            $this->usuario->leerUno();
+            
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $this->usuario->tipo_usuario = $_POST['tipo_usuario'] ?? 'estudiante_mayor';
+                $this->usuario->nombre = $_POST['nombre'];
+                $this->usuario->email = $_POST['email'] ?? null;
+                $this->usuario->telefono = $_POST['telefono'] ?? null;
+                $this->usuario->direccion = $_POST['direccion'] ?? null;
+                $this->usuario->oni = $_POST['oni'] ?? null;
+                $this->usuario->dui = $_POST['dui'] ?? null;
+                $this->usuario->estado = $_POST['estado'] ?? 'activo';
+                
+                if ($this->usuario->actualizar()) {
+                    header("Location: index.php?ruta=usuarios&mensaje=Usuario actualizado exitosamente");
+                    exit();
+                } else {
+                    $error = "Error al actualizar el usuario";
+                }
+            }
+            
+            $usuario = [
+                'id' => $this->usuario->id,
+                'tipo_usuario' => $this->usuario->tipo_usuario,
+                'nombre' => $this->usuario->nombre,
+                'email' => $this->usuario->email,
+                'telefono' => $this->usuario->telefono,
+                'direccion' => $this->usuario->direccion,
+                'oni' => $this->usuario->oni,
+                'dui' => $this->usuario->dui,
+                'estado' => $this->usuario->estado
+            ];
+            
+            require_once 'views/usuarios/editar.php';
+        }
+    }
+    
+    // Eliminar usuario
+    public function eliminar() {
+        if (isset($_GET['id'])) {
+            $this->usuario->id = $_GET['id'];
+            
+            if ($this->usuario->eliminar()) {
+                header("Location: index.php?ruta=usuarios&mensaje=Usuario eliminado exitosamente");
+                exit();
+            } else {
+                header("Location: index.php?ruta=usuarios&error=Error al eliminar el usuario");
+                exit();
+            }
+        }
+    }
+}
+?>

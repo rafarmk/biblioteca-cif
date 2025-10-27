@@ -2,7 +2,7 @@
 class Usuario {
     private $conn;
     private $table = "usuarios";
-
+    
     // Propiedades definidas explícitamente (PHP 8.2+)
     public $id;
     public $tipo_usuario;
@@ -27,15 +27,15 @@ class Usuario {
     public $fecha_registro;
     public $ultimo_acceso;
     public $estado;
-
+    
     // Constructor
     public function __construct($db) {
         $this->conn = $db;
     }
-
+    
     // Crear usuario
     public function crear() {
-        $query = "INSERT INTO " . $this->table . "
+        $query = "INSERT INTO " . $this->table . " 
                   SET tipo_usuario = :tipo_usuario,
                       nombre = :nombre,
                       email = :email,
@@ -45,22 +45,22 @@ class Usuario {
                       dui = :dui,
                       password = :password,
                       estado = :estado";
-
+        
         $stmt = $this->conn->prepare($query);
-
+        
         // Limpiar datos
         $this->tipo_usuario = htmlspecialchars(strip_tags($this->tipo_usuario ?? 'estudiante_mayor'));
         $this->nombre = htmlspecialchars(strip_tags($this->nombre));
         $this->email = htmlspecialchars(strip_tags($this->email ?? ''));
         $this->telefono = htmlspecialchars(strip_tags($this->telefono ?? ''));
         $this->direccion = htmlspecialchars(strip_tags($this->direccion ?? ''));
-        $this->oni = $this->oni ? htmlspecialchars(strip_tags($this->oni)) : null;
-        $this->dui = $this->dui ? htmlspecialchars(strip_tags($this->dui)) : null;
+        $this->oni = htmlspecialchars(strip_tags($this->oni ?? null));
+        $this->dui = htmlspecialchars(strip_tags($this->dui ?? null));
         $this->estado = htmlspecialchars(strip_tags($this->estado ?? 'activo'));
-
+        
         // Encriptar password
         $this->password = password_hash($this->password, PASSWORD_BCRYPT);
-
+        
         // Bind
         $stmt->bindParam(":tipo_usuario", $this->tipo_usuario);
         $stmt->bindParam(":nombre", $this->nombre);
@@ -71,13 +71,13 @@ class Usuario {
         $stmt->bindParam(":dui", $this->dui);
         $stmt->bindParam(":password", $this->password);
         $stmt->bindParam(":estado", $this->estado);
-
+        
         if ($stmt->execute()) {
             return true;
         }
         return false;
     }
-
+    
     // Leer todos los usuarios
     public function leer() {
         $query = "SELECT * FROM " . $this->table . " ORDER BY fecha_registro DESC";
@@ -85,16 +85,16 @@ class Usuario {
         $stmt->execute();
         return $stmt;
     }
-
+    
     // Leer un usuario
     public function leerUno() {
         $query = "SELECT * FROM " . $this->table . " WHERE id = ? LIMIT 1";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $this->id);
         $stmt->execute();
-
+        
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
+        
         if ($row) {
             $this->tipo_usuario = $row['tipo_usuario'];
             $this->nombre = $row['nombre'];
@@ -109,7 +109,7 @@ class Usuario {
         }
         return false;
     }
-
+    
     // Actualizar usuario
     public function actualizar() {
         $query = "UPDATE " . $this->table . "
@@ -122,20 +122,20 @@ class Usuario {
                       dui = :dui,
                       estado = :estado
                   WHERE id = :id";
-
+        
         $stmt = $this->conn->prepare($query);
-
-        // Limpiar datos - CORREGIDO para evitar warnings con NULL
+        
+        // Limpiar datos
         $this->tipo_usuario = htmlspecialchars(strip_tags($this->tipo_usuario ?? 'estudiante_mayor'));
         $this->nombre = htmlspecialchars(strip_tags($this->nombre));
         $this->email = htmlspecialchars(strip_tags($this->email ?? ''));
         $this->telefono = htmlspecialchars(strip_tags($this->telefono ?? ''));
         $this->direccion = htmlspecialchars(strip_tags($this->direccion ?? ''));
-        $this->oni = $this->oni ? htmlspecialchars(strip_tags($this->oni)) : null;
-        $this->dui = $this->dui ? htmlspecialchars(strip_tags($this->dui)) : null;
+        $this->oni = htmlspecialchars(strip_tags($this->oni ?? null));
+        $this->dui = htmlspecialchars(strip_tags($this->dui ?? null));
         $this->estado = htmlspecialchars(strip_tags($this->estado ?? 'activo'));
         $this->id = htmlspecialchars(strip_tags($this->id));
-
+        
         // Bind
         $stmt->bindParam(":tipo_usuario", $this->tipo_usuario);
         $stmt->bindParam(":nombre", $this->nombre);
@@ -146,25 +146,25 @@ class Usuario {
         $stmt->bindParam(":dui", $this->dui);
         $stmt->bindParam(":estado", $this->estado);
         $stmt->bindParam(":id", $this->id);
-
+        
         if ($stmt->execute()) {
             return true;
         }
         return false;
     }
-
+    
     // Eliminar usuario
     public function eliminar() {
         $query = "DELETE FROM " . $this->table . " WHERE id = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $this->id);
-
+        
         if ($stmt->execute()) {
             return true;
         }
         return false;
     }
-
+    
     // Buscar por email
     public function buscarPorEmail($email) {
         $query = "SELECT * FROM " . $this->table . " WHERE email = ? LIMIT 1";
@@ -173,7 +173,7 @@ class Usuario {
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-
+    
     // Contar usuarios
     public function contar() {
         $query = "SELECT COUNT(*) as total FROM " . $this->table;

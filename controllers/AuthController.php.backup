@@ -17,7 +17,7 @@ class AuthController {
             // Validar campos
             if (empty($email) || empty($password)) {
                 $error = "Por favor complete todos los campos";
-                require_once 'views/auth/login.php';
+                require_once 'views/login.php';
                 return;
             }
             
@@ -50,13 +50,13 @@ class AuthController {
             } else {
                 // Login fallido
                 $error = "Email o contraseña incorrectos";
-                require_once 'views/auth/login.php';
+                require_once 'views/login.php';
                 return;
             }
         }
         
         // Mostrar formulario de login
-        require_once 'views/auth/login.php';
+        require_once 'views/login.php';
     }
     
     // Método de logout
