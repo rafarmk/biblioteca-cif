@@ -154,7 +154,7 @@ body {
 
 /* Partículas flotantes para Premium */
 [data-theme="premium"] body {
-    overflow: hidden;
+    overflow-x: hidden; overflow-y: auto;
 
     padding-top: 75px;
 }
