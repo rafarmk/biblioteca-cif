@@ -183,7 +183,7 @@
     </style>
 </head>
 <body>
-    <?php if (isset(\['admin_nombre'])): ?>
+    <?php if (isset($_SESSION['admin_nombre'])): ?>
         <?php require_once __DIR__ . '/layouts/navbar.php'; ?>
     <?php endif; ?>
 
@@ -196,7 +196,6 @@
             </div>
 
             <div class="cards-grid">
-                <!-- Card 1: Libros -->
                 <div class="feature-card" onclick="window.location.href='index.php?ruta=libros'">
                     <div class="card-icon"></div>
                     <h2 class="card-title">Gestión de Libros</h2>
@@ -206,7 +205,6 @@
                     <a href="index.php?ruta=libros" class="card-button">Ver Catálogo</a>
                 </div>
 
-                <!-- Card 2: Usuarios -->
                 <div class="feature-card" onclick="window.location.href='index.php?ruta=usuarios'">
                     <div class="card-icon"></div>
                     <h2 class="card-title">Gestión de Usuarios</h2>
@@ -216,7 +214,6 @@
                     <a href="index.php?ruta=usuarios" class="card-button">Ver Usuarios</a>
                 </div>
 
-                <!-- Card 3: Préstamos -->
                 <div class="feature-card" onclick="window.location.href='index.php?ruta=prestamos'">
                     <div class="card-icon"></div>
                     <h2 class="card-title">Control de Préstamos</h2>
@@ -232,7 +229,6 @@
     <?php require_once __DIR__ . "/layouts/footer.php"; ?>
 
     <script>
-        // Animación de entrada para las cards
         document.addEventListener('DOMContentLoaded', function() {
             const cards = document.querySelectorAll('.feature-card');
             cards.forEach((card, index) => {
