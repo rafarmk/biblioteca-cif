@@ -391,42 +391,11 @@
         </div>
     </div>
 
-    <!-- Theme Toggle -->
-    <div class="theme-toggle" id="themeToggle">
-        <span style="font-size: 24px;"></span>
-        <span style="font-weight: 700; font-size: 16px; color: var(--text-primary);">Modo Claro</span>
-    </div>
+
 
     <?php require_once __DIR__ . "/layouts/footer.php"; ?>
 
     <script>
-        const themeToggle = document.getElementById('themeToggle');
-        const html = document.documentElement;
-        const themeIcon = themeToggle.querySelector('span:first-child');
-        const themeText = themeToggle.querySelector('span:last-child');
-
-        const themes = {
-            light: { icon: '', text: 'Modo Claro', next: 'dark' },
-            dark: { icon: '', text: 'Modo Oscuro', next: 'original' },
-            original: { icon: '', text: 'Modo Original', next: 'premium' },
-            premium: { icon: '', text: 'Modo Premium', next: 'light' }
-        };
-
-        let currentTheme = localStorage.getItem('theme') || 'light';
-        html.setAttribute('data-theme', currentTheme);
-        updateTheme(currentTheme);
-
-        themeToggle.addEventListener('click', function() {
-            currentTheme = themes[currentTheme].next;
-            html.setAttribute('data-theme', currentTheme);
-            localStorage.setItem('theme', currentTheme);
-            updateTheme(currentTheme);
-        });
-
-        function updateTheme(theme) {
-            themeIcon.textContent = themes[theme].icon;
-            themeText.textContent = themes[theme].text;
-        }
 
         // Animación de entrada para las cards
         document.addEventListener('DOMContentLoaded', function() {
