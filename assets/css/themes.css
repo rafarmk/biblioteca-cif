@@ -1,0 +1,297 @@
+﻿/* ============================================
+   SISTEMA DE TEMAS CENTRALIZADO
+   Biblioteca CIF - Todos los estilos de temas
+   ============================================ */
+
+/* Importar fuente Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    --primary: #3498db;
+    --secondary: #2c3e50;
+    --accent: #e74c3c;
+    --light: #ecf0f1;
+    --dark: #34495e;
+    --success: #27ae60;
+    --transition: all 0.3s ease;
+
+    /* Light mode colors */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --bg-card: #ffffff;
+    --text-primary: #2c3e50;
+    --text-secondary: #5a6c7d;
+    --border-color: #e1e8ed;
+    --shadow: rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================
+   DARK MODE
+   ============================================ */
+[data-theme="dark"] {
+    --bg-primary: #0a0f1e;
+    --bg-secondary: #121829;
+    --bg-card: #1a2332;
+    --text-primary: #e5e7eb;
+    --text-secondary: #9ca3af;
+    --border-color: #2d3748;
+    --shadow: rgba(0, 0, 0, 0.3);
+    --primary: #3b82f6;
+    --accent: #ef4444;
+}
+
+/* ============================================
+   ORIGINAL MODE
+   ============================================ */
+[data-theme="original"] {
+    --bg-primary: #f0f4f8;
+    --bg-secondary: #e3e8ef;
+    --bg-card: #ffffff;
+    --text-primary: #2c3e50;
+    --text-secondary: #5a6c7d;
+    --border-color: #d1dce5;
+    --shadow: rgba(52, 152, 219, 0.15);
+    --primary: #3498db;
+    --secondary: #2c3e50;
+    --accent: #e74c3c;
+}
+
+/* ============================================
+   PREMIUM MODE
+   ============================================ */
+[data-theme="premium"] {
+    --bg-primary: #0f1419;
+    --bg-secondary: #1a1f29;
+    --bg-card: #1e2533;
+    --text-primary: #c9d1d9;
+    --text-secondary: #8b93a0;
+    --border-color: #30363d;
+    --shadow: rgba(56, 189, 248, 0.3);
+    --primary: #38bdf8;
+    --secondary: #0ea5e9;
+    --accent: #60a5fa;
+}
+
+/* ============================================
+   ESTILOS BASE
+   ============================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif !important;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    transition: var(--transition);
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+    padding-top: 75px;
+}
+
+/* ============================================
+   PREMIUM MODE - EFECTOS VISUALES
+   ============================================ */
+[data-theme="premium"] body {
+    background: linear-gradient(135deg, #0f1419 0%, #1a1f29 50%, #0f1419 100%);
+}
+
+[data-theme="premium"] body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        radial-gradient(circle at 20% 50%, rgba(56, 189, 248, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(96, 165, 250, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(14, 165, 233, 0.15) 0%, transparent 50%);
+    animation: premium-glow 15s ease-in-out infinite alternate;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes premium-glow {
+    0% {
+        opacity: 0.8;
+        transform: scale(1) rotate(0deg);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.1) rotate(5deg);
+    }
+    100% {
+        opacity: 0.8;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+/* ============================================
+   THEME TOGGLE BUTTON
+   ============================================ */
+.theme-toggle {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 10000;
+    background: var(--bg-card);
+    border: 2px solid var(--border-color);
+    border-radius: 50px;
+    padding: 14px 26px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 8px 30px var(--shadow);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="premium"] .theme-toggle {
+    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
+    border-color: #38bdf8;
+    box-shadow:
+        0 8px 30px rgba(56, 189, 248, 0.4),
+        0 0 60px rgba(56, 189, 248, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    animation: premium-pulse 3s ease-in-out infinite;
+}
+
+@keyframes premium-pulse {
+    0%, 100% {
+        box-shadow:
+            0 8px 30px rgba(56, 189, 248, 0.4),
+            0 0 60px rgba(56, 189, 248, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+    50% {
+        box-shadow:
+            0 8px 40px rgba(56, 189, 248, 0.6),
+            0 0 80px rgba(56, 189, 248, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    }
+}
+
+.theme-toggle:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 12px 40px var(--shadow);
+}
+
+.theme-toggle-icon {
+    font-size: 22px;
+    transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.theme-toggle:hover .theme-toggle-icon {
+    transform: rotate(360deg) scale(1.2);
+}
+
+.theme-toggle-text {
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 15px;
+    letter-spacing: 0.5px;
+}
+
+/* ============================================
+   TIPOGRAFÍA Y CONTRASTE
+   ============================================ */
+h1, h2, h3, h4, h5, h6, label, .page-title, .card-title {
+    color: var(--text-primary) !important;
+    font-weight: 700 !important;
+    font-family: 'Poppins', sans-serif !important;
+}
+
+table th, table td {
+    color: var(--text-primary) !important;
+    font-family: 'Poppins', sans-serif !important;
+}
+
+p, span, div {
+    font-family: 'Poppins', sans-serif !important;
+}
+
+/* ============================================
+   INPUTS VISIBLES EN TODOS LOS FORMULARIOS
+   ============================================ */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="number"],
+input[type="password"],
+input[type="date"],
+select,
+textarea {
+    background-color: #ffffff !important;
+    color: #1a202c !important;
+    border: 2px solid #cbd5e0 !important;
+    padding: 12px 15px !important;
+    font-family: 'Poppins', sans-serif !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: #a0aec0 !important;
+    opacity: 1 !important;
+}
+
+label {
+    color: #2d3748 !important;
+    font-family: 'Poppins', sans-serif !important;
+}
+
+/* MODO OSCURO - Inputs */
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="email"],
+[data-theme="dark"] input[type="tel"],
+[data-theme="dark"] input[type="number"],
+[data-theme="dark"] input[type="password"],
+[data-theme="dark"] input[type="date"],
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+    background-color: #2d3748 !important;
+    color: #f7fafc !important;
+    border-color: #4a5568 !important;
+}
+
+[data-theme="dark"] input::placeholder {
+    color: #718096 !important;
+}
+
+[data-theme="dark"] label {
+    color: #e2e8f0 !important;
+}
+
+/* MODO PREMIUM - Inputs */
+[data-theme="premium"] input[type="text"],
+[data-theme="premium"] input[type="email"],
+[data-theme="premium"] input[type="tel"],
+[data-theme="premium"] input[type="number"],
+[data-theme="premium"] input[type="password"],
+[data-theme="premium"] input[type="date"],
+[data-theme="premium"] select,
+[data-theme="premium"] textarea {
+    background-color: #1a202c !important;
+    color: #e2e8f0 !important;
+    border-color: rgba(56, 189, 248, 0.5) !important;
+}
+
+[data-theme="premium"] label {
+    color: #c9d1d9 !important;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    .theme-toggle-text {
+        display: none;
+    }
+    
+    .theme-toggle {
+        padding: 12px;
+    }
+}
