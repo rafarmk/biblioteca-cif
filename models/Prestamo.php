@@ -1,4 +1,4 @@
-<?php
+ï»¿<?php
 class Prestamo {
     private $conn;
     private $table = "prestamos";
@@ -16,7 +16,7 @@ class Prestamo {
         $this->conn = $db;
     }
     
-    // Crear préstamo
+    // Crear prÃ©stamo
     public function crear() {
         // Verificar disponibilidad del libro
         $query = "SELECT cantidad_disponible FROM libros WHERE id = :libro_id";
@@ -26,7 +26,7 @@ class Prestamo {
         $libro = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if ($libro && $libro['cantidad_disponible'] > 0) {
-            // Crear el préstamo
+            // Crear el prÃ©stamo
             $query = "INSERT INTO " . $this->table . " 
                       SET libro_id = :libro_id,
                           usuario_id = :usuario_id,
@@ -54,7 +54,7 @@ class Prestamo {
         return false;
     }
     
-    // Leer todos los préstamos
+    // Leer todos los prÃ©stamos
     public function leer() {
         $query = "SELECT p.*, l.titulo as libro_titulo, u.nombre as usuario_nombre 
                   FROM " . $this->table . " p
@@ -94,7 +94,7 @@ class Prestamo {
         return false;
     }
     
-    // Eliminar préstamo
+    // Eliminar prÃ©stamo
     public function eliminar() {
         $query = "DELETE FROM " . $this->table . " WHERE id = ?";
         $stmt = $this->conn->prepare($query);
@@ -102,7 +102,7 @@ class Prestamo {
         return $stmt->execute();
     }
     
-    // Contar préstamos activos
+    // Contar prÃ©stamos activos
     public function contarActivos() {
         $query = "SELECT COUNT(*) as total FROM " . $this->table . " WHERE estado = 'activo'";
         $stmt = $this->conn->prepare($query);
@@ -111,7 +111,7 @@ class Prestamo {
         return $row['total'];
     }
     
-    // Contar préstamos atrasados
+    // Contar prÃ©stamos atrasados
     public function contarAtrasados() {
         $query = "SELECT COUNT(*) as total FROM " . $this->table . " 
                   WHERE estado = 'activo' AND fecha_devolucion_esperada < CURDATE()";
@@ -121,7 +121,7 @@ class Prestamo {
         return $row['total'];
     }
     
-    // Obtener préstamos recientes
+    // Obtener prÃ©stamos recientes
     public function obtenerRecientes($limite = 5) {
         $query = "SELECT p.*, l.titulo as libro_titulo, u.nombre as usuario_nombre 
                   FROM " . $this->table . " p

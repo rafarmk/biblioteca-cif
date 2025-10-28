@@ -1,4 +1,4 @@
-<?php
+ï»¿<?php
 require_once 'models/Prestamo.php';
 require_once 'models/Libro.php';
 require_once 'models/Usuario.php';
@@ -12,7 +12,7 @@ class PrestamoController {
         $this->prestamo = new Prestamo($db);
     }
     
-    // Listar todos los préstamos
+    // Listar todos los prï¿½stamos
     public function index() {
         $stmt = $this->prestamo->leer();
         $prestamos = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -29,10 +29,10 @@ class PrestamoController {
             $this->prestamo->estado = 'activo';
             
             if ($this->prestamo->crear()) {
-                header("Location: index.php?ruta=prestamos&mensaje=Préstamo creado exitosamente");
+                header("Location: index.php?ruta=prestamos&mensaje=Prï¿½stamo creado exitosamente");
                 exit();
             } else {
-                $error = "Error al crear el préstamo";
+                $error = "Error al crear el prï¿½stamo";
             }
         }
         
@@ -61,16 +61,16 @@ class PrestamoController {
         }
     }
     
-    // Eliminar préstamo
+    // Eliminar prï¿½stamo
     public function eliminar() {
         if (isset($_GET['id'])) {
             $this->prestamo->id = $_GET['id'];
             
             if ($this->prestamo->eliminar()) {
-                header("Location: index.php?ruta=prestamos&mensaje=Préstamo eliminado exitosamente");
+                header("Location: index.php?ruta=prestamos&mensaje=Prï¿½stamo eliminado exitosamente");
                 exit();
             } else {
-                header("Location: index.php?ruta=prestamos&error=Error al eliminar el préstamo");
+                header("Location: index.php?ruta=prestamos&error=Error al eliminar el prï¿½stamo");
                 exit();
             }
         }

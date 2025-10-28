@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/../layouts/navbar.php'; ?>
+ï»¿<?php require_once __DIR__ . '/../layouts/navbar.php'; ?>
 
 <style>
 /* Centrado para esta vista */
@@ -226,16 +226,16 @@ footer { flex-shrink: 0; margin-top: auto !important; }
 
 <div class="main-container">
     <div class="page-header">
-        <h1> Gestión de Préstamos</h1>
+        <h1> GestiÃ³n de PrÃ©stamos</h1>
         <a href="index.php?ruta=prestamos/crear" class="btn btn-primary">
-             Nuevo Préstamo
+             Nuevo PrÃ©stamo
         </a>
     </div>
 
     <div class="content-card">
         <div class="card-header">
-            <h2>Lista de Préstamos</h2>
-            <input type="text" id="searchInput" placeholder=" Buscar préstamo..." class="search-input">
+            <h2>Lista de PrÃ©stamos</h2>
+            <input type="text" id="searchInput" placeholder=" Buscar prÃ©stamo..." class="search-input">
         </div>
         
         <div class="table-container">
@@ -246,8 +246,8 @@ footer { flex-shrink: 0; margin-top: auto !important; }
                             <th>ID</th>
                             <th>Usuario</th>
                             <th>Libro</th>
-                            <th>Fecha Préstamo</th>
-                            <th>Fecha Devolución</th>
+                            <th>Fecha PrÃ©stamo</th>
+                            <th>Fecha DevoluciÃ³n</th>
                             <th>Estado</th>
                             <th>Acciones</th>
                         </tr>
@@ -300,7 +300,7 @@ footer { flex-shrink: 0; margin-top: auto !important; }
                                         <?php if ($estado === 'activo' || $estado === 'atrasado'): ?>
                                             <a href="index.php?ruta=prestamos/devolver&id=<?php echo $prestamo['id']; ?>" 
                                                class="btn btn-success btn-sm"
-                                               onclick="return confirm('¿Confirmar devolución del libro?')">
+                                               onclick="return confirm('Â¿Confirmar devoluciÃ³n del libro?')">
                                                  Devolver
                                             </a>
                                         <?php endif; ?>
@@ -317,8 +317,8 @@ footer { flex-shrink: 0; margin-top: auto !important; }
             <?php else: ?>
                 <div style="text-align: center; padding: 60px 20px; color: var(--text-secondary);">
                     <div style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;"></div>
-                    <h3 style="color: var(--text-primary);">No hay préstamos registrados</h3>
-                    <p>Comienza creando el primer préstamo</p>
+                    <h3 style="color: var(--text-primary);">No hay prÃ©stamos registrados</h3>
+                    <p>Comienza creando el primer prÃ©stamo</p>
                 </div>
             <?php endif; ?>
         </div>

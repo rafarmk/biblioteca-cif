@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -7,10 +7,10 @@
 </head>
 <body class="bg-light">
 <div class="container mt-5">
-    <h2 class="mb-4">📚 Registro de Libros</h2>
+    <h2 class="mb-4">ðŸ“š Registro de Libros</h2>
     <form action="../controladores/LibroController.php" method="POST">
         <div class="mb-3">
-            <label for="titulo" class="form-label">Título</label>
+            <label for="titulo" class="form-label">TÃ­tulo</label>
             <input type="text" class="form-control" id="titulo" name="titulo" required>
         </div>
         <div class="mb-3">
@@ -18,11 +18,11 @@
             <input type="text" class="form-control" id="autor" name="autor" required>
         </div>
         <div class="mb-3">
-            <label for="categoria" class="form-label">Categoría</label>
+            <label for="categoria" class="form-label">CategorÃ­a</label>
             <input type="text" class="form-control" id="categoria" name="categoria" required>
         </div>
         <div class="mb-3">
-            <label for="anio" class="form-label">Año</label>
+            <label for="anio" class="form-label">AÃ±o</label>
             <input type="number" class="form-control" id="anio" name="anio" required>
         </div>
         <button type="submit" class="btn btn-primary">Registrar Libro</button>

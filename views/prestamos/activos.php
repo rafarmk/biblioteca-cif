@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Préstamos Activos - Biblioteca CIF</title>
+    <title>PrÃ©stamos Activos - Biblioteca CIF</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -165,7 +165,7 @@
 
     <div class="page-header">
         <h1 class="page-title">
-            <i class="fas fa-book-open"></i> Préstamos Activos
+            <i class="fas fa-book-open"></i> PrÃ©stamos Activos
         </h1>
     </div>
 
@@ -199,7 +199,7 @@
                 </a>
             </div>
             <a href="index.php?ruta=prestamos/crear" class="btn-modern btn-success-modern">
-                <i class="fas fa-plus"></i> Nuevo Préstamo
+                <i class="fas fa-plus"></i> Nuevo PrÃ©stamo
             </a>
         </div>
 
@@ -210,9 +210,9 @@
                         <th>ID</th>
                         <th>Usuario</th>
                         <th>Libro</th>
-                        <th>Fecha Préstamo</th>
-                        <th>Devolución Esperada</th>
-                        <th>Días Restantes</th>
+                        <th>Fecha PrÃ©stamo</th>
+                        <th>DevoluciÃ³n Esperada</th>
+                        <th>DÃ­as Restantes</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -221,7 +221,7 @@
                         <tr>
                             <td colspan="7" style="text-align: center; padding: 40px;">
                                 <i class="fas fa-check-circle" style="font-size: 50px; color: #56ab2f; display: block; margin-bottom: 15px;"></i>
-                                <span style="color: #999; font-size: 18px;">¡No hay préstamos activos! Todos los libros han sido devueltos.</span>
+                                <span style="color: #999; font-size: 18px;">Â¡No hay prÃ©stamos activos! Todos los libros han sido devueltos.</span>
                             </td>
                         </tr>
                     <?php else: ?>
@@ -247,7 +247,7 @@
                                 <?php if ($dias_diferencia < 0): ?>
                                     <span class="badge-modern badge-late">
                                         <i class="fas fa-exclamation-triangle"></i>
-                                        <?php echo abs($dias_diferencia); ?> días atrasado
+                                        <?php echo abs($dias_diferencia); ?> dÃ­as atrasado
                                     </span>
                                 <?php elseif ($dias_diferencia == 0): ?>
                                     <span class="badge-modern badge-warning">
@@ -257,12 +257,12 @@
                                 <?php elseif ($dias_diferencia <= 3): ?>
                                     <span class="badge-modern badge-warning">
                                         <i class="fas fa-clock"></i>
-                                        <?php echo $dias_diferencia; ?> días
+                                        <?php echo $dias_diferencia; ?> dÃ­as
                                     </span>
                                 <?php else: ?>
                                     <span class="badge-modern badge-active">
                                         <i class="fas fa-check"></i>
-                                        <?php echo $dias_diferencia; ?> días
+                                        <?php echo $dias_diferencia; ?> dÃ­as
                                     </span>
                                 <?php endif; ?>
                             </td>
@@ -270,8 +270,8 @@
                                 <form method="POST" action="index.php?ruta=prestamos/devolver&id=<?php echo $prestamo['id']; ?>" 
                                       style="display: inline;">
                                     <button type="submit" class="btn-action btn-return" 
-                                            title="Registrar devolución"
-                                            onclick="return confirm('¿Confirmar devolución del libro: <?php echo htmlspecialchars($prestamo['libro_titulo']); ?>?')">
+                                            title="Registrar devoluciÃ³n"
+                                            onclick="return confirm('Â¿Confirmar devoluciÃ³n del libro: <?php echo htmlspecialchars($prestamo['libro_titulo']); ?>?')">
                                         <i class="fas fa-undo"></i>
                                     </button>
                                 </form>

@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Préstamos Atrasados - Biblioteca CIF</title>
+    <title>PrÃ©stamos Atrasados - Biblioteca CIF</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -175,7 +175,7 @@
 
     <div class="page-header">
         <h1 class="page-title">
-            <i class="fas fa-exclamation-triangle"></i> Préstamos Atrasados
+            <i class="fas fa-exclamation-triangle"></i> PrÃ©stamos Atrasados
         </h1>
     </div>
 
@@ -200,7 +200,7 @@
             <div class="alert-warning-custom">
                 <h5 style="margin: 0; color: #856404;">
                     <i class="fas fa-exclamation-triangle"></i>
-                    <strong>¡Atención!</strong> Hay <?php echo count($prestamos); ?> préstamo(s) atrasado(s) que requieren acción inmediata.
+                    <strong>Â¡AtenciÃ³n!</strong> Hay <?php echo count($prestamos); ?> prÃ©stamo(s) atrasado(s) que requieren acciÃ³n inmediata.
                 </h5>
             </div>
         <?php endif; ?>
@@ -218,7 +218,7 @@
                 </a>
             </div>
             <a href="index.php?ruta=prestamos/crear" class="btn-modern btn-success-modern">
-                <i class="fas fa-plus"></i> Nuevo Préstamo
+                <i class="fas fa-plus"></i> Nuevo PrÃ©stamo
             </a>
         </div>
 
@@ -229,9 +229,9 @@
                         <th>ID</th>
                         <th>Usuario</th>
                         <th>Libro</th>
-                        <th>Fecha Préstamo</th>
-                        <th>Debía Devolverse</th>
-                        <th>Días de Atraso</th>
+                        <th>Fecha PrÃ©stamo</th>
+                        <th>DebÃ­a Devolverse</th>
+                        <th>DÃ­as de Atraso</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -240,7 +240,7 @@
                         <tr>
                             <td colspan="7" style="text-align: center; padding: 40px; border-left: none;">
                                 <i class="fas fa-check-circle" style="font-size: 50px; color: #56ab2f; display: block; margin-bottom: 15px;"></i>
-                                <span style="color: #999; font-size: 18px;">¡Excelente! No hay préstamos atrasados.</span>
+                                <span style="color: #999; font-size: 18px;">Â¡Excelente! No hay prÃ©stamos atrasados.</span>
                             </td>
                         </tr>
                     <?php else: ?>
@@ -263,15 +263,15 @@
                             <td>
                                 <span class="badge-modern badge-late">
                                     <i class="fas fa-exclamation-triangle"></i>
-                                    <?php echo abs($dias_atraso); ?> día(s)
+                                    <?php echo abs($dias_atraso); ?> dÃ­a(s)
                                 </span>
                             </td>
                             <td>
                                 <form method="POST" action="index.php?ruta=prestamos/devolver&id=<?php echo $prestamo['id']; ?>" 
                                       style="display: inline;">
                                     <button type="submit" class="btn-action btn-return" 
-                                            title="Registrar devolución URGENTE"
-                                            onclick="return confirm('¿Confirmar devolución del libro: <?php echo htmlspecialchars($prestamo['libro_titulo']); ?>?')">
+                                            title="Registrar devoluciÃ³n URGENTE"
+                                            onclick="return confirm('Â¿Confirmar devoluciÃ³n del libro: <?php echo htmlspecialchars($prestamo['libro_titulo']); ?>?')">
                                         <i class="fas fa-undo"></i>
                                     </button>
                                 </form>

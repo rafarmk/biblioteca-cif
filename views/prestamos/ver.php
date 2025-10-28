@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/../layouts/navbar.php'; ?>
+ï»¿<?php require_once __DIR__ . '/../layouts/navbar.php'; ?>
 
 <style>
 .main-container {
@@ -131,16 +131,16 @@
 
 <div class="main-container">
     <div class="page-header">
-        <h1> Detalles del Préstamo</h1>
+        <h1> Detalles del PrÃ©stamo</h1>
         <a href="index.php?ruta=prestamos" class="btn btn-secondary">
-             Volver a Préstamos
+             Volver a PrÃ©stamos
         </a>
     </div>
 
     <div class="content-card">
         <?php if (isset($datos)): ?>
             <div class="detail-row">
-                <div class="detail-label">ID del Préstamo:</div>
+                <div class="detail-label">ID del PrÃ©stamo:</div>
                 <div class="detail-value">#<?php echo htmlspecialchars($datos['id']); ?></div>
             </div>
 
@@ -168,7 +168,7 @@
             </div>
 
             <div class="detail-row">
-                <div class="detail-label">Fecha de Préstamo:</div>
+                <div class="detail-label">Fecha de PrÃ©stamo:</div>
                 <div class="detail-value">
                     <?php 
                     if (isset($datos['fecha_prestamo'])) {
@@ -181,7 +181,7 @@
             </div>
 
             <div class="detail-row">
-                <div class="detail-label">Fecha de Devolución Estimada:</div>
+                <div class="detail-label">Fecha de DevoluciÃ³n Estimada:</div>
                 <div class="detail-value">
                     <?php 
                     $fechaDevolucion = $datos['fecha_devolucion_esperada'] ?? 
@@ -198,7 +198,7 @@
 
             <?php if (isset($datos['fecha_devolucion_real'])): ?>
             <div class="detail-row">
-                <div class="detail-label">Fecha de Devolución Real:</div>
+                <div class="detail-label">Fecha de DevoluciÃ³n Real:</div>
                 <div class="detail-value">
                     <?php echo date('d/m/Y H:i', strtotime($datos['fecha_devolucion_real'])); ?>
                 </div>
@@ -225,7 +225,7 @@
                     
                     <?php if ($estado === 'atrasado'): ?>
                         <br><small style="color: var(--accent); font-weight: 600;">
-                            Días de retraso: <?php 
+                            DÃ­as de retraso: <?php 
                                 $dias = (time() - strtotime($fechaDevolucion)) / (60 * 60 * 24);
                                 echo floor($dias);
                             ?>
@@ -245,7 +245,7 @@
             <div style="margin-top: 40px; text-align: center;">
                 <a href="index.php?ruta=prestamos/devolver&id=<?php echo $datos['id']; ?>" 
                    class="btn btn-secondary"
-                   onclick="return confirm('¿Confirmar devolución del libro?')"
+                   onclick="return confirm('Â¿Confirmar devoluciÃ³n del libro?')"
                    style="background: var(--success); padding: 15px 40px; font-size: 16px;">
                      Marcar como Devuelto
                 </a>
@@ -255,8 +255,8 @@
         <?php else: ?>
             <div style="text-align: center; padding: 60px 20px; color: var(--text-secondary);">
                 <div style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;"></div>
-                <h3 style="color: var(--text-primary);">Préstamo no encontrado</h3>
-                <p>El préstamo solicitado no existe o ha sido eliminado</p>
+                <h3 style="color: var(--text-primary);">PrÃ©stamo no encontrado</h3>
+                <p>El prÃ©stamo solicitado no existe o ha sido eliminado</p>
             </div>
         <?php endif; ?>
     </div>

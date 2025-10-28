@@ -1,7 +1,7 @@
-<?php
+ï»¿<?php
 require_once 'models/Usuario.php';
 
-// Log de depuración
+// Log de depuraciÃ³n
 file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - Inicio UsuarioController\n", FILE_APPEND);
 
 class UsuarioController {
@@ -24,7 +24,7 @@ class UsuarioController {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $emailExistente = $this->usuario->buscarPorEmail($_POST['email'] ?? '');
             if ($emailExistente) {
-                $error = "El email ya está registrado. Por favor use otro email.";
+                $error = "El email ya estÃ¡ registrado. Por favor use otro email.";
                 require_once 'views/usuarios/crear.php';
                 return;
             }
@@ -48,7 +48,7 @@ class UsuarioController {
                 }
             } catch (PDOException $e) {
                 if ($e->getCode() == 23000) {
-                    $error = "El email ya está registrado. Por favor use otro email.";
+                    $error = "El email ya estÃ¡ registrado. Por favor use otro email.";
                 } else {
                     $error = "Error al crear el usuario: " . $e->getMessage();
                 }
@@ -68,14 +68,14 @@ class UsuarioController {
                 
                 file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - Antes de leerUno()\n", FILE_APPEND);
                 $this->usuario->leerUno();
-                file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - Después de leerUno()\n", FILE_APPEND);
+                file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - DespuÃ©s de leerUno()\n", FILE_APPEND);
                 
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - Es POST\n", FILE_APPEND);
                     
                     $emailExistente = $this->usuario->buscarPorEmail($_POST['email'] ?? '');
                     if ($emailExistente && $emailExistente['id'] != $this->usuario->id) {
-                        $error = "El email ya está registrado en otro usuario.";
+                        $error = "El email ya estÃ¡ registrado en otro usuario.";
                         $usuario = [
                             'id' => $this->usuario->id,
                             'tipo_usuario' => $this->usuario->tipo_usuario,
@@ -104,7 +104,7 @@ class UsuarioController {
                     
                     try {
                         if ($this->usuario->actualizar()) {
-                            file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - Actualización OK, redirigiendo\n", FILE_APPEND);
+                            file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - ActualizaciÃ³n OK, redirigiendo\n", FILE_APPEND);
                             header("Location: index.php?ruta=usuarios&mensaje=Usuario actualizado exitosamente");
                             exit();
                         } else {
@@ -112,9 +112,9 @@ class UsuarioController {
                             $error = "Error al actualizar el usuario";
                         }
                     } catch (PDOException $e) {
-                        file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - Excepción: " . $e->getMessage() . "\n", FILE_APPEND);
+                        file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - ExcepciÃ³n: " . $e->getMessage() . "\n", FILE_APPEND);
                         if ($e->getCode() == 23000) {
-                            $error = "El email ya está registrado en otro usuario.";
+                            $error = "El email ya estÃ¡ registrado en otro usuario.";
                         } else {
                             $error = "Error al actualizar el usuario: " . $e->getMessage();
                         }
@@ -137,10 +137,10 @@ class UsuarioController {
                 
                 file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - Antes de cargar vista\n", FILE_APPEND);
                 require_once 'views/usuarios/editar.php';
-                file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - Después de cargar vista\n", FILE_APPEND);
+                file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - DespuÃ©s de cargar vista\n", FILE_APPEND);
             }
         } catch (Exception $e) {
-            file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - EXCEPCIÓN FATAL: " . $e->getMessage() . "\n", FILE_APPEND);
+            file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - EXCEPCIÃ“N FATAL: " . $e->getMessage() . "\n", FILE_APPEND);
             die("Error fatal: " . $e->getMessage());
         }
     }

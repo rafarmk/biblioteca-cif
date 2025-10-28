@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/layouts/navbar.php'; ?>
+ï»¿<?php require_once __DIR__ . '/layouts/navbar.php'; ?>
 
 <style>
 .dashboard-container {
@@ -271,7 +271,7 @@
     }
 }
 
-/* Mejorar formato de Préstamos Activos */
+/* Mejorar formato de PrÃ©stamos Activos */
 .activity-item {
     display: flex;
     justify-content: space-between;
@@ -323,7 +323,7 @@
     box-shadow: 0 4px 10px rgba(6, 95, 70, 0.2);
 }
 
-/* Adaptación por tema */
+/* AdaptaciÃ³n por tema */
 [data-theme="dark"] .activity-item {
     background: #0f1419;
     border-color: #2d3748;
@@ -349,7 +349,7 @@
     border: 2px solid rgba(56, 189, 248, 0.3);
 }
 
-/* PRÉSTAMOS ACTIVOS - DISEÑO MEJORADO */
+/* PRÃ‰STAMOS ACTIVOS - DISEÃ‘O MEJORADO */
 .activity-item {
     display: flex;
     justify-content: space-between;
@@ -460,7 +460,7 @@
     box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
 }
 
-/* Adaptación por tema */
+/* AdaptaciÃ³n por tema */
 [data-theme="dark"] .activity-item {
     background: #0f1419;
 }
@@ -507,7 +507,7 @@
             <div class="stat-card-number"><?php echo count($libros ?? []); ?></div>
             <div class="stat-card-label">Total de Libros</div>
             <a href="index.php?ruta=libros" class="stat-card-link">
-                Ver Catálogo 
+                Ver CatÃ¡logo 
             </a>
         </div>
 
@@ -523,7 +523,7 @@
         <div class="stat-card">
             <div class="stat-card-icon orange"></div>
             <div class="stat-card-number"><?php echo $stats_prestamos['activos'] ?? 0; ?></div>
-            <div class="stat-card-label">Préstamos Activos</div>
+            <div class="stat-card-label">PrÃ©stamos Activos</div>
             <a href="index.php?ruta=prestamos/activos" class="stat-card-link">
                 Ver Activos 
             </a>
@@ -532,7 +532,7 @@
         <div class="stat-card">
             <div class="stat-card-icon pink"></div>
             <div class="stat-card-number"><?php echo $stats_prestamos['atrasados'] ?? 0; ?></div>
-            <div class="stat-card-label">Préstamos Atrasados</div>
+            <div class="stat-card-label">PrÃ©stamos Atrasados</div>
             <a href="index.php?ruta=prestamos/atrasados" class="stat-card-link">
                 Ver Atrasados 
             </a>
@@ -541,7 +541,7 @@
         <div class="stat-card">
             <div class="stat-card-icon purple"></div>
             <div class="stat-card-number"><?php echo $stats_prestamos['total'] ?? 0; ?></div>
-            <div class="stat-card-label">Total Préstamos</div>
+            <div class="stat-card-label">Total PrÃ©stamos</div>
             <a href="index.php?ruta=prestamos" class="stat-card-link">
                 Ver Todos 
             </a>
@@ -558,13 +558,13 @@
             ?></div>
             <div class="stat-card-label">Libros Devueltos</div>
             <a href="index.php?ruta=prestamos&accion=crear" class="stat-card-link">
-                + Nuevo Préstamo 
+                + Nuevo PrÃ©stamo 
             </a>
         </div>
     </div>
 
     <!-- Recent Activity -->
-    <h2 class="section-title"> Préstamos Activos Recientes</h2>
+    <h2 class="section-title"> PrÃ©stamos Activos Recientes</h2>
     <div class="recent-activity">
         <?php if (isset($prestamos_activos) && count($prestamos_activos) > 0): ?>
             <ul class="activity-list">
@@ -578,9 +578,9 @@
                                     <span class="meta-item">
                                         <strong> Usuario:</strong> <?php echo htmlspecialchars($prestamo['usuario_nombre'] ?? 'Usuario desconocido'); ?>
                                     </span>
-                                    <span class="meta-separator">•</span>
+                                    <span class="meta-separator">â€¢</span>
                                     <span class="meta-item">
-                                        <strong> Préstamo:</strong> <?php echo date('d/m/Y', strtotime($prestamo['fecha_prestamo'])); ?>
+                                        <strong> PrÃ©stamo:</strong> <?php echo date('d/m/Y', strtotime($prestamo['fecha_prestamo'])); ?>
                                     </span>
                                     <span class="meta-separator"></span>
                                     <span class="meta-item">
@@ -598,13 +598,13 @@
             </ul>
         <?php else: ?>
             <p style="text-align: center; color: var(--text-secondary); padding: 40px;">
-                No hay préstamos activos en este momento
+                No hay prÃ©stamos activos en este momento
             </p>
         <?php endif; ?>
     </div>
 
     <?php if (isset($prestamos_atrasados) && count($prestamos_atrasados) > 0): ?>
-        <h2 class="section-title" style="margin-top: 40px;"> Préstamos Atrasados</h2>
+        <h2 class="section-title" style="margin-top: 40px;"> PrÃ©stamos Atrasados</h2>
         <div class="recent-activity">
             <ul class="activity-list">
                 <?php foreach (array_slice($prestamos_atrasados, 0, 5) as $prestamo): ?>
@@ -617,9 +617,9 @@
                                     <span class="meta-item">
                                         <strong> Usuario:</strong> <?php echo htmlspecialchars($prestamo['usuario_nombre'] ?? 'Usuario desconocido'); ?>
                                     </span>
-                                    <span class="meta-separator">•</span>
+                                    <span class="meta-separator">â€¢</span>
                                     <span class="meta-item">
-                                        <strong> Préstamo:</strong> <?php echo date('d/m/Y', strtotime($prestamo['fecha_prestamo'])); ?>
+                                        <strong> PrÃ©stamo:</strong> <?php echo date('d/m/Y', strtotime($prestamo['fecha_prestamo'])); ?>
                                     </span>
                                     <span class="meta-separator"></span>
                                     <span class="meta-item">
