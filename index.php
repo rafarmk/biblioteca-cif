@@ -106,6 +106,9 @@ switch ($ruta) {
             case 'devolver':
                 $controller->devolver();
                 break;
+            case 'ver':
+                $controller->ver();
+                break;
             case 'eliminar':
                 $controller->eliminar();
                 break;

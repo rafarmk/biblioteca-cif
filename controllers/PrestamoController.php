@@ -75,5 +75,40 @@ class PrestamoController {
             }
         }
     }
+    
+    // Ver detalles de un préstamo
+    public function ver() {
+        if (isset($_GET['id'])) {
+            $this->prestamo->id = $_GET['id'];
+            
+            // Obtener datos del préstamo con JOIN
+            $query = "SELECT p.*, 
+                             l.titulo as libro_titulo, 
+                             l.autor as libro_autor,
+                             u.nombre as usuario_nombre,
+                             u.email as usuario_email,
+                             u.telefono as usuario_telefono
+                      FROM prestamos p
+                      INNER JOIN libros l ON p.libro_id = l.id
+                      INNER JOIN usuarios u ON p.usuario_id = u.id
+                      WHERE p.id = :id";
+            
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(':id', $this->prestamo->id);
+            $stmt->execute();
+            
+            $datos = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($datos) {
+                require_once 'views/prestamos/ver.php';
+            } else {
+                header("Location: index.php?ruta=prestamos&error=Préstamo no encontrado");
+                exit();
+            }
+        } else {
+            header("Location: index.php?ruta=prestamos");
+            exit();
+        }
+    }
 }
 ?>

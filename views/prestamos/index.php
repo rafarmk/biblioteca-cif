@@ -227,7 +227,7 @@ footer { flex-shrink: 0; margin-top: auto !important; }
 <div class="main-container">
     <div class="page-header">
         <h1> Gestión de Préstamos</h1>
-        <a href="index.php?ruta=prestamos/crear" class="btn btn-primary">
+        <a href="index.php?ruta=prestamos&accion=crear" class="btn btn-primary">
              Nuevo Préstamo
         </a>
     </div>
@@ -298,13 +298,13 @@ footer { flex-shrink: 0; margin-top: auto !important; }
                                 <td>
                                     <div class="action-buttons">
                                         <?php if ($estado === 'activo' || $estado === 'atrasado'): ?>
-                                            <a href="index.php?ruta=prestamos/devolver&id=<?php echo $prestamo['id']; ?>" 
+                                            <a href="index.php?ruta=prestamos&accion=devolver&id=<?php echo $prestamo['id']; ?>" 
                                                class="btn btn-success btn-sm"
                                                onclick="return confirm('¿Confirmar devolución del libro?')">
                                                  Devolver
                                             </a>
                                         <?php endif; ?>
-                                        <a href="index.php?ruta=prestamos/ver&id=<?php echo $prestamo['id']; ?>" 
+                                        <a href="index.php?ruta=prestamos&accion=ver&id=<?php echo $prestamo['id']; ?>" 
                                            class="btn btn-primary btn-sm">
                                              Ver
                                         </a>

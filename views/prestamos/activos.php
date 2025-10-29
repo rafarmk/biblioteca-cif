@@ -191,14 +191,14 @@
                 <a href="index.php?ruta=prestamos" class="btn-modern btn-primary-modern">
                     <i class="fas fa-list"></i> Todos
                 </a>
-                <a href="index.php?ruta=prestamos/activos" class="btn-modern btn-success-modern">
+                <a href="index.php?ruta=prestamos&accion=activos" class="btn-modern btn-success-modern">
                     <i class="fas fa-book-open"></i> Activos
                 </a>
-                <a href="index.php?ruta=prestamos/atrasados" class="btn-modern btn-danger-modern">
+                <a href="index.php?ruta=prestamos&accion=atrasados" class="btn-modern btn-danger-modern">
                     <i class="fas fa-exclamation-triangle"></i> Atrasados
                 </a>
             </div>
-            <a href="index.php?ruta=prestamos/crear" class="btn-modern btn-success-modern">
+            <a href="index.php?ruta=prestamos&accion=crear" class="btn-modern btn-success-modern">
                 <i class="fas fa-plus"></i> Nuevo PrÃ©stamo
             </a>
         </div>
@@ -267,7 +267,7 @@
                                 <?php endif; ?>
                             </td>
                             <td>
-                                <form method="POST" action="index.php?ruta=prestamos/devolver&id=<?php echo $prestamo['id']; ?>" 
+                                <form method="POST" action="index.php?ruta=prestamos&accion=devolver&id=<?php echo $prestamo['id']; ?>" 
                                       style="display: inline;">
                                     <button type="submit" class="btn-action btn-return" 
                                             title="Registrar devoluciÃ³n"

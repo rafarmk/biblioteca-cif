@@ -243,7 +243,7 @@
 
             <?php if ($estado === 'activo' || $estado === 'atrasado'): ?>
             <div style="margin-top: 40px; text-align: center;">
-                <a href="index.php?ruta=prestamos/devolver&id=<?php echo $datos['id']; ?>" 
+                <a href="index.php?ruta=prestamos&accion=devolver&id=<?php echo $datos['id']; ?>" 
                    class="btn btn-secondary"
                    onclick="return confirm('¿Confirmar devolución del libro?')"
                    style="background: var(--success); padding: 15px 40px; font-size: 16px;">

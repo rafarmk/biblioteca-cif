@@ -43,6 +43,11 @@ class Usuario {
                       direccion = :direccion,
                       oni = :oni,
                       dui = :dui,
+                      token_temporal = :token_temporal,
+                      es_menor_edad = :es_menor_edad,
+                      tutor_nombre = :tutor_nombre,
+                      tutor_contacto = :tutor_contacto,
+                      tutor_dui = :tutor_dui,
                       password = :password,
                       estado = :estado";
 
@@ -69,6 +74,11 @@ class Usuario {
         $stmt->bindParam(":direccion", $this->direccion);
         $stmt->bindParam(":oni", $this->oni);
         $stmt->bindParam(":dui", $this->dui);
+        $stmt->bindParam(":token_temporal", $this->token_temporal);
+        $stmt->bindParam(":es_menor_edad", $this->es_menor_edad);
+        $stmt->bindParam(":tutor_nombre", $this->tutor_nombre);
+        $stmt->bindParam(":tutor_contacto", $this->tutor_contacto);
+        $stmt->bindParam(":tutor_dui", $this->tutor_dui);
         $stmt->bindParam(":password", $this->password);
         $stmt->bindParam(":estado", $this->estado);
 

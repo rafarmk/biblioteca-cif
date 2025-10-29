@@ -154,7 +154,7 @@
             </div>
         <?php endif; ?>
 
-        <form method="POST" action="index.php?ruta=usuarios&accion=crear" id="formUsuario">
+        <form method="POST" action="index.php?ruta=usuarios&accion=guardar" id="formUsuario">
             
             <!-- Tipo de Usuario -->
             <div class="form-group">
@@ -324,14 +324,14 @@ tipoUsuario.addEventListener('change', function() {
             
         case 'estudiante_menor':
             infoBox.classList.remove('campo-oculto');
-            textoInfo.textContent = 'Se generará un token temporal automáticamente para identificar al estudiante.';
+            textoInfo.textContent = 'Se generará un token temporal automáticamente. Debe proporcionar los datos del tutor/encargado.';
             campoToken.classList.remove('campo-oculto');
-            // datosTutor.classList.remove('campo-oculto');
+            datosTutor.classList.remove('campo-oculto');
             // Generar token temporal
             inputToken.value = 'TOKEN-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9).toUpperCase();
-            // inputTutorNombre.setAttribute('required', 'required');
-            // inputTutorDui.setAttribute('required', 'required');
-            // inputTutorContacto.setAttribute('required', 'required');
+            inputTutorNombre.setAttribute('required', 'required');
+            inputTutorDui.setAttribute('required', 'required');
+            inputTutorContacto.setAttribute('required', 'required');
             break;
     }
 });
