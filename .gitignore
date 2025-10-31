@@ -37,3 +37,5 @@ ejecutar_seed.php
 verificar_prestamos.php
 temp_leer_excel.php
 index.php.backup_duplicado
+# Archivos de historial de VSCode
+.history/
