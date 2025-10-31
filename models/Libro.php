@@ -2,8 +2,7 @@
 class Libro {
     private $conn;
     private $table = "libros";
-    
-    // Propiedades definidas explícitamente
+
     public $id;
     public $titulo;
     public $autor;
@@ -17,15 +16,13 @@ class Libro {
     public $descripcion;
     public $estado;
     public $fecha_registro;
-    
-    // Constructor
+
     public function __construct($db) {
         $this->conn = $db;
     }
-    
-    // Crear libro
+
     public function crear() {
-        $query = "INSERT INTO " . $this->table . " 
+        $query = "INSERT INTO " . $this->table . "
                   SET titulo = :titulo,
                       autor = :autor,
                       isbn = :isbn,
@@ -37,58 +34,51 @@ class Libro {
                       cantidad_disponible = :cantidad_disponible,
                       descripcion = :descripcion,
                       estado = :estado";
-        
+
         $stmt = $this->conn->prepare($query);
-        
-        // Limpiar datos
+
         $this->titulo = htmlspecialchars(strip_tags($this->titulo));
         $this->autor = htmlspecialchars(strip_tags($this->autor));
         $this->isbn = htmlspecialchars(strip_tags($this->isbn ?? ''));
         $this->editorial = htmlspecialchars(strip_tags($this->editorial ?? ''));
-        $this->anio_publicacion = htmlspecialchars(strip_tags($this->anio_publicacion ?? null));
+        $this->anio_publicacion = (!empty($this->anio_publicacion)) ? intval($this->anio_publicacion) : null;
         $this->categoria = htmlspecialchars(strip_tags($this->categoria ?? ''));
         $this->ubicacion = htmlspecialchars(strip_tags($this->ubicacion ?? ''));
-        $this->cantidad_total = htmlspecialchars(strip_tags($this->cantidad_total ?? 1));
-        $this->cantidad_disponible = htmlspecialchars(strip_tags($this->cantidad_disponible ?? 1));
+        $this->cantidad_total = intval($this->cantidad_total ?? 1);
+        $this->cantidad_disponible = intval($this->cantidad_disponible ?? 1);
         $this->descripcion = htmlspecialchars(strip_tags($this->descripcion ?? ''));
         $this->estado = htmlspecialchars(strip_tags($this->estado ?? 'disponible'));
-        
-        // Bind
+
         $stmt->bindParam(":titulo", $this->titulo);
         $stmt->bindParam(":autor", $this->autor);
         $stmt->bindParam(":isbn", $this->isbn);
         $stmt->bindParam(":editorial", $this->editorial);
-        $stmt->bindParam(":anio_publicacion", $this->anio_publicacion);
+        $stmt->bindParam(":anio_publicacion", $this->anio_publicacion, PDO::PARAM_INT);
         $stmt->bindParam(":categoria", $this->categoria);
         $stmt->bindParam(":ubicacion", $this->ubicacion);
         $stmt->bindParam(":cantidad_total", $this->cantidad_total);
         $stmt->bindParam(":cantidad_disponible", $this->cantidad_disponible);
         $stmt->bindParam(":descripcion", $this->descripcion);
         $stmt->bindParam(":estado", $this->estado);
-        
-        if ($stmt->execute()) {
-            return true;
-        }
-        return false;
+
+        return $stmt->execute();
     }
-    
-    // Leer todos los libros
+
     public function leer() {
         $query = "SELECT * FROM " . $this->table . " ORDER BY fecha_registro DESC";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         return $stmt;
     }
-    
-    // Leer un libro
+
     public function leerUno() {
         $query = "SELECT * FROM " . $this->table . " WHERE id = ? LIMIT 1";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $this->id);
         $stmt->execute();
-        
+
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        
+
         if ($row) {
             $this->titulo = $row['titulo'];
             $this->autor = $row['autor'];
@@ -106,8 +96,7 @@ class Libro {
         }
         return false;
     }
-    
-    // Actualizar libro
+
     public function actualizar() {
         $query = "UPDATE " . $this->table . "
                   SET titulo = :titulo,
@@ -121,54 +110,43 @@ class Libro {
                       descripcion = :descripcion,
                       estado = :estado
                   WHERE id = :id";
-        
+
         $stmt = $this->conn->prepare($query);
-        
-        // Limpiar datos
+
         $this->titulo = htmlspecialchars(strip_tags($this->titulo));
         $this->autor = htmlspecialchars(strip_tags($this->autor));
         $this->isbn = htmlspecialchars(strip_tags($this->isbn ?? ''));
         $this->editorial = htmlspecialchars(strip_tags($this->editorial ?? ''));
-        $this->anio_publicacion = htmlspecialchars(strip_tags($this->anio_publicacion ?? null));
+        $this->anio_publicacion = (!empty($this->anio_publicacion)) ? intval($this->anio_publicacion) : null;
         $this->categoria = htmlspecialchars(strip_tags($this->categoria ?? ''));
         $this->ubicacion = htmlspecialchars(strip_tags($this->ubicacion ?? ''));
-        $this->cantidad_total = htmlspecialchars(strip_tags($this->cantidad_total ?? 1));
+        $this->cantidad_total = intval($this->cantidad_total ?? 1);
         $this->descripcion = htmlspecialchars(strip_tags($this->descripcion ?? ''));
         $this->estado = htmlspecialchars(strip_tags($this->estado ?? 'disponible'));
-        $this->id = htmlspecialchars(strip_tags($this->id));
-        
-        // Bind
+        $this->id = intval($this->id);
+
         $stmt->bindParam(":titulo", $this->titulo);
         $stmt->bindParam(":autor", $this->autor);
         $stmt->bindParam(":isbn", $this->isbn);
         $stmt->bindParam(":editorial", $this->editorial);
-        $stmt->bindParam(":anio_publicacion", $this->anio_publicacion);
+        $stmt->bindParam(":anio_publicacion", $this->anio_publicacion, PDO::PARAM_INT);
         $stmt->bindParam(":categoria", $this->categoria);
         $stmt->bindParam(":ubicacion", $this->ubicacion);
         $stmt->bindParam(":cantidad_total", $this->cantidad_total);
         $stmt->bindParam(":descripcion", $this->descripcion);
         $stmt->bindParam(":estado", $this->estado);
         $stmt->bindParam(":id", $this->id);
-        
-        if ($stmt->execute()) {
-            return true;
-        }
-        return false;
+
+        return $stmt->execute();
     }
-    
-    // Eliminar libro
+
     public function eliminar() {
         $query = "DELETE FROM " . $this->table . " WHERE id = ?";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(1, $this->id);
-        
-        if ($stmt->execute()) {
-            return true;
-        }
-        return false;
+        return $stmt->execute();
     }
-    
-    // Contar libros
+
     public function contar() {
         $query = "SELECT COUNT(*) as total FROM " . $this->table;
         $stmt = $this->conn->prepare($query);
@@ -176,8 +154,7 @@ class Libro {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row['total'];
     }
-    
-    // Contar libros disponibles
+
     public function contarDisponibles() {
         $query = "SELECT COUNT(*) as total FROM " . $this->table . " WHERE cantidad_disponible > 0";
         $stmt = $this->conn->prepare($query);
@@ -185,11 +162,10 @@ class Libro {
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
         return $row['total'];
     }
-    
-    // Actualizar disponibilidad
+
     public function actualizarDisponibilidad($libro_id, $cantidad) {
-        $query = "UPDATE " . $this->table . " 
-                  SET cantidad_disponible = cantidad_disponible + :cantidad 
+        $query = "UPDATE " . $this->table . "
+                  SET cantidad_disponible = cantidad_disponible + :cantidad
                   WHERE id = :id";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":cantidad", $cantidad);

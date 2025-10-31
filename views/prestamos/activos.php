@@ -1,289 +1,198 @@
-﻿<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PrÃ©stamos Activos - Biblioteca CIF</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        .page-header {
-            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
-            padding: 40px 0;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        .page-title {
-            color: white;
-            font-size: 2.5rem;
-            font-weight: 800;
-            text-align: center;
-            margin: 0;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-        }
-        .actions-bar {
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .btn-modern {
-            padding: 15px 30px;
-            border-radius: 15px;
-            border: none;
-            font-weight: 700;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-        }
-        .btn-primary-modern {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        .btn-success-modern {
-            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
-            color: white;
-        }
-        .btn-danger-modern {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-        }
-        .btn-modern:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        }
-        .table-container {
-            background: white;
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        }
-        .modern-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 10px;
-        }
-        .modern-table thead th {
-            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
-            color: white;
-            padding: 15px;
-            font-weight: 700;
-            text-align: left;
-            border: none;
-        }
-        .modern-table thead th:first-child { border-radius: 10px 0 0 10px; }
-        .modern-table thead th:last-child { border-radius: 0 10px 10px 0; }
-        .modern-table tbody tr {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            transition: all 0.3s;
-        }
-        .modern-table tbody tr:hover {
-            transform: scale(1.01);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-        .modern-table tbody td {
-            padding: 18px 15px;
-            border-top: 1px solid #f0f0f0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        .modern-table tbody td:first-child {
-            border-left: 1px solid #f0f0f0;
-            border-radius: 10px 0 0 10px;
-        }
-        .modern-table tbody td:last-child {
-            border-right: 1px solid #f0f0f0;
-            border-radius: 0 10px 10px 0;
-        }
-        .badge-modern {
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 13px;
-        }
-        .badge-active {
-            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
-            color: white;
-        }
-        .badge-warning {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            color: white;
-        }
-        .badge-late {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-        .btn-action {
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            border: none;
-            color: white;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-            margin: 0 3px;
-            text-decoration: none;
-        }
-        .btn-return {
-            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
-        }
-        .btn-action:hover {
-            transform: translateY(-3px) scale(1.1);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-        .alert-modern {
-            border-radius: 15px;
-            border: none;
-            padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-    </style>
-</head>
-<body>
-    <?php require_once 'views/layouts/navbar.php'; ?>
+﻿<?php require_once 'views/layouts/navbar.php'; ?>
+<style>
+.main-container {
+    max-width: 1400px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+.page-header {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px var(--shadow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 2px solid var(--border-color);
+}
+.page-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: var(--text-primary);
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+}
+.page-title i {
+    color: var(--primary);
+}
+.filters {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+.btn-modern {
+    padding: 12px 24px;
+    border-radius: 12px;
+    border: 2px solid var(--border-color);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+.btn-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--shadow);
+}
+.btn-primary-modern {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    border-color: transparent;
+}
+.btn-success-modern {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border-color: transparent;
+}
+.table-container {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 4px 20px var(--shadow);
+    border: 2px solid var(--border-color);
+    overflow-x: auto;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+thead {
+    background: var(--bg-secondary);
+}
+th {
+    padding: 15px;
+    text-align: left;
+    color: var(--text-primary);
+    font-weight: 600;
+    border-bottom: 2px solid var(--border-color);
+}
+td {
+    padding: 15px;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-color);
+}
+tbody tr:hover {
+    background: var(--bg-secondary);
+}
+.badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+.badge-success {
+    background: #10b981;
+    color: white;
+}
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+}
+.btn-success {
+    background: #10b981;
+    color: white;
+}
+.btn-primary {
+    background: var(--primary);
+    color: white;
+}
+.btn-sm:hover {
+    transform: translateY(-2px);
+}
+</style>
 
+<div class="main-container">
     <div class="page-header">
         <h1 class="page-title">
-            <i class="fas fa-book-open"></i> PrÃ©stamos Activos
+            <i class="fas fa-book-open"></i> Préstamos Activos
         </h1>
     </div>
 
-    <div class="container">
-        <?php if (isset($_SESSION['mensaje'])): ?>
-            <div class="alert alert-success alert-modern alert-dismissible fade show">
-                <i class="fas fa-check-circle"></i>
-                <?php echo $_SESSION['mensaje']; unset($_SESSION['mensaje']); ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        <?php endif; ?>
-
-        <?php if (isset($_SESSION['error'])): ?>
-            <div class="alert alert-danger alert-modern alert-dismissible fade show">
-                <i class="fas fa-exclamation-circle"></i>
-                <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
-        <?php endif; ?>
-
-        <div class="actions-bar">
-            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                <a href="index.php?ruta=prestamos" class="btn-modern btn-primary-modern">
-                    <i class="fas fa-list"></i> Todos
-                </a>
-                <a href="index.php?ruta=prestamos&accion=activos" class="btn-modern btn-success-modern">
-                    <i class="fas fa-book-open"></i> Activos
-                </a>
-                <a href="index.php?ruta=prestamos&accion=atrasados" class="btn-modern btn-danger-modern">
-                    <i class="fas fa-exclamation-triangle"></i> Atrasados
-                </a>
-            </div>
-            <a href="index.php?ruta=prestamos&accion=crear" class="btn-modern btn-success-modern">
-                <i class="fas fa-plus"></i> Nuevo PrÃ©stamo
+    <div style="margin-bottom: 20px;">
+        <div class="filters">
+            <a href="index.php?ruta=prestamos" class="btn-modern btn-primary-modern">
+                <i class="fas fa-list"></i> Todos
+            </a>
+            <a href="index.php?ruta=prestamos&accion=activos" class="btn-modern btn-success-modern">
+                <i class="fas fa-check-circle"></i> Activos
+            </a>
+            <a href="index.php?ruta=prestamos&accion=atrasados" class="btn-modern" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; border: none;">
+                <i class="fas fa-exclamation-triangle"></i> Atrasados
             </a>
         </div>
+        <a href="index.php?ruta=prestamos&accion=crear" class="btn-modern btn-success-modern" style="margin-top: 15px;">
+            <i class="fas fa-plus"></i> Nuevo Préstamo
+        </a>
+    </div>
 
-        <div class="table-container">
-            <table class="modern-table">
+    <div class="table-container">
+        <?php if (!empty($prestamos)): ?>
+            <table>
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Usuario</th>
                         <th>Libro</th>
-                        <th>Fecha PrÃ©stamo</th>
-                        <th>DevoluciÃ³n Esperada</th>
-                        <th>DÃ­as Restantes</th>
+                        <th>Fecha Préstamo</th>
+                        <th>Devolución Esperada</th>
+                        <th>Días Restantes</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if (empty($prestamos)): ?>
+                    <?php foreach ($prestamos as $prestamo): ?>
                         <tr>
-                            <td colspan="7" style="text-align: center; padding: 40px;">
-                                <i class="fas fa-check-circle" style="font-size: 50px; color: #56ab2f; display: block; margin-bottom: 15px;"></i>
-                                <span style="color: #999; font-size: 18px;">Â¡No hay prÃ©stamos activos! Todos los libros han sido devueltos.</span>
-                            </td>
-                        </tr>
-                    <?php else: ?>
-                        <?php foreach ($prestamos as $prestamo): ?>
-                        <?php
-                        $fecha_esperada = strtotime($prestamo['fecha_devolucion_esperada']);
-                        $hoy = strtotime(date('Y-m-d'));
-                        $dias_diferencia = ($fecha_esperada - $hoy) / 86400;
-                        ?>
-                        <tr>
-                            <td><strong>#<?php echo $prestamo['id']; ?></strong></td>
-                            <td>
-                                <strong><?php echo htmlspecialchars($prestamo['usuario_nombre']); ?></strong><br>
-                                <small style="color: #999;"><?php echo htmlspecialchars($prestamo['usuario_email']); ?></small>
-                            </td>
-                            <td>
-                                <strong><?php echo htmlspecialchars($prestamo['libro_titulo']); ?></strong><br>
-                                <small style="color: #999;"><?php echo htmlspecialchars($prestamo['libro_autor']); ?></small>
-                            </td>
+                            <td><?php echo $prestamo['id']; ?></td>
+                            <td><?php echo htmlspecialchars($prestamo['usuario_nombre'] ?? 'N/A'); ?></td>
+                            <td><?php echo htmlspecialchars($prestamo['libro_titulo'] ?? 'N/A'); ?></td>
                             <td><?php echo date('d/m/Y', strtotime($prestamo['fecha_prestamo'])); ?></td>
                             <td><?php echo date('d/m/Y', strtotime($prestamo['fecha_devolucion_esperada'])); ?></td>
                             <td>
-                                <?php if ($dias_diferencia < 0): ?>
-                                    <span class="badge-modern badge-late">
-                                        <i class="fas fa-exclamation-triangle"></i>
-                                        <?php echo abs($dias_diferencia); ?> dÃ­as atrasado
-                                    </span>
-                                <?php elseif ($dias_diferencia == 0): ?>
-                                    <span class="badge-modern badge-warning">
-                                        <i class="fas fa-clock"></i>
-                                        Vence hoy
-                                    </span>
-                                <?php elseif ($dias_diferencia <= 3): ?>
-                                    <span class="badge-modern badge-warning">
-                                        <i class="fas fa-clock"></i>
-                                        <?php echo $dias_diferencia; ?> dÃ­as
-                                    </span>
-                                <?php else: ?>
-                                    <span class="badge-modern badge-active">
-                                        <i class="fas fa-check"></i>
-                                        <?php echo $dias_diferencia; ?> dÃ­as
-                                    </span>
-                                <?php endif; ?>
+                                <?php 
+                                $dias = (strtotime($prestamo['fecha_devolucion_esperada']) - time()) / 86400;
+                                echo ceil($dias) . ' días';
+                                ?>
                             </td>
                             <td>
-                                <form method="POST" action="index.php?ruta=prestamos&accion=devolver&id=<?php echo $prestamo['id']; ?>" 
-                                      style="display: inline;">
-                                    <button type="submit" class="btn-action btn-return" 
-                                            title="Registrar devoluciÃ³n"
-                                            onclick="return confirm('Â¿Confirmar devoluciÃ³n del libro: <?php echo htmlspecialchars($prestamo['libro_titulo']); ?>?')">
-                                        <i class="fas fa-undo"></i>
+                                <form method="POST" action="index.php?ruta=prestamos&accion=devolver&id=<?php echo $prestamo['id']; ?>" style="display: inline;">
+                                    <button type="submit" class="btn-sm btn-success" onclick="return confirm('¿Confirmar devolución?')">
+                                        <i class="fas fa-check"></i> Devolver
                                     </button>
                                 </form>
+                                <a href="index.php?ruta=prestamos&accion=ver&id=<?php echo $prestamo['id']; ?>" class="btn-sm btn-primary">
+                                    <i class="fas fa-eye"></i> Ver
+                                </a>
                             </td>
                         </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
-        </div>
+        <?php else: ?>
+            <p style="text-align: center; color: var(--text-secondary); padding: 40px;">No hay préstamos activos</p>
+        <?php endif; ?>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<?php require_once 'views/layouts/footer.php'; ?>

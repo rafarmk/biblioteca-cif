@@ -524,7 +524,7 @@
             <div class="stat-card-icon orange"></div>
             <div class="stat-card-number"><?php echo $stats_prestamos['activos'] ?? 0; ?></div>
             <div class="stat-card-label">Préstamos Activos</div>
-            <a href="index.php?ruta=prestamos/activos" class="stat-card-link">
+            <a href="index.php?ruta=prestamos&accion=activos" class="stat-card-link">
                 Ver Activos 
             </a>
         </div>
@@ -533,7 +533,7 @@
             <div class="stat-card-icon pink"></div>
             <div class="stat-card-number"><?php echo $stats_prestamos['atrasados'] ?? 0; ?></div>
             <div class="stat-card-label">Préstamos Atrasados</div>
-            <a href="index.php?ruta=prestamos/atrasados" class="stat-card-link">
+            <a href="index.php?ruta=prestamos&accion=atrasados" class="stat-card-link">
                 Ver Atrasados 
             </a>
         </div>

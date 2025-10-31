@@ -1,161 +1,233 @@
-﻿<?php
-require_once 'models/Usuario.php';
-
-// Log de depuración
-file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - Inicio UsuarioController\n", FILE_APPEND);
+<?php
+require_once 'config/Database.php';
 
 class UsuarioController {
     private $db;
-    private $usuario;
-    
+
     public function __construct($db) {
         $this->db = $db;
-        $this->usuario = new Usuario($db);
-        file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - Constructor OK\n", FILE_APPEND);
     }
-    
+
     public function index() {
-        $stmt = $this->usuario->leer();
+        // Obtener usuarios pendientes primero
+        $queryPendientes = "SELECT * FROM usuarios WHERE estado = 'pendiente' ORDER BY fecha_registro DESC";
+        $stmtPendientes = $this->db->prepare($queryPendientes);
+        $stmtPendientes->execute();
+        $usuariosPendientes = $stmtPendientes->fetchAll(PDO::FETCH_ASSOC);
+
+        // Obtener todos los usuarios
+        $query = "SELECT * FROM usuarios ORDER BY fecha_registro DESC";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
         $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        require_once 'views/layouts/navbar.php';
         require_once 'views/usuarios/index.php';
     }
-    
+
     public function crear() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $emailExistente = $this->usuario->buscarPorEmail($_POST['email'] ?? '');
-            if ($emailExistente) {
-                $error = "El email ya está registrado. Por favor use otro email.";
-                require_once 'views/usuarios/crear.php';
-                return;
+            $nombre = $_POST['nombre'] ?? '';
+            $email = $_POST['email'] ?? '';
+            $telefono = $_POST['telefono'] ?? '';
+            $direccion = $_POST['direccion'] ?? '';
+            $tipo_usuario = $_POST['tipo_usuario'] ?? 'estudiante_mayor';
+            $dui = $_POST['dui'] ?? '';
+            $password = $_POST['password'] ?? '';
+
+            if (empty($nombre) || empty($email)) {
+                $_SESSION['error'] = "Nombre y email son obligatorios";
+                header("Location: index.php?ruta=usuarios");
+                exit();
             }
-            
-            $this->usuario->tipo_usuario = $_POST['tipo_usuario'] ?? 'estudiante_mayor';
-            $this->usuario->nombre = $_POST['nombre'];
-            $this->usuario->email = $_POST['email'] ?? null;
-            $this->usuario->telefono = $_POST['telefono'] ?? null;
-            $this->usuario->direccion = $_POST['direccion'] ?? null;
-            $this->usuario->oni = $_POST['oni'] ?? null;
-            $this->usuario->dui = $_POST['dui'] ?? null;
-            $this->usuario->password = $_POST['password'] ?? 'password123';
-            $this->usuario->estado = 'activo';
-            
-            try {
-                if ($this->usuario->crear()) {
-                    header("Location: index.php?ruta=usuarios&mensaje=Usuario creado exitosamente");
-                    exit();
-                } else {
-                    $error = "Error al crear el usuario";
-                }
-            } catch (PDOException $e) {
-                if ($e->getCode() == 23000) {
-                    $error = "El email ya está registrado. Por favor use otro email.";
-                } else {
-                    $error = "Error al crear el usuario: " . $e->getMessage();
-                }
-            }
+
+            // Encriptar contraseña si se proporciona
+            $password_hash = !empty($password) ? password_hash($password, PASSWORD_DEFAULT) : null;
+
+            $query = "INSERT INTO usuarios 
+                      (nombre, email, telefono, direccion, tipo_usuario, dui, password, estado, puede_prestar, dias_max_prestamo, max_libros_simultaneos)
+                      VALUES 
+                      (:nombre, :email, :telefono, :direccion, :tipo_usuario, :dui, :password, 'activo', 1, 7, 3)";
+
+            $stmt = $this->db->prepare($query);
+            $stmt->execute([
+                ':nombre' => $nombre,
+                ':email' => $email,
+                ':telefono' => $telefono,
+                ':direccion' => $direccion,
+                ':tipo_usuario' => $tipo_usuario,
+                ':dui' => $dui,
+                ':password' => $password_hash
+            ]);
+
+            $_SESSION['mensaje'] = "Usuario creado exitosamente";
+            header("Location: index.php?ruta=usuarios");
+            exit();
         }
+
+        require_once 'views/layouts/navbar.php';
         require_once 'views/usuarios/crear.php';
     }
-    
+
     public function editar() {
-        file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - Inicio editar()\n", FILE_APPEND);
-        
-        try {
-            if (isset($_GET['id'])) {
-                file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - ID: " . $_GET['id'] . "\n", FILE_APPEND);
-                
-                $this->usuario->id = $_GET['id'];
-                
-                file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - Antes de leerUno()\n", FILE_APPEND);
-                $this->usuario->leerUno();
-                file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - Después de leerUno()\n", FILE_APPEND);
-                
-                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                    file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - Es POST\n", FILE_APPEND);
-                    
-                    $emailExistente = $this->usuario->buscarPorEmail($_POST['email'] ?? '');
-                    if ($emailExistente && $emailExistente['id'] != $this->usuario->id) {
-                        $error = "El email ya está registrado en otro usuario.";
-                        $usuario = [
-                            'id' => $this->usuario->id,
-                            'tipo_usuario' => $this->usuario->tipo_usuario,
-                            'nombre' => $this->usuario->nombre,
-                            'email' => $this->usuario->email,
-                            'telefono' => $this->usuario->telefono,
-                            'direccion' => $this->usuario->direccion,
-                            'oni' => $this->usuario->oni,
-                            'dui' => $this->usuario->dui,
-                            'estado' => $this->usuario->estado
-                        ];
-                        require_once 'views/usuarios/editar.php';
-                        return;
-                    }
-                    
-                    $this->usuario->tipo_usuario = $_POST['tipo_usuario'] ?? 'estudiante_mayor';
-                    $this->usuario->nombre = $_POST['nombre'];
-                    $this->usuario->email = $_POST['email'] ?? null;
-                    $this->usuario->telefono = $_POST['telefono'] ?? null;
-                    $this->usuario->direccion = $_POST['direccion'] ?? null;
-                    $this->usuario->oni = $_POST['oni'] ?? null;
-                    $this->usuario->dui = $_POST['dui'] ?? null;
-                    $this->usuario->estado = $_POST['estado'] ?? 'activo';
-                    
-                    file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - Antes de actualizar()\n", FILE_APPEND);
-                    
-                    try {
-                        if ($this->usuario->actualizar()) {
-                            file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - Actualización OK, redirigiendo\n", FILE_APPEND);
-                            header("Location: index.php?ruta=usuarios&mensaje=Usuario actualizado exitosamente");
-                            exit();
-                        } else {
-                            file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - Error al actualizar\n", FILE_APPEND);
-                            $error = "Error al actualizar el usuario";
-                        }
-                    } catch (PDOException $e) {
-                        file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - Excepción: " . $e->getMessage() . "\n", FILE_APPEND);
-                        if ($e->getCode() == 23000) {
-                            $error = "El email ya está registrado en otro usuario.";
-                        } else {
-                            $error = "Error al actualizar el usuario: " . $e->getMessage();
-                        }
-                    }
-                }
-                
-                file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - Preparando array usuario\n", FILE_APPEND);
-                
-                $usuario = [
-                    'id' => $this->usuario->id,
-                    'tipo_usuario' => $this->usuario->tipo_usuario,
-                    'nombre' => $this->usuario->nombre,
-                    'email' => $this->usuario->email,
-                    'telefono' => $this->usuario->telefono,
-                    'direccion' => $this->usuario->direccion,
-                    'oni' => $this->usuario->oni,
-                    'dui' => $this->usuario->dui,
-                    'estado' => $this->usuario->estado
-                ];
-                
-                file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - Antes de cargar vista\n", FILE_APPEND);
-                require_once 'views/usuarios/editar.php';
-                file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - Después de cargar vista\n", FILE_APPEND);
+        $id = $_GET['id'] ?? null;
+
+        if (!$id) {
+            $_SESSION['error'] = "ID de usuario no válido";
+            header("Location: index.php?ruta=usuarios");
+            exit();
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $nombre = $_POST['nombre'] ?? '';
+            $email = $_POST['email'] ?? '';
+            $telefono = $_POST['telefono'] ?? '';
+            $direccion = $_POST['direccion'] ?? '';
+            $tipo_usuario = $_POST['tipo_usuario'] ?? 'estudiante_mayor';
+            $estado = $_POST['estado'] ?? 'activo';
+            $dui = $_POST['dui'] ?? '';
+            $password = $_POST['password'] ?? '';
+
+            if (empty($nombre) || empty($email)) {
+                $_SESSION['error'] = "Nombre y email son obligatorios";
+                header("Location: index.php?ruta=usuarios&accion=editar&id=$id");
+                exit();
             }
-        } catch (Exception $e) {
-            file_put_contents('debug_editar.log', date('Y-m-d H:i:s') . " - EXCEPCIÓN FATAL: " . $e->getMessage() . "\n", FILE_APPEND);
-            die("Error fatal: " . $e->getMessage());
+
+            // Actualizar contraseña solo si se proporciona una nueva
+            if (!empty($password)) {
+                $password_hash = password_hash($password, PASSWORD_DEFAULT);
+                $query = "UPDATE usuarios 
+                          SET nombre = :nombre, email = :email, telefono = :telefono, 
+                              direccion = :direccion, tipo_usuario = :tipo_usuario, 
+                              estado = :estado, dui = :dui, password = :password
+                          WHERE id = :id";
+                $params = [
+                    ':nombre' => $nombre,
+                    ':email' => $email,
+                    ':telefono' => $telefono,
+                    ':direccion' => $direccion,
+                    ':tipo_usuario' => $tipo_usuario,
+                    ':estado' => $estado,
+                    ':dui' => $dui,
+                    ':password' => $password_hash,
+                    ':id' => $id
+                ];
+            } else {
+                $query = "UPDATE usuarios 
+                          SET nombre = :nombre, email = :email, telefono = :telefono, 
+                              direccion = :direccion, tipo_usuario = :tipo_usuario, 
+                              estado = :estado, dui = :dui
+                          WHERE id = :id";
+                $params = [
+                    ':nombre' => $nombre,
+                    ':email' => $email,
+                    ':telefono' => $telefono,
+                    ':direccion' => $direccion,
+                    ':tipo_usuario' => $tipo_usuario,
+                    ':estado' => $estado,
+                    ':dui' => $dui,
+                    ':id' => $id
+                ];
+            }
+
+            $stmt = $this->db->prepare($query);
+            $stmt->execute($params);
+
+            $_SESSION['mensaje'] = "Usuario actualizado exitosamente";
+            header("Location: index.php?ruta=usuarios");
+            exit();
+        }
+
+        $query = "SELECT * FROM usuarios WHERE id = :id";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$usuario) {
+            $_SESSION['error'] = "Usuario no encontrado";
+            header("Location: index.php?ruta=usuarios");
+            exit();
+        }
+
+        require_once 'views/layouts/navbar.php';
+        require_once 'views/usuarios/editar.php';
+    }
+
+    public function eliminar() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = $_POST['id'] ?? null;
+
+            if (!$id) {
+                $_SESSION['error'] = "ID de usuario no válido";
+                header("Location: index.php?ruta=usuarios");
+                exit();
+            }
+
+            $query = "DELETE FROM usuarios WHERE id = :id";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(':id', $id);
+            $stmt->execute();
+
+            $_SESSION['mensaje'] = "Usuario eliminado exitosamente";
+            header("Location: index.php?ruta=usuarios");
+            exit();
         }
     }
-    
-    public function eliminar() {
-        if (isset($_GET['id'])) {
-            $this->usuario->id = $_GET['id'];
-            if ($this->usuario->eliminar()) {
-                header("Location: index.php?ruta=usuarios&mensaje=Usuario eliminado exitosamente");
-                exit();
-            } else {
-                header("Location: index.php?ruta=usuarios&error=Error al eliminar el usuario");
+
+    public function aprobar() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = $_POST['id'] ?? null;
+
+            if (!$id) {
+                $_SESSION['error'] = "ID de usuario no válido";
+                header("Location: index.php?ruta=usuarios");
                 exit();
             }
+
+            // Cambiar estado a activo y habilitar préstamos
+            $query = "UPDATE usuarios 
+                      SET estado = 'activo', puede_prestar = 1
+                      WHERE id = :id";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(':id', $id);
+            $stmt->execute();
+
+            $_SESSION['mensaje'] = "Usuario aprobado exitosamente";
+            header("Location: index.php?ruta=usuarios");
+            exit();
         }
+    }
+
+    public function rechazar() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $id = $_POST['id'] ?? null;
+
+            if (!$id) {
+                $_SESSION['error'] = "ID de usuario no válido";
+                header("Location: index.php?ruta=usuarios");
+                exit();
+            }
+
+            // Eliminar el usuario rechazado
+            $query = "DELETE FROM usuarios WHERE id = :id";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(':id', $id);
+            $stmt->execute();
+
+            $_SESSION['mensaje'] = "Usuario rechazado y eliminado";
+            header("Location: index.php?ruta=usuarios");
+            exit();
+        }
+    }
+
+    public function contarPendientes() {
+        $query = "SELECT COUNT(*) as total FROM usuarios WHERE estado = 'pendiente'";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['total'];
     }
 }
 ?>

@@ -144,6 +144,8 @@ footer { flex-shrink: 0; margin-top: auto !important; }
 }
 
 .table thead th {
+    text-align: center !important;
+    padding: 18px;
     background: var(--bg-secondary);
     padding: 15px 20px;
     text-align: left;
@@ -164,6 +166,9 @@ footer { flex-shrink: 0; margin-top: auto !important; }
 }
 
 .table tbody td {
+    text-align: center !important;
+    vertical-align: middle !important;
+    padding: 16px;
     padding: 18px 20px;
     color: var(--text-secondary);
     font-size: 14px;
@@ -299,9 +304,8 @@ footer { flex-shrink: 0; margin-top: auto !important; }
                                     <div class="action-buttons">
                                         <?php if ($estado === 'activo' || $estado === 'atrasado'): ?>
                                             <a href="index.php?ruta=prestamos&accion=devolver&id=<?php echo $prestamo['id']; ?>" 
-                                               class="btn btn-success btn-sm"
-                                               onclick="return confirm('¿Confirmar devolución del libro?')">
-                                                 Devolver
+                                               class="btn btn-devolver btn-sm"
+                                               onclick="return confirm('¿Confirmar devolución del libro?')"><i class="fas fa-undo"></i> Devolver
                                             </a>
                                         <?php endif; ?>
                                         <a href="index.php?ruta=prestamos&accion=ver&id=<?php echo $prestamo['id']; ?>" 
@@ -338,5 +342,7 @@ document.getElementById('searchInput').addEventListener('input', function(e) {
 </script>
 
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>
+
+
 
 

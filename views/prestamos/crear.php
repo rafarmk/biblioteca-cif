@@ -250,7 +250,7 @@ label {
     <?php endif; ?>
 
     <div class="content-card">
-        <form action="index.php?ruta=prestamos/guardar" method="POST" id="formPrestamo">
+        <form action="index.php?ruta=prestamos&accion=crear" method="POST" id="formPrestamo">
             
             <div class="form-group">
                 <label for="usuario_id"> Usuario *</label>
@@ -360,4 +360,5 @@ document.getElementById('formPrestamo').addEventListener('submit', function(e) {
 </script>
 
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>
+
 

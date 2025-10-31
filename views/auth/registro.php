@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Biblioteca CIF</title>
+    <title>Registro - Biblioteca CIF</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
@@ -53,32 +53,31 @@
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
-            padding-bottom: 100px;
+            padding: 40px 20px 120px;
         }
 
-        .login-container {
+        .registro-container {
             width: 100%;
-            max-width: 500px;
-            padding: 20px;
+            max-width: 600px;
             z-index: 10;
         }
 
-        .login-card {
+        .registro-card {
             background: var(--bg-card);
             border-radius: 24px;
-            padding: 50px 40px;
+            padding: 40px;
             box-shadow: 0 10px 50px var(--shadow);
             border: 2px solid var(--border-color);
         }
 
-        .login-header {
+        .registro-header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
-        .login-icon {
-            font-size: 4.5rem;
-            margin-bottom: 20px;
+        .registro-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
             animation: float 3s ease-in-out infinite;
         }
 
@@ -87,74 +86,93 @@
             50% { transform: translateY(-10px); }
         }
 
-        .login-header h1 {
-            font-size: 2.2rem;
+        .registro-header h1 {
+            font-size: 2rem;
             font-weight: 700;
             color: var(--text-primary);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
-        .login-header p {
+        .registro-header p {
             color: var(--text-secondary);
-            font-size: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
         }
 
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             font-weight: 600;
             color: var(--text-primary);
-            font-size: 14px;
+            font-size: 13px;
         }
 
-        .form-group input {
+        .form-group input,
+        .form-group select {
             width: 100%;
-            padding: 14px 18px;
+            padding: 12px 16px;
             border: 2px solid var(--border-color);
-            border-radius: 12px;
+            border-radius: 10px;
             background: var(--bg-primary);
             color: var(--text-primary);
-            font-size: 15px;
+            font-size: 14px;
             transition: all 0.3s ease;
         }
 
-        .form-group input:focus {
+        .form-group input:focus,
+        .form-group select:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
-        .btn-login {
+        .btn-registro {
             width: 100%;
-            padding: 16px;
+            padding: 14px;
             background: var(--primary);
             color: white;
             border: none;
             border-radius: 12px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
             margin-top: 10px;
         }
 
-        .btn-login:hover {
+        .btn-registro:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
         }
 
         .alert-error {
-            padding: 15px 20px;
-            border-radius: 12px;
-            margin-bottom: 25px;
+            padding: 12px 18px;
+            border-radius: 10px;
+            margin-bottom: 20px;
             background: #fee2e2;
             color: #991b1b;
             border: 2px solid #fecaca;
-            text-align: center;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            padding: 12px 18px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            background: #d1fae5;
+            color: #065f46;
+            border: 2px solid #a7f3d0;
+            font-size: 14px;
         }
 
         .login-link {
@@ -204,70 +222,111 @@
             background: var(--bg-card);
             color: var(--text-secondary);
             text-align: center;
-            padding: 20px;
+            padding: 15px;
             border-top: 3px solid var(--primary);
             box-shadow: 0 -6px 25px var(--shadow);
             z-index: 100;
-        }
-
-        footer p:first-child {
-            margin: 0;
-            font-size: 17px;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        footer p:last-child {
-            margin: 5px 0 0 0;
-            font-size: 14px;
-            opacity: 0.85;
+            font-size: 13px;
         }
 
         @media (max-width: 600px) {
-            .login-card {
-                padding: 40px 30px;
+            .form-row {
+                grid-template-columns: 1fr;
             }
-
-            body {
-                padding-bottom: 120px;
+            
+            .registro-card {
+                padding: 30px 25px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-card">
-            <div class="login-header">
-                <div class="login-icon">📚</div>
-                <h1>Biblioteca CIF</h1>
-                <p>Sistema de Gestión de Préstamos</p>
+    <div class="registro-container">
+        <div class="registro-card">
+            <div class="registro-header">
+                <div class="registro-icon">📝</div>
+                <h1>Crear Cuenta</h1>
+                <p>Regístrate para solicitar préstamos de libros</p>
             </div>
 
             <?php if (isset($error)): ?>
                 <div class="alert-error">
-                    <?php echo htmlspecialchars($error); ?>
+                    ⚠️ <?php echo htmlspecialchars($error); ?>
                 </div>
             <?php endif; ?>
 
-            <form method="POST" action="index.php?ruta=login">
-                <div class="form-group">
-                    <label for="email">📧 Correo Electrónico</label>
-                    <input type="email" id="email" name="email" required
-                           placeholder="usuario@email.com" autocomplete="email">
+            <?php if (isset($success)): ?>
+                <div class="alert-success">
+                    ✅ <?php echo htmlspecialchars($success); ?>
+                </div>
+            <?php endif; ?>
+
+            <form method="POST" action="index.php?ruta=registro">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nombre">👤 Nombre Completo</label>
+                        <input type="text" id="nombre" name="nombre" required
+                               placeholder="Juan Pérez" value="<?php echo $_POST['nombre'] ?? ''; ?>">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">📧 Correo Electrónico</label>
+                        <input type="email" id="email" name="email" required
+                               placeholder="usuario@email.com" value="<?php echo $_POST['email'] ?? ''; ?>">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="telefono">📱 Teléfono</label>
+                        <input type="tel" id="telefono" name="telefono" required
+                               placeholder="7777-7777" value="<?php echo $_POST['telefono'] ?? ''; ?>">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dui">🪪 DUI</label>
+                        <input type="text" id="dui" name="dui" required
+                               placeholder="00000000-0" value="<?php echo $_POST['dui'] ?? ''; ?>">
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="password">🔒 Contraseña</label>
-                    <input type="password" id="password" name="password" required
-                           placeholder="••••••••" autocomplete="current-password">
+                    <label for="direccion">🏠 Dirección</label>
+                    <input type="text" id="direccion" name="direccion" required
+                           placeholder="Calle, Colonia, Ciudad" value="<?php echo $_POST['direccion'] ?? ''; ?>">
                 </div>
 
-                <button type="submit" class="btn-login">
-                    🔓 Iniciar Sesión
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="password">🔒 Contraseña</label>
+                        <input type="password" id="password" name="password" required
+                               placeholder="Mínimo 6 caracteres" minlength="6">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password_confirm">🔒 Confirmar Contraseña</label>
+                        <input type="password" id="password_confirm" name="password_confirm" required
+                               placeholder="Repetir contraseña" minlength="6">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="tipo_usuario">👥 Tipo de Usuario</label>
+                    <select id="tipo_usuario" name="tipo_usuario" required>
+                        <option value="estudiante_mayor">Estudiante (Mayor de edad)</option>
+                        <option value="estudiante_menor">Estudiante (Menor de edad)</option>
+                        <option value="visitante">Visitante</option>
+                        <option value="personal_administrativo">Personal Administrativo</option>
+                        <option value="personal_operativo">Personal Operativo</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-registro">
+                    ✅ Crear Cuenta
                 </button>
 
                 <div class="login-link">
-                    ¿No tienes cuenta? <a href="index.php?ruta=registro">Regístrate aquí</a>
+                    ¿Ya tienes cuenta? <a href="index.php?ruta=login">Iniciar Sesión</a>
                 </div>
             </form>
         </div>
@@ -279,8 +338,7 @@
     </div>
 
     <footer>
-        <p>📚 Gestión de Infraestructura</p>
-        <p>© 2025 Sistema de Biblioteca CIF. Todos los derechos reservados.</p>
+        <p>📚 2025 Sistema de Biblioteca CIF. Todos los derechos reservados.</p>
     </footer>
 
     <script>

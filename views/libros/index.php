@@ -1,314 +1,264 @@
-﻿<?php require_once __DIR__ . '/../layouts/navbar.php'; ?>
+﻿<?php require_once 'views/layouts/navbar.php'; ?>
 
 <style>
-/* Centrado para esta vista */
-body > div:not(.modern-navbar) {
+.container {
     max-width: 1400px;
     margin: 0 auto;
     padding: 20px;
 }
 
-/* Forzar footer al final de la página */
-html, body {
-    height: 100%;
-    margin: 0;
-}
-
-body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
-.main-container,
-body > div:first-of-type {
-    flex: 1 0 auto;
-}
-
-footer {
-    flex-shrink: 0;
-    margin-top: auto !important;
-}
-</style>
-
-<style>
-.main-container {
-    max-width: 1400px;
-    margin: 40px auto;
-    padding: 0 20px;
-    position: relative;
-    z-index: 1;
-}
-
 .page-header {
-    background: var(--bg-card);
-    border-radius: 16px;
-    padding: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 30px;
-    box-shadow: 0 4px 20px var(--shadow);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
-    border: 2px solid var(--border-color);
 }
 
-[data-theme="premium"] .page-header {
-    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
-    border-color: rgba(56, 189, 248, 0.2);
-}
-
-.page-header h1 {
+.page-title {
     font-size: 2rem;
-    color: var(--text-primary);
     font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 15px;
+    color: var(--text-primary);
 }
 
-.btn {
-    padding: 12px 24px;
-    border: none;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+.stats-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
 }
 
-.btn-primary {
-    background: var(--primary);
-    color: white;
-    box-shadow: 0 4px 15px var(--shadow);
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    opacity: 0.9;
-}
-
-.content-card {
+.stat-card {
     background: var(--bg-card);
     border-radius: 16px;
-    box-shadow: 0 4px 20px var(--shadow);
-    overflow: hidden;
+    padding: 25px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    border: 2px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+
+.stat-card-icon.blue {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+}
+
+.stat-card-icon.green {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
+.stat-card-icon.orange {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+}
+
+.stat-card h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.stat-card p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.search-container {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     border: 2px solid var(--border-color);
 }
 
-[data-theme="premium"] .content-card {
-    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
-    border-color: rgba(56, 189, 248, 0.2);
-}
-
-.card-header {
-    padding: 25px 30px;
-    background: var(--bg-secondary);
+.search-box {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 15px;
-    border-bottom: 2px solid var(--border-color);
-}
-
-.card-header h2 {
-    color: var(--text-primary);
-    font-size: 1.5rem;
-    font-weight: 600;
+    gap: 12px;
 }
 
 .search-input {
-    padding: 12px 20px;
+    flex: 1;
+    padding: 14px 20px;
     border: 2px solid var(--border-color);
+    border-radius: 12px;
     background: var(--bg-primary);
-    border-radius: 10px;
     color: var(--text-primary);
     font-size: 14px;
-    width: 300px;
-    transition: all 0.3s ease;
 }
 
 .search-input:focus {
     outline: none;
     border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
 }
 
-.table-container {
-    overflow-x: auto;
-    padding: 30px;
-}
-
-.table {
+table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.table thead th {
-    background: var(--bg-secondary);
-    padding: 15px 20px;
+thead {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+thead th {
+    padding: 18px 16px;
     text-align: left;
-    font-weight: 600;
-    color: var(--text-primary);
-    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    font-size: 0.85rem;
     text-transform: uppercase;
-    border-bottom: 2px solid var(--border-color);
+    text-align: center;
+    text-align: center;
 }
 
-.table tbody tr {
+tbody td {
+    padding: 16px;
     border-bottom: 1px solid var(--border-color);
-    transition: all 0.3s ease;
+    color: var(--text-primary);
+    vertical-align: middle;
+    text-align: center;
+    text-align: center;
 }
 
-.table tbody tr:hover {
+tbody tr:hover {
     background: var(--bg-secondary);
 }
 
-.table tbody td {
-    padding: 18px 20px;
-    color: var(--text-secondary);
-    font-size: 14px;
-}
-
-.badge {
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 12px;
+.book-title {
     font-weight: 600;
-    display: inline-block;
 }
 
-.badge-success {
-    background: #d1fae5;
-    color: #065f46;
-}
-
-.badge-warning {
-    background: #fef3c7;
-    color: #92400e;
-}
-
-.action-buttons {
+.actions {
     display: flex;
     gap: 8px;
 }
-
-.btn-sm {
-    padding: 8px 16px;
-    font-size: 13px;
-}
-
-/* Forzar footer al final de la página */
-html, body {
-    height: 100%;
-    margin: 0;
-}
-
-body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
-.main-container,
-body > div:first-of-type {
-    flex: 1 0 auto;
-}
-
-footer {
-    flex-shrink: 0;
-    margin-top: auto !important;
-}
 </style>
 
-<div class="main-container">
+<div class="container">
     <div class="page-header">
-        <h1> Gestión de Libros</h1>
+        <h1 class="page-title"><i class="fas fa-book"></i> Gestión de Libros</h1>
         <a href="index.php?ruta=libros&accion=crear" class="btn btn-primary">
-             Agregar Libro
+            <i class="fas fa-plus"></i> Agregar Libro
         </a>
     </div>
 
-    <div class="content-card">
-        <div class="card-header">
-            <h2>Catálogo de Libros</h2>
-            <input type="text" id="searchInput" placeholder=" Buscar libro..." class="search-input">
+    <?php if (isset($_SESSION['mensaje'])): ?>
+        <div class="alert alert-success">
+            <div class="alert-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="alert-content"><?php echo htmlspecialchars($_SESSION['mensaje']); unset($_SESSION['mensaje']); ?></div>
         </div>
-        
-        <div class="table-container">
-            <?php if (isset($libros) && count($libros) > 0): ?>
-                <table class="table">
-                    <thead>
+    <?php endif; ?>
+
+    <?php if (isset($_SESSION['error'])): ?>
+        <div class="alert alert-error">
+            <div class="alert-icon"><i class="fas fa-exclamation-circle"></i></div>
+            <div class="alert-content"><?php echo htmlspecialchars($_SESSION['error']); unset($_SESSION['error']); ?></div>
+        </div>
+    <?php endif; ?>
+
+    <div class="stats-cards">
+        <div class="stat-card">
+            <div class="stat-card-icon blue"><i class="fas fa-book"></i></div>
+            <h3><?php echo count($libros); ?></h3>
+            <p>Total de Libros</p>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-icon green"><i class="fas fa-check-circle"></i></div>
+            <h3><?php echo count(array_filter($libros, fn($l) => $l['estado'] === 'disponible')); ?></h3>
+            <p>Libros Disponibles</p>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-icon orange"><i class="fas fa-handshake"></i></div>
+            <h3><?php echo count(array_filter($libros, fn($l) => $l['estado'] === 'prestado')); ?></h3>
+            <p>Libros Prestados</p>
+        </div>
+    </div>
+
+    <div class="search-container">
+        <form method="GET" action="index.php">
+            <input type="hidden" name="ruta" value="libros">
+            <div class="search-box">
+                <input type="text" name="buscar" class="search-input" placeholder=" Buscar por título, autor, ISBN..." value="<?php echo htmlspecialchars($_GET['buscar'] ?? ''); ?>">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Buscar</button>
+                <?php if (isset($_GET['buscar'])): ?>
+                    <a href="index.php?ruta=libros" class="btn btn-secondary"><i class="fas fa-times"></i> Limpiar</a>
+                <?php endif; ?>
+            </div>
+        </form>
+    </div>
+
+    <div class="card">
+        <h2 style="margin-bottom: 20px;"> Catálogo de Libros</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Título</th>
+                    <th>Autor</th>
+                    <th>ISBN</th>
+                    <th>Categoría</th>
+                    <th>Año</th>
+                    <th>Disponibles</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (empty($libros)): ?>
+                    <tr><td colspan="9" style="text-align: center; padding: 40px;">No hay libros registrados</td></tr>
+                <?php else: ?>
+                    <?php foreach ($libros as $libro): ?>
                         <tr>
-                            <th>ID</th>
-                            <th>Título</th>
-                            <th>Autor</th>
-                            <th>ISBN</th>
-                            <th>Categoría</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
+                            <td><strong>#<?php echo $libro['id']; ?></strong></td>
+                            <td class="book-title"><?php echo htmlspecialchars($libro['titulo']); ?></td>
+                            <td><?php echo htmlspecialchars($libro['autor']); ?></td>
+                            <td><code style="background: var(--bg-secondary); padding: 4px 8px; border-radius: 6px;"><?php echo htmlspecialchars($libro['isbn']); ?></code></td>
+                            <td><?php echo htmlspecialchars($libro['categoria']); ?></td>
+                            <td><?php echo $libro['anio_publicacion'] ?? 'N/A'; ?></td>
+                            <td><strong style="color: var(--primary);"><?php echo $libro['cantidad_disponible']; ?></strong> / <?php echo $libro['cantidad_total']; ?></td>
+                            <td>
+                                <?php if ($libro['estado'] === 'disponible'): ?>
+                                    <span class="badge badge-success"><i class="fas fa-check"></i> Disponible</span>
+                                <?php elseif ($libro['estado'] === 'prestado'): ?>
+                                    <span class="badge badge-warning"><i class="fas fa-handshake"></i> Prestado</span>
+                                <?php else: ?>
+                                    <span class="badge badge-danger"><i class="fas fa-times"></i> No Disponible</span>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <div class="actions">
+                                    <a href="index.php?ruta=libros&accion=editar&id=<?php echo $libro['id']; ?>" class="btn btn-sm btn-secondary"><i class="fas fa-edit"></i></a>
+                                    <form method="POST" action="index.php?ruta=libros&accion=eliminar" style="display: inline;" onsubmit="return confirm('¿Eliminar este libro?');">
+                                        <input type="hidden" name="id" value="<?php echo $libro['id']; ?>">
+                                        <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                                    </form>
+                                </div>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody id="librosTable">
-                        <?php foreach ($libros as $libro): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($libro['id']); ?></td>
-                                <td><?php echo htmlspecialchars($libro['titulo']); ?></td>
-                                <td><?php echo htmlspecialchars($libro['autor']); ?></td>
-                                <td><?php echo htmlspecialchars($libro['isbn'] ?? 'N/A'); ?></td>
-                                <td><?php echo htmlspecialchars($libro['categoria'] ?? 'General'); ?></td>
-                                <td>
-                                    <?php 
-                                    $estado = $libro['cantidad_disponible'] > 0 ? 'Disponible' : 'Prestado';
-                                    $badgeClass = $estado === 'Disponible' ? 'badge-success' : 'badge-warning';
-                                    ?>
-                                    <span class="badge <?php echo $badgeClass; ?>"><?php echo $estado; ?></span>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <a href="index.php?ruta=libros&accion=editar&id=<?php echo $libro['id']; ?>" 
-                                           class="btn btn-primary btn-sm">
-                                             Editar
-                                        </a>
-                                        <a href="index.php?ruta=libros&accion=eliminar&id=<?php echo $libro['id']; ?>" 
-                                           class="btn btn-primary btn-sm" 
-                                           onclick="return confirm('¿Estás seguro de eliminar este libro?')">
-                                             Eliminar
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            <?php else: ?>
-                <div style="text-align: center; padding: 60px 20px; color: var(--text-secondary);">
-                    <div style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;"></div>
-                    <h3 style="color: var(--text-primary);">No hay libros registrados</h3>
-                    <p>Comienza agregando tu primer libro al catálogo</p>
-                </div>
-            <?php endif; ?>
-        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </tbody>
+        </table>
     </div>
 </div>
 
-<script>
-document.getElementById('searchInput').addEventListener('input', function(e) {
-    const searchTerm = e.target.value.toLowerCase();
-    const rows = document.querySelectorAll('#librosTable tr');
-    
-    rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        row.style.display = text.includes(searchTerm) ? '' : 'none';
-    });
-});
-</script>
-
-<?php require_once __DIR__ . '/../layouts/footer.php'; ?>
+</body>
+</html>
 
 

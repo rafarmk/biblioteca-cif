@@ -26,3 +26,6 @@ document.addEventListener('DOMContentLoaded', function() {
     document.documentElement.setAttribute('data-theme', savedTheme);
 });
 </script>
+
+</body>
+</html>

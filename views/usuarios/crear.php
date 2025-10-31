@@ -1,45 +1,63 @@
 ﻿<?php require_once 'views/layouts/navbar.php'; ?>
 <style>
-/* Formulario Moderno */
 .modern-form-container {
-    max-width: 900px;
+    max-width: 1100px;
     margin: 40px auto;
     padding: 0 20px;
 }
+
 .form-card {
     background: var(--bg-card);
     border-radius: 16px;
-    padding: 40px;
+    padding: 50px;
     border: 2px solid var(--border-color);
     box-shadow: 0 8px 32px var(--shadow);
 }
+
+[data-theme="premium"] .form-card {
+    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
+    border-color: rgba(56, 189, 248, 0.2);
+}
+
 .form-header {
     display: flex;
+    justify-content: space-between;
     align-items: center;
     gap: 15px;
     margin-bottom: 30px;
     padding-bottom: 20px;
     border-bottom: 2px solid var(--border-color);
 }
+
+.form-header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
 .form-header h2 {
     color: var(--text-primary);
     font-size: 1.8rem;
     font-weight: 700;
     margin: 0;
 }
+
 .form-header i {
     font-size: 2rem;
     color: var(--primary);
 }
+
 .form-row {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
     margin-bottom: 25px;
 }
+
 .form-group {
     margin-bottom: 25px;
 }
+
 .form-group label {
     display: block;
     color: var(--text-primary);
@@ -47,6 +65,7 @@
     margin-bottom: 8px;
     font-size: 0.95rem;
 }
+
 .form-group input,
 .form-group textarea,
 .form-group select {
@@ -60,6 +79,7 @@
     transition: all 0.3s ease;
     font-family: 'Poppins', sans-serif;
 }
+
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
@@ -67,13 +87,16 @@
     border-color: var(--primary);
     box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
 }
+
 .form-group input::placeholder,
 .form-group textarea::placeholder {
     color: #95a5a6;
 }
+
 .campo-oculto {
     display: none;
 }
+
 .info-box {
     background: rgba(52, 152, 219, 0.1);
     border-left: 4px solid var(--primary);
@@ -82,6 +105,7 @@
     margin-bottom: 20px;
     color: var(--text-primary);
 }
+
 .form-actions {
     display: flex;
     gap: 15px;
@@ -89,7 +113,9 @@
     padding-top: 20px;
     border-top: 2px solid var(--border-color);
 }
+
 .btn-primary-modern {
+    flex: 1;
     padding: 14px 32px;
     background: linear-gradient(135deg, var(--primary), var(--secondary));
     color: white;
@@ -101,32 +127,51 @@
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
 }
+
 .btn-primary-modern:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
 }
+
 .btn-secondary-modern {
-    padding: 14px 32px;
+    padding: 12px 24px;
     background: var(--bg-secondary);
     color: var(--text-primary);
     border: 2px solid var(--border-color);
     border-radius: 12px;
     font-weight: 600;
-    font-size: 1rem;
+    font-size: 0.95rem;
     cursor: pointer;
     transition: all 0.3s ease;
     text-decoration: none;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
+
 .btn-secondary-modern:hover {
     background: var(--bg-card);
     border-color: var(--primary);
 }
-/* Modo Oscuro */
+
+.alert {
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.alert-danger {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 2px solid #fecaca;
+}
+
 [data-theme="dark"] .form-group input,
 [data-theme="dark"] .form-group textarea,
 [data-theme="dark"] .form-group select {
@@ -134,18 +179,45 @@
     color: #ffffff;
     border-color: #4a5568;
 }
+
 [data-theme="dark"] .form-group input:focus,
 [data-theme="dark"] .form-group textarea:focus,
 [data-theme="dark"] .form-group select:focus {
     border-color: #3b82f6;
 }
+
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .form-card {
+        padding: 30px;
+    }
+}
+
+html, body { height: 100%; margin: 0; }
+body { display: flex; flex-direction: column; min-height: 100vh; }
+.modern-form-container { flex: 1 0 auto; }
+footer { flex-shrink: 0; margin-top: auto !important; }
 </style>
 
 <div class="modern-form-container">
     <div class="form-card">
         <div class="form-header">
-            <i class="fas fa-user-plus"></i>
-            <h2>Crear Nuevo Usuario</h2>
+            <div class="form-header-left">
+                <i class="fas fa-user-plus"></i>
+                <h2>Crear Nuevo Usuario</h2>
+            </div>
+            <a href="index.php?ruta=usuarios" class="btn-secondary-modern">
+                <i class="fas fa-arrow-left"></i>
+                Volver
+            </a>
         </div>
 
         <?php if (isset($error)): ?>
@@ -155,8 +227,7 @@
         <?php endif; ?>
 
         <form method="POST" action="index.php?ruta=usuarios&accion=crear" id="formUsuario">
-            
-            <!-- Tipo de Usuario -->
+
             <div class="form-group">
                 <label>Tipo de Usuario *</label>
                 <select name="tipo_usuario" id="tipo_usuario" required>
@@ -173,7 +244,6 @@
                 <i class="fas fa-info-circle"></i> <span id="texto-info"></span>
             </div>
 
-            <!-- Campos Básicos -->
             <div class="form-row">
                 <div class="form-group">
                     <label>Nombre Completo *</label>
@@ -186,28 +256,24 @@
                 </div>
             </div>
 
-            <!-- Campo ONI (Personal Administrativo/Operativo) -->
             <div class="form-group campo-oculto" id="campo-oni">
                 <label>Número ONI *</label>
                 <input type="text" name="oni" id="oni" placeholder="Ej: 12345ABC o 123456">
             </div>
 
-            <!-- Campo DUI (Visitas/Estudiante Mayor) -->
             <div class="form-group campo-oculto" id="campo-dui">
                 <label>Número de DUI *</label>
                 <input type="text" name="dui" id="dui" placeholder="Ej: 12345678-9" maxlength="10">
             </div>
 
-            <!-- Token Temporal (Estudiante Menor) - Auto-generado -->
             <div class="form-group campo-oculto" id="campo-token">
                 <label>Token Temporal (Auto-generado)</label>
                 <input type="text" name="token_temporal" id="token_temporal" readonly style="background: #f0f0f0;">
             </div>
 
-            <!-- Datos del Tutor (Estudiante Menor) -->
             <div id="datos-tutor" class="campo-oculto">
                 <h3 style="color: var(--text-primary); margin: 30px 0 20px;">Datos del Tutor/Encargado</h3>
-                
+
                 <div class="form-row">
                     <div class="form-group">
                         <label>Nombre del Tutor *</label>
@@ -226,7 +292,6 @@
                 </div>
             </div>
 
-            <!-- Contacto y Dirección -->
             <div class="form-row">
                 <div class="form-group">
                     <label>Teléfono</label>
@@ -254,7 +319,6 @@
 </div>
 
 <script>
-// Control dinámico de campos según tipo de usuario
 const tipoUsuario = document.getElementById('tipo_usuario');
 const infoBox = document.getElementById('info-identificacion');
 const textoInfo = document.getElementById('texto-info');
@@ -270,27 +334,24 @@ const inputTutorDui = document.getElementById('tutor_dui');
 const inputTutorContacto = document.getElementById('tutor_contacto');
 
 tipoUsuario.addEventListener('change', function() {
-    // Ocultar todos los campos especiales
     campoOni.classList.add('campo-oculto');
     campoDui.classList.add('campo-oculto');
     campoToken.classList.add('campo-oculto');
     datosTutor.classList.add('campo-oculto');
     infoBox.classList.add('campo-oculto');
-    
-    // Quitar required de todos
+
     inputOni.removeAttribute('required');
     inputDui.removeAttribute('required');
     inputTutorNombre.removeAttribute('required');
     inputTutorDui.removeAttribute('required');
     inputTutorContacto.removeAttribute('required');
-    
-    // Limpiar valores
+
     inputOni.value = '';
     inputDui.value = '';
     inputToken.value = '';
-    
+
     const tipo = this.value;
-    
+
     switch(tipo) {
         case 'personal_administrativo':
             infoBox.classList.remove('campo-oculto');
@@ -299,7 +360,7 @@ tipoUsuario.addEventListener('change', function() {
             inputOni.setAttribute('required', 'required');
             inputOni.placeholder = 'Ej: 12345ABC';
             break;
-            
+
         case 'personal_operativo':
             infoBox.classList.remove('campo-oculto');
             textoInfo.textContent = 'El personal operativo se identifica con Número ONI (solo números)';
@@ -307,36 +368,30 @@ tipoUsuario.addEventListener('change', function() {
             inputOni.setAttribute('required', 'required');
             inputOni.placeholder = 'Ej: 123456';
             break;
-            
+
         case 'visitas':
             infoBox.classList.remove('campo-oculto');
             textoInfo.textContent = 'Las visitas se identifican con número de DUI';
             campoDui.classList.remove('campo-oculto');
             inputDui.setAttribute('required', 'required');
             break;
-            
+
         case 'estudiante_mayor':
             infoBox.classList.remove('campo-oculto');
             textoInfo.textContent = 'Los estudiantes mayores de edad se identifican con número de DUI';
             campoDui.classList.remove('campo-oculto');
             inputDui.setAttribute('required', 'required');
             break;
-            
+
         case 'estudiante_menor':
             infoBox.classList.remove('campo-oculto');
             textoInfo.textContent = 'Se generará un token temporal automáticamente para identificar al estudiante.';
             campoToken.classList.remove('campo-oculto');
-            // datosTutor.classList.remove('campo-oculto');
-            // Generar token temporal
             inputToken.value = 'TOKEN-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9).toUpperCase();
-            // inputTutorNombre.setAttribute('required', 'required');
-            // inputTutorDui.setAttribute('required', 'required');
-            // inputTutorContacto.setAttribute('required', 'required');
             break;
     }
 });
 
-// Formatear DUI automáticamente
 document.getElementById('dui')?.addEventListener('input', function(e) {
     let value = e.target.value.replace(/\D/g, '');
     if (value.length > 8) {

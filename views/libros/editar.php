@@ -1,42 +1,24 @@
-﻿<?php require_once __DIR__ . '/../layouts/navbar.php'; ?>
+﻿<?php require_once 'views/layouts/navbar.php'; ?>
 <style id="input-fix">
-input[type="text"],
-input[type="number"],
-textarea,
-select {
+input, textarea, select {
     background-color: #ffffff !important;
     color: #000000 !important;
     border: 2px solid #d1d5db !important;
     padding: 12px 16px !important;
     border-radius: 8px !important;
-    font-size: 16px !important;
 }
-
-::placeholder {
-    color: #9ca3af !important;
-}
-
-label {
-    color: #374151 !important;
-    font-weight: 600 !important;
-}
-
-[data-theme="dark"] input,
-[data-theme="dark"] textarea,
-[data-theme="dark"] select {
-    background-color: #374151 !important;
-    color: #ffffff !important;
-}
-
-[data-theme="dark"] label {
-    color: #f3f4f6 !important;
+::placeholder { color: #9ca3af !important; }
+label { color: #374151 !important; font-weight: 600 !important; }
+[data-theme="dark"] input, [data-theme="dark"] textarea, [data-theme="dark"] select {
+    background-color: #374151 !important; color: #ffffff !important;
 }
 </style>
 <style>
 /* FORZAR VISIBILIDAD DE INPUTS */
 input[type="text"],
-input[type="email"], 
+input[type="email"],
 input[type="tel"],
+input[type="number"],
 select,
 textarea {
     background-color: #ffffff !important;
@@ -56,6 +38,7 @@ label {
 [data-theme="dark"] input[type="text"],
 [data-theme="dark"] input[type="email"],
 [data-theme="dark"] input[type="tel"],
+[data-theme="dark"] input[type="number"],
 [data-theme="dark"] select,
 [data-theme="dark"] textarea {
     background-color: #2d3748 !important;
@@ -71,6 +54,7 @@ label {
 [data-theme="premium"] input[type="text"],
 [data-theme="premium"] input[type="email"],
 [data-theme="premium"] input[type="tel"],
+[data-theme="premium"] input[type="number"],
 [data-theme="premium"] select,
 [data-theme="premium"] textarea {
     background-color: #1a202c !important;
@@ -135,7 +119,7 @@ label {
 }
 
 .btn-secondary {
-    background: var(--secondary);
+    background: linear-gradient(135deg, #64748b 0%, #475569 100%);
     color: white;
 }
 
@@ -151,6 +135,15 @@ label {
     justify-content: center;
     padding: 15px;
     font-size: 16px;
+}
+
+.btn-info {
+    background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+    color: white;
+}
+
+.btn-info:hover {
+    box-shadow: 0 8px 30px rgba(6, 182, 212, 0.4);
 }
 
 .btn-primary:hover {
@@ -184,8 +177,9 @@ label {
 }
 
 .form-group select,
-.form-group input[type="text"],
+.form-group input[type="date"],
 .form-group input[type="number"],
+.form-group input[type="text"],
 .form-group textarea {
     width: 100%;
     padding: 12px 15px;
@@ -229,14 +223,10 @@ label {
     border: 2px solid #fecaca;
 }
 
-.info-badge {
-    display: inline-block;
-    padding: 8px 16px;
-    background: var(--bg-secondary);
-    border-radius: 8px;
-    font-size: 13px;
-    color: var(--text-secondary);
-    margin-top: 5px;
+.alert-success {
+    background: #d1fae5;
+    color: #065f46;
+    border: 2px solid #a7f3d0;
 }
 
 @media (max-width: 768px) {
@@ -256,16 +246,16 @@ label {
 </style>
 
 <div class="main-container">
-    <div class="page-header">
+    <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; gap: 15px;">
         <h1> Editar Libro</h1>
-        <a href="index.php?ruta=libros" class="btn btn-secondary">
+        <a href="index.php?ruta=libros" class="btn btn-primary">
              Volver
         </a>
     </div>
 
     <?php if (isset($_SESSION['error'])): ?>
         <div class="alert alert-error">
-            <?php 
+            <?php
             echo $_SESSION['error'];
             unset($_SESSION['error']);
             ?>
@@ -274,14 +264,13 @@ label {
 
     <div class="content-card">
         <?php if (isset($libro)): ?>
-        <form action="index.php?ruta=libros&accion=editar" method="POST" id="formLibro">
-            <input type="hidden" name="id" value="<?php echo $libro['id']; ?>">
-            
+        <form action="index.php?ruta=libros&accion=editar&id=<?php echo $libro['id']; ?>" method="POST">
+
             <div class="form-group">
-                <label for="titulo"> Título del Libro *</label>
+                <label for="titulo"> Título *</label>
                 <input type="text" name="titulo" id="titulo" required 
                        value="<?php echo htmlspecialchars($libro['titulo']); ?>"
-                       placeholder="Ingrese el título del libro">
+                       placeholder="Título del libro">
             </div>
 
             <div class="form-row">
@@ -296,7 +285,7 @@ label {
                     <label for="isbn"> ISBN</label>
                     <input type="text" name="isbn" id="isbn" 
                            value="<?php echo htmlspecialchars($libro['isbn'] ?? ''); ?>"
-                           placeholder="978-0-00-000000-0">
+                           placeholder="Código ISBN">
                 </div>
             </div>
 
@@ -305,50 +294,63 @@ label {
                     <label for="editorial"> Editorial</label>
                     <input type="text" name="editorial" id="editorial" 
                            value="<?php echo htmlspecialchars($libro['editorial'] ?? ''); ?>"
-                           placeholder="Nombre de la editorial">
+                           placeholder="Editorial">
                 </div>
 
                 <div class="form-group">
                     <label for="anio_publicacion"> Año de Publicación</label>
                     <input type="number" name="anio_publicacion" id="anio_publicacion" 
                            value="<?php echo htmlspecialchars($libro['anio_publicacion'] ?? ''); ?>"
-                           min="1800" max="<?php echo date('Y'); ?>" 
-                           placeholder="<?php echo date('Y'); ?>">
+                           min="1800" max="<?php echo date('Y'); ?>" placeholder="Año">
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label for="categoria"> Categoría</label>
-                    <input type="text" name="categoria" id="categoria" 
-                           value="<?php echo htmlspecialchars($libro['categoria'] ?? ''); ?>"
-                           placeholder="Ej: Ficción, Historia, Ciencia">
+                    <select name="categoria" id="categoria">
+                        <option value="">Seleccione una categoría</option>
+                        <option value="Ficción" <?php echo ($libro['categoria'] ?? '') == 'Ficción' ? 'selected' : ''; ?>>Ficción</option>
+                        <option value="No Ficción" <?php echo ($libro['categoria'] ?? '') == 'No Ficción' ? 'selected' : ''; ?>>No Ficción</option>
+                        <option value="Ciencia" <?php echo ($libro['categoria'] ?? '') == 'Ciencia' ? 'selected' : ''; ?>>Ciencia</option>
+                        <option value="Historia" <?php echo ($libro['categoria'] ?? '') == 'Historia' ? 'selected' : ''; ?>>Historia</option>
+                        <option value="Tecnología" <?php echo ($libro['categoria'] ?? '') == 'Tecnología' ? 'selected' : ''; ?>>Tecnología</option>
+                        <option value="Arte" <?php echo ($libro['categoria'] ?? '') == 'Arte' ? 'selected' : ''; ?>>Arte</option>
+                        <option value="Biografía" <?php echo ($libro['categoria'] ?? '') == 'Biografía' ? 'selected' : ''; ?>>Biografía</option>
+                        <option value="Infantil" <?php echo ($libro['categoria'] ?? '') == 'Infantil' ? 'selected' : ''; ?>>Infantil</option>
+                        <option value="Juvenil" <?php echo ($libro['categoria'] ?? '') == 'Juvenil' ? 'selected' : ''; ?>>Juvenil</option>
+                        <option value="Académico" <?php echo ($libro['categoria'] ?? '') == 'Académico' ? 'selected' : ''; ?>>Académico</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
-                    <label for="cantidad_total"> Cantidad Total *</label>
-                    <input type="number" name="cantidad_total" id="cantidad_total" required 
-                           value="<?php echo htmlspecialchars($libro['cantidad_total'] ?? ''); ?>"
-                           min="1" placeholder="Número de ejemplares">
-                    <?php if (isset($libro['cantidad_disponible'])): ?>
-                    <span class="info-badge">
-                         Disponibles: <?php echo $libro['cantidad_disponible']; ?>
-                    </span>
-                    <?php endif; ?>
+                    <label for="ubicacion"> Ubicación</label>
+                    <input type="text" name="ubicacion" id="ubicacion" 
+                           value="<?php echo htmlspecialchars($libro['ubicacion'] ?? ''); ?>"
+                           placeholder="Estante/Sección">
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="ubicacion"> Ubicación en Biblioteca</label>
-                <input type="text" name="ubicacion" id="ubicacion" 
-                       value="<?php echo htmlspecialchars($libro['ubicacion'] ?? ''); ?>"
-                       placeholder="Ej: Estante A - Nivel 2">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="cantidad_total"> Cantidad Total *</label>
+                    <input type="number" name="cantidad_total" id="cantidad_total" 
+                           value="<?php echo htmlspecialchars($libro['cantidad_total']); ?>"
+                           required min="1" placeholder="Cantidad">
+                </div>
+
+                <div class="form-group">
+                    <label for="estado"> Estado</label>
+                    <select name="estado" id="estado">
+                        <option value="disponible" <?php echo ($libro['estado'] ?? 'disponible') == 'disponible' ? 'selected' : ''; ?>>Disponible</option>
+                        <option value="no_disponible" <?php echo ($libro['estado'] ?? '') == 'no_disponible' ? 'selected' : ''; ?>>No Disponible</option>
+                    </select>
+                </div>
             </div>
 
             <div class="form-group">
                 <label for="descripcion"> Descripción</label>
-                <textarea name="descripcion" id="descripcion" 
-                          placeholder="Breve descripción del libro (opcional)"><?php echo htmlspecialchars($libro['descripcion'] ?? ''); ?></textarea>
+                <textarea name="descripcion" id="descripcion" placeholder="Descripción breve del libro"><?php echo htmlspecialchars($libro['descripcion'] ?? ''); ?></textarea>
             </div>
 
             <button type="submit" class="btn btn-primary">
@@ -356,21 +358,13 @@ label {
             </button>
         </form>
         <?php else: ?>
-        <div style="text-align: center; padding: 60px 20px; color: var(--text-secondary);">
-            <div style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;"></div>
-            <h3 style="color: var(--text-primary);">Libro no encontrado</h3>
+        <div style="text-align: center; padding: 60px 20px;">
+            <h3> Libro no encontrado</h3>
         </div>
         <?php endif; ?>
     </div>
 </div>
 
-<script>
-document.getElementById('formLibro')?.addEventListener('submit', function(e) {
-    if (!confirm('¿Confirmar actualización del libro?')) {
-        e.preventDefault();
-    }
-});
-</script>
+<?php require_once 'views/layouts/footer.php'; ?>
 
-<?php require_once __DIR__ . '/../layouts/footer.php'; ?>
 

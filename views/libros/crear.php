@@ -1,60 +1,24 @@
-﻿<?php require_once __DIR__ . '/../layouts/navbar.php'; ?>
+﻿<?php require_once 'views/layouts/navbar.php'; ?>
 <style id="input-fix">
-/* INPUTS VISIBLES */
-input[type="text"],
-input[type="number"],
-textarea,
-select {
+input, textarea, select {
     background-color: #ffffff !important;
     color: #000000 !important;
     border: 2px solid #d1d5db !important;
     padding: 12px 16px !important;
     border-radius: 8px !important;
-    font-size: 16px !important;
 }
-
-input:focus,
-textarea:focus,
-select:focus {
-    outline: none !important;
-    border-color: #3b82f6 !important;
-}
-
-::placeholder {
-    color: #9ca3af !important;
-    opacity: 1 !important;
-}
-
-label {
-    color: #374151 !important;
-    font-weight: 600 !important;
-    display: block !important;
-    margin-bottom: 8px !important;
-}
-
-/* Modo oscuro */
-[data-theme="dark"] input[type="text"],
-[data-theme="dark"] input[type="number"],
-[data-theme="dark"] textarea,
-[data-theme="dark"] select {
-    background-color: #374151 !important;
-    color: #ffffff !important;
-    border-color: #4b5563 !important;
-}
-
-[data-theme="dark"] label {
-    color: #f3f4f6 !important;
-}
-
-[data-theme="dark"] ::placeholder {
-    color: #6b7280 !important;
+::placeholder { color: #9ca3af !important; }
+label { color: #374151 !important; font-weight: 600 !important; }
+[data-theme="dark"] input, [data-theme="dark"] textarea, [data-theme="dark"] select {
+    background-color: #374151 !important; color: #ffffff !important;
 }
 </style>
 <style>
 /* FORZAR VISIBILIDAD DE INPUTS */
 input[type="text"],
-input[type="email"], 
+input[type="email"],
 input[type="tel"],
+input[type="number"],
 select,
 textarea {
     background-color: #ffffff !important;
@@ -74,6 +38,7 @@ label {
 [data-theme="dark"] input[type="text"],
 [data-theme="dark"] input[type="email"],
 [data-theme="dark"] input[type="tel"],
+[data-theme="dark"] input[type="number"],
 [data-theme="dark"] select,
 [data-theme="dark"] textarea {
     background-color: #2d3748 !important;
@@ -89,6 +54,7 @@ label {
 [data-theme="premium"] input[type="text"],
 [data-theme="premium"] input[type="email"],
 [data-theme="premium"] input[type="tel"],
+[data-theme="premium"] input[type="number"],
 [data-theme="premium"] select,
 [data-theme="premium"] textarea {
     background-color: #1a202c !important;
@@ -153,8 +119,9 @@ label {
 }
 
 .btn-secondary {
-    background: var(--secondary);
+    background: linear-gradient(135deg, #64748b 0%, #475569 100%);
     color: white;
+    box-shadow: 0 4px 15px rgba(100, 116, 139, 0.3);
 }
 
 .btn-secondary:hover {
@@ -202,8 +169,9 @@ label {
 }
 
 .form-group select,
-.form-group input[type="text"],
+.form-group input[type="date"],
 .form-group input[type="number"],
+.form-group input[type="text"],
 .form-group textarea {
     width: 100%;
     padding: 12px 15px;
@@ -247,6 +215,12 @@ label {
     border: 2px solid #fecaca;
 }
 
+.alert-success {
+    background: #d1fae5;
+    color: #065f46;
+    border: 2px solid #a7f3d0;
+}
+
 @media (max-width: 768px) {
     .page-header {
         flex-direction: column;
@@ -266,14 +240,13 @@ label {
 <div class="main-container">
     <div class="page-header">
         <h1> Nuevo Libro</h1>
-        <a href="index.php?ruta=libros" class="btn btn-secondary">
-             Volver
+        <a href="index.php?ruta=libros" class="btn btn-info"><i class="fas fa-arrow-left"></i> Volver
         </a>
     </div>
 
     <?php if (isset($_SESSION['error'])): ?>
         <div class="alert alert-error">
-            <?php 
+            <?php
             echo $_SESSION['error'];
             unset($_SESSION['error']);
             ?>
@@ -281,11 +254,11 @@ label {
     <?php endif; ?>
 
     <div class="content-card">
-        <form action="index.php?ruta=libros&accion=crear" method="POST" id="formLibro">
-            
+        <form action="index.php?ruta=libros&accion=crear" method="POST">
+
             <div class="form-group">
-                <label for="titulo"> Título del Libro *</label>
-                <input type="text" name="titulo" id="titulo" required placeholder="Ingrese el título del libro">
+                <label for="titulo"> Título *</label>
+                <input type="text" name="titulo" id="titulo" required placeholder="Título del libro">
             </div>
 
             <div class="form-row">
@@ -296,84 +269,75 @@ label {
 
                 <div class="form-group">
                     <label for="isbn"> ISBN</label>
-                    <input type="text" name="isbn" id="isbn" placeholder="978-0-00-000000-0">
+                    <input type="text" name="isbn" id="isbn" placeholder="Código ISBN">
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label for="editorial"> Editorial</label>
-                    <input type="text" name="editorial" id="editorial" placeholder="Nombre de la editorial">
+                    <input type="text" name="editorial" id="editorial" placeholder="Editorial">
                 </div>
 
                 <div class="form-group">
                     <label for="anio_publicacion"> Año de Publicación</label>
                     <input type="number" name="anio_publicacion" id="anio_publicacion" 
-                           min="1800" max="<?php echo date('Y'); ?>" 
-                           placeholder="<?php echo date('Y'); ?>">
+                           min="1800" max="<?php echo date('Y'); ?>" placeholder="Año">
                 </div>
             </div>
 
             <div class="form-row">
                 <div class="form-group">
                     <label for="categoria"> Categoría</label>
-                    <input type="text" name="categoria" id="categoria" placeholder="Ej: Ficción, Historia, Ciencia">
+                    <select name="categoria" id="categoria">
+                        <option value="">Seleccione una categoría</option>
+                        <option value="Ficción">Ficción</option>
+                        <option value="No Ficción">No Ficción</option>
+                        <option value="Ciencia">Ciencia</option>
+                        <option value="Historia">Historia</option>
+                        <option value="Tecnología">Tecnología</option>
+                        <option value="Arte">Arte</option>
+                        <option value="Biografía">Biografía</option>
+                        <option value="Infantil">Infantil</option>
+                        <option value="Juvenil">Juvenil</option>
+                        <option value="Académico">Académico</option>
+                    </select>
                 </div>
 
                 <div class="form-group">
-                    <label for="cantidad_total"> Cantidad Total *</label>
-                    <input type="number" name="cantidad_total" id="cantidad_total" required 
-                           min="1" value="1" placeholder="Número de ejemplares">
+                    <label for="ubicacion"> Ubicación</label>
+                    <input type="text" name="ubicacion" id="ubicacion" placeholder="Estante/Sección">
                 </div>
             </div>
 
-            <div class="form-group">
-                <label for="ubicacion"> Ubicación en Biblioteca</label>
-                <input type="text" name="ubicacion" id="ubicacion" placeholder="Ej: Estante A - Nivel 2">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="cantidad_total"> Cantidad Total *</label>
+                    <input type="number" name="cantidad_total" id="cantidad_total" 
+                           required min="1" value="1" placeholder="Cantidad">
+                </div>
+
+                <div class="form-group">
+                    <label for="estado"> Estado</label>
+                    <select name="estado" id="estado">
+                        <option value="disponible">Disponible</option>
+                        <option value="no_disponible">No Disponible</option>
+                    </select>
+                </div>
             </div>
 
             <div class="form-group">
                 <label for="descripcion"> Descripción</label>
-                <textarea name="descripcion" id="descripcion" 
-                          placeholder="Breve descripción del libro (opcional)"></textarea>
+                <textarea name="descripcion" id="descripcion" placeholder="Descripción breve del libro"></textarea>
             </div>
 
             <button type="submit" class="btn btn-primary">
-                 Guardar Libro
+                 Crear Libro
             </button>
         </form>
     </div>
 </div>
 
-<script>
-document.getElementById('formLibro').addEventListener('submit', function(e) {
-    const titulo = document.getElementById('titulo').value.trim();
-    const autor = document.getElementById('autor').value.trim();
-    const cantidad = parseInt(document.getElementById('cantidad_total').value);
-    
-    if (titulo.length < 3) {
-        alert(' El título debe tener al menos 3 caracteres');
-        e.preventDefault();
-        return;
-    }
-    
-    if (autor.length < 3) {
-        alert(' El nombre del autor debe tener al menos 3 caracteres');
-        e.preventDefault();
-        return;
-    }
-    
-    if (cantidad < 1) {
-        alert(' La cantidad debe ser al menos 1');
-        e.preventDefault();
-        return;
-    }
-    
-    if (!confirm('¿Confirmar registro del libro?')) {
-        e.preventDefault();
-    }
-});
-</script>
+<?php require_once 'views/layouts/footer.php'; ?>
 
-<?php require_once __DIR__ . '/../layouts/footer.php'; ?>
 

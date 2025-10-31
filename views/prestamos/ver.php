@@ -132,8 +132,7 @@
 <div class="main-container">
     <div class="page-header">
         <h1> Detalles del Préstamo</h1>
-        <a href="index.php?ruta=prestamos" class="btn btn-secondary">
-             Volver a Préstamos
+        <a href="index.php?ruta=prestamos" class="btn btn-info"><i class="fas fa-arrow-left"></i> Volver a Préstamos
         </a>
     </div>
 
@@ -244,10 +243,9 @@
             <?php if ($estado === 'activo' || $estado === 'atrasado'): ?>
             <div style="margin-top: 40px; text-align: center;">
                 <a href="index.php?ruta=prestamos&accion=devolver&id=<?php echo $datos['id']; ?>" 
-                   class="btn btn-secondary"
+                   class="btn btn-devolver"
                    onclick="return confirm('¿Confirmar devolución del libro?')"
-                   style="background: var(--success); padding: 15px 40px; font-size: 16px;">
-                     Marcar como Devuelto
+                   ><i class="fas fa-check-circle"></i> Marcar como Devuelto
                 </a>
             </div>
             <?php endif; ?>
@@ -263,3 +261,5 @@
 </div>
 
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>
+
+
