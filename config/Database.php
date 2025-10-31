@@ -1,27 +1,33 @@
-﻿<?php
+<?php
 class Database {
-    private $host = 'localhost';
-    private $db_name = 'bibloteca_cif';
-    private $username = 'root';
-    private $password = '';
-    private $conn = null;
+    private $host;
+    private $db_name;
+    private $username;
+    private $password;
+    public $conn;
+
+    public function __construct() {
+        // Usar variables de entorno de Docker si existen, sino usar valores por defecto
+        $this->host = getenv('DB_HOST') ?: 'localhost';
+        $this->db_name = getenv('DB_NAME') ?: 'biblioteca_cif';
+        $this->username = getenv('DB_USER') ?: 'root';
+        $this->password = getenv('DB_PASSWORD') ?: '';
+    }
 
     public function getConnection() {
+        $this->conn = null;
         try {
             $this->conn = new PDO(
-                "mysql:host=" . $this->host . ";dbname=" . $this->db_name . ";charset=utf8mb4",
+                "mysql:host=" . $this->host . ";dbname=" . $this->db_name,
                 $this->username,
-                $this->password,
-                [
-                    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                    PDO::ATTR_EMULATE_PREPARES => false,
-                ]
+                $this->password
             );
-        } catch(PDOException $e) {
-            echo "Error de conexión: " . $e->getMessage();
-            die();
+            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->conn->exec("set names utf8");
+        } catch(PDOException $exception) {
+            echo "Error de conexión: " . $exception->getMessage();
         }
         return $this->conn;
     }
 }
+?>

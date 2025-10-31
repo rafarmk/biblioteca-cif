@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  # Servicio de PHP/Apache
+  web:
+    build: .
+    container_name: biblioteca-cif-web
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_NAME=biblioteca_cif
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+    networks:
+      - biblioteca-network
+
+  # Servicio de MySQL
+  db:
+    image: mysql:8.0
+    container_name: biblioteca-cif-db
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: biblioteca_cif
+      MYSQL_USER: biblioteca_user
+      MYSQL_PASSWORD: biblioteca_pass
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./database:/docker-entrypoint-initdb.d
+    networks:
+      - biblioteca-network
+
+  # phpMyAdmin (opcional, para gestionar la BD)
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: biblioteca-cif-phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: rootpassword
+    depends_on:
+      - db
+    networks:
+      - biblioteca-network
+
+volumes:
+  db_data:
+
+networks:
+  biblioteca-network:
+    driver: bridge

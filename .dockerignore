@@ -1,0 +1,13 @@
+.git
+.gitignore
+.history
+node_modules
+vendor
+*.log
+*.backup*
+*.bak
+*.original
+temp_*
+test_*
+ejecutar_seed.php
+verificar_prestamos.php
