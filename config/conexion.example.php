@@ -5,7 +5,7 @@
 $host = 'localhost';
 $usuario = 'root';
 $contrasena = ''; // Ingresa tu contraseña de MySQL aquí
-$base = 'bibloteca_cif';
+$base = 'biblioteca_cif';
 
 // Crear conexión
 $conn = new mysqli($host, $usuario, $contrasena, $base);

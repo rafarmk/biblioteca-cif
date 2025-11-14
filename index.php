@@ -6,7 +6,7 @@ $ruta = $_GET['ruta'] ?? 'landing';
 $accion = $_GET['accion'] ?? 'index';
 
 // Rutas públicas (no requieren autenticación)
-$rutasPublicas = ['login', 'landing'];
+$rutasPublicas = ['login', 'landing', 'registro'];
 
 // Verificar autenticación para rutas protegidas
 if (!in_array($ruta, $rutasPublicas)) {
@@ -19,7 +19,6 @@ if (!in_array($ruta, $rutasPublicas)) {
 // Enrutamiento principal
 switch ($ruta) {
     case 'login':
-        // Si ya está logueado, redirigir al LANDING
         if (isset($_SESSION['logueado']) && $_SESSION['logueado'] === true) {
             header('Location: index.php?ruta=landing');
             exit();
@@ -29,6 +28,84 @@ switch ($ruta) {
         $controller->login();
         break;
 
+    case 'registro':
+        // CRÍTICO: Limpiar cualquier sesión activa antes de registrar
+        if (isset($_SESSION['logueado'])) {
+            $_SESSION = array();
+            session_destroy();
+            session_start();
+        }
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            require_once 'config/Database.php';
+            
+            try {
+                $db = new Database();
+                $conn = $db->getConnection();
+                
+                // Verificar si el email ya existe
+                $stmt = $conn->prepare("SELECT id FROM usuarios WHERE email = ?");
+                $stmt->execute([$_POST['email']]);
+                
+                if ($stmt->fetch()) {
+                    $_SESSION['error'] = "El correo electrónico ya está registrado en el sistema";
+                    header('Location: index.php?ruta=registro');
+                    exit;
+                }
+                
+                // Hash de la contraseña
+                $password_hash = password_hash($_POST['password'], PASSWORD_DEFAULT);
+                
+                // Insertar nuevo usuario
+                $stmt = $conn->prepare("
+                    INSERT INTO usuarios 
+                    (nombre, apellido, email, telefono, dui, direccion, password, tipo_usuario, rol, estado, puede_prestar, dias_max_prestamo, max_libros_simultaneos)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'pendiente', 1, 7, 3)
+                ");
+                
+                $stmt->execute([
+                    $_POST['nombre'],
+                    $_POST['apellido'],
+                    $_POST['email'],
+                    $_POST['telefono'] ?? null,
+                    $_POST['dui'] ?? null,
+                    $_POST['direccion'] ?? null,
+                    $password_hash,
+                    $_POST['tipo_usuario'],
+                    'usuario'
+                ]);
+                
+                // Redirigir al login con mensaje de éxito
+                header('Location: index.php?ruta=login&mensaje=registro_exitoso');
+                exit;
+                
+            } catch (PDOException $e) {
+                $_SESSION['error'] = "Error al crear la cuenta: " . $e->getMessage();
+                header('Location: index.php?ruta=registro');
+                exit;
+            }
+        }
+        
+        require_once 'views/registro_publico.php';
+        break;
+
+    case 'solicitudes':
+        require_once 'controllers/SolicitudController.php';
+        $controller = new SolicitudController();
+        
+        switch ($accion) {
+            case 'aprobar':
+                $controller->aprobar();
+                break;
+            case 'rechazar':
+                $controller->rechazar();
+                break;
+            default:
+                $controller->index();
+                break;
+        }
+        break;
+
     case 'logout':
         require_once 'controllers/AuthController.php';
         $controller = new AuthController();
@@ -36,7 +113,6 @@ switch ($ruta) {
         break;
 
     case 'landing':
-        // PERMITIR que usuarios logueados vean el landing
         require_once 'views/landing.php';
         break;
 
@@ -59,6 +135,17 @@ switch ($ruta) {
             case 'eliminar':
                 $controller->eliminar();
                 break;
+            case 'importar':
+                require_once 'controllers/ImportarController.php';
+                $controller = new ImportarController();
+                
+                $accion = $_GET['accion'] ?? 'index';
+                if ($accion === 'procesar') {
+                    $controller->procesar();
+                } else {
+                    $controller->index();
+                }
+                break;
             default:
                 $controller->index();
                 break;
@@ -78,6 +165,9 @@ switch ($ruta) {
             case 'eliminar':
                 $controller->eliminar();
                 break;
+            case 'importar':
+                $controller->importar();
+                break;
             default:
                 $controller->index();
                 break;
@@ -85,40 +175,32 @@ switch ($ruta) {
         break;
 
     case 'prestamos':
-    case 'prestamos/activos':
-    case 'prestamos/atrasados':
-    case 'prestamos/crear':
-    case 'prestamos/guardar':
-    case 'prestamos/ver':
-    case 'prestamos/devolver':
-    case 'prestamos/historialUsuario':
-    case 'prestamos/historialLibro':
         require_once 'controllers/PrestamoController.php';
         $controller = new PrestamoController();
-
-        switch ($ruta) {
-            case 'prestamos/activos':
-                $controller->activos();
-                break;
-            case 'prestamos/atrasados':
-                $controller->atrasados();
-                break;
-            case 'prestamos/crear':
+        
+        switch ($accion) {
+            case 'crear':
                 $controller->crear();
                 break;
-            case 'prestamos/guardar':
+            case 'guardar':
                 $controller->guardar();
                 break;
-            case 'prestamos/ver':
+            case 'ver':
                 $controller->ver();
                 break;
-            case 'prestamos/devolver':
+            case 'devolver':
                 $controller->devolver();
                 break;
-            case 'prestamos/historialUsuario':
+            case 'activos':
+                $controller->activos();
+                break;
+            case 'atrasados':
+                $controller->atrasados();
+                break;
+            case 'historialUsuario':
                 $controller->historialUsuario();
                 break;
-            case 'prestamos/historialLibro':
+            case 'historialLibro':
                 $controller->historialLibro();
                 break;
             default:
@@ -128,7 +210,6 @@ switch ($ruta) {
         break;
 
     default:
-        // Siempre redirigir al landing como página de inicio
         header('Location: index.php?ruta=landing');
         exit();
 }

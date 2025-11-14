@@ -1,5 +1,14 @@
 <?php
-// views/usuarios/index.php
+if (!isset($_SESSION['logueado']) || $_SESSION['logueado'] !== true) {
+    header('Location: index.php?ruta=login');
+    exit();
+}
+
+require_once __DIR__ . '/../layouts/navbar.php';
+
+$usuarios = $usuarios ?? [];
+$mensaje = $_SESSION['mensaje'] ?? null;
+unset($_SESSION['mensaje']);
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -16,410 +25,266 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a1f3a 0%, #2d3561 100%);
             min-height: 100vh;
-            padding: 20px;
+            color: #fff;
         }
 
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            padding: 30px;
+            padding: 80px 20px 40px;
         }
 
-        .header {
+        .header-section {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 3px solid #667eea;
+            margin-bottom: 40px;
         }
 
-        .header h1 {
-            color: #333;
-            font-size: 28px;
+        .header-section h1 {
+            font-size: 2.5rem;
+            color: #5b8fd7;
+            font-weight: 700;
+        }
+
+        .btn-group {
             display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .header h1::before {
-            content: "👥";
-            font-size: 35px;
+            gap: 15px;
         }
 
         .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
+            padding: 12px 25px;
+            border-radius: 50px;
             text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
         }
 
         .btn-primary {
-            background: #667eea;
+            background: linear-gradient(135deg, #5b8fd7 0%, #4a7bc4 100%);
             color: white;
+            box-shadow: 0 5px 15px rgba(91, 143, 215, 0.3);
         }
 
         .btn-primary:hover {
-            background: #5568d3;
+            box-shadow: 0 8px 25px rgba(91, 143, 215, 0.5);
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
 
-        .btn-success {
-            background: #48bb78;
-            color: white;
-            font-size: 12px;
-            padding: 8px 16px;
+        .btn-secondary {
+            background: rgba(91, 143, 215, 0.2);
+            color: #5b8fd7;
+            border: 2px solid #5b8fd7;
         }
 
-        .btn-success:hover {
-            background: #38a169;
-        }
-
-        .btn-danger {
-            background: #f56565;
-            color: white;
-            font-size: 12px;
-            padding: 8px 16px;
-        }
-
-        .btn-danger:hover {
-            background: #e53e3e;
-        }
-
-        .btn-back {
-            background: #718096;
-            color: white;
-        }
-
-        .btn-back:hover {
-            background: #4a5568;
+        .btn-secondary:hover {
+            background: rgba(91, 143, 215, 0.3);
+            transform: translateY(-2px);
         }
 
         .alert {
+            background: rgba(91, 143, 215, 0.2);
+            border: 1px solid #5b8fd7;
+            border-radius: 15px;
             padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 10px;
-            font-weight: 500;
         }
 
         .alert-success {
-            background: #c6f6d5;
-            color: #22543d;
-            border-left: 4px solid #48bb78;
+            background: rgba(46, 204, 113, 0.2);
+            border-color: #2ecc71;
+            color: #2ecc71;
         }
 
-        .alert-error {
-            background: #fed7d7;
-            color: #742a2a;
-            border-left: 4px solid #f56565;
+        .alert-danger {
+            background: rgba(231, 76, 60, 0.2);
+            border-color: #e74c3c;
+            color: #e74c3c;
         }
 
-        .search-bar {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 25px;
+        .card {
+            background: rgba(45, 53, 97, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(91, 143, 215, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
-        .search-input {
-            flex: 1;
-            padding: 12px 20px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .stat-card h3 {
-            font-size: 32px;
-            margin-bottom: 5px;
-        }
-
-        .stat-card p {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-
-        .table-container {
+        .table-responsive {
             overflow-x: auto;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
         }
 
-        thead {
-            background: #f7fafc;
-        }
-
-        th {
+        thead th {
+            background: rgba(91, 143, 215, 0.2);
+            color: #5b8fd7;
             padding: 15px;
             text-align: left;
             font-weight: 600;
-            color: #4a5568;
-            border-bottom: 2px solid #e2e8f0;
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            border-bottom: 2px solid #5b8fd7;
         }
 
-        td {
+        tbody td {
             padding: 15px;
-            border-bottom: 1px solid #e2e8f0;
-            color: #2d3748;
-            font-size: 14px;
-        }
-
-        tbody tr {
-            transition: background 0.2s ease;
+            border-bottom: 1px solid rgba(91, 143, 215, 0.1);
+            color: #b8c5d6;
         }
 
         tbody tr:hover {
-            background: #f7fafc;
+            background: rgba(91, 143, 215, 0.1);
         }
 
         .badge {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 20px;
+            padding: 6px 15px;
+            border-radius: 50px;
             font-size: 12px;
             font-weight: 600;
-            text-align: center;
+            display: inline-block;
         }
 
-        .badge-policia {
-            background: #bee3f8;
-            color: #2c5282;
+        .badge-danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
         }
 
-        .badge-administrativo {
-            background: #faf089;
-            color: #744210;
+        .badge-info {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
         }
 
-        .badge-estudiante {
-            background: #c6f6d5;
-            color: #22543d;
+        .badge-success {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
         }
 
-        .actions {
-            display: flex;
-            gap: 8px;
+        .badge-secondary {
+            background: rgba(149, 165, 166, 0.3);
+            color: #95a5a6;
         }
 
-        .no-data {
-            text-align: center;
-            padding: 40px;
-            color: #718096;
-            font-size: 16px;
+        .btn-sm {
+            padding: 8px 15px;
+            font-size: 12px;
         }
 
-        .no-data::before {
-            content: "📭";
-            font-size: 50px;
-            display: block;
-            margin-bottom: 15px;
+        .btn-warning {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
         }
 
-        @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
-            }
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
 
-            .stats {
-                grid-template-columns: 1fr;
-            }
-
-            table {
-                font-size: 12px;
-            }
-
-            th, td {
-                padding: 10px 8px;
-            }
-
-            .actions {
-                flex-direction: column;
-            }
+        .btn-warning:hover,
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>Gestión de Usuarios</h1>
-            <div style="display: flex; gap: 10px;">
-                <a href="index.php?ruta=usuarios/crear" class="btn btn-primary">➕ Nuevo Usuario</a>
-                <a href="index.php?ruta=home" class="btn btn-back">🏠 Volver al Inicio</a>
+        <div class="header-section">
+            <h1>👥 Gestión de Usuarios</h1>
+            <div class="btn-group">
+                <a href="index.php?ruta=usuarios&accion=importar" class="btn btn-secondary">
+                    📥 Importar
+                </a>
+                <a href="index.php?ruta=usuarios&accion=crear" class="btn btn-primary">
+                    ➕ Nuevo Usuario
+                </a>
             </div>
         </div>
 
-        <?php
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        
-        if (isset($_SESSION['mensaje'])):
-            $tipo = isset($_SESSION['mensaje_tipo']) ? $_SESSION['mensaje_tipo'] : 'success';
-        ?>
-            <div class="alert alert-<?php echo $tipo; ?>">
-                <?php echo $tipo === 'success' ? '✅' : '❌'; ?>
-                <?php echo $_SESSION['mensaje']; ?>
+        <?php if ($mensaje): ?>
+            <div class="alert alert-<?= htmlspecialchars($mensaje['tipo']) ?>">
+                <span><?= htmlspecialchars($mensaje['texto']) ?></span>
+                <button onclick="this.parentElement.remove()" style="background:none;border:none;color:inherit;cursor:pointer;font-size:20px;">×</button>
             </div>
-        <?php
-            unset($_SESSION['mensaje']);
-            unset($_SESSION['mensaje_tipo']);
-        endif;
-        ?>
+        <?php endif; ?>
 
-        <form action="index.php" method="GET" class="search-bar">
-            <input type="hidden" name="ruta" value="usuarios/buscar">
-            <input 
-                type="text" 
-                name="q" 
-                class="search-input" 
-                placeholder="🔍 Buscar por nombre o documento..."
-                value="<?php echo isset($_GET['q']) ? htmlspecialchars($_GET['q']) : ''; ?>"
-            >
-            <button type="submit" class="btn btn-primary">Buscar</button>
-            <?php if (isset($_GET['q'])): ?>
-                <a href="index.php?ruta=usuarios" class="btn btn-back">Limpiar</a>
-            <?php endif; ?>
-        </form>
-
-        <div class="stats">
-            <?php
-            $totalUsuarios = count($usuarios);
-            $totalPolicia = count(array_filter($usuarios, fn($u) => $u['tipo'] == 'policia'));
-            $totalAdmin = count(array_filter($usuarios, fn($u) => $u['tipo'] == 'administrativo'));
-            $totalEstudiantes = count(array_filter($usuarios, fn($u) => $u['tipo'] == 'estudiante'));
-            ?>
-            <div class="stat-card">
-                <h3><?php echo $totalUsuarios; ?></h3>
-                <p>Total Usuarios</p>
-            </div>
-            <div class="stat-card">
-                <h3><?php echo $totalPolicia; ?></h3>
-                <p>👮 Policías</p>
-            </div>
-            <div class="stat-card">
-                <h3><?php echo $totalAdmin; ?></h3>
-                <p>💼 Personal Administrativo</p>
-            </div>
-            <div class="stat-card">
-                <h3><?php echo $totalEstudiantes; ?></h3>
-                <p>👨‍🎓 Estudiantes/Visitantes</p>
-            </div>
-        </div>
-
-        <div class="table-container">
-            <?php if (empty($usuarios)): ?>
-                <div class="no-data">
-                    No se encontraron usuarios
-                    <?php if (isset($_GET['q'])): ?>
-                        <br><small>para la búsqueda: "<?php echo htmlspecialchars($_GET['q']); ?>"</small>
-                    <?php endif; ?>
-                </div>
-            <?php else: ?>
+        <div class="card">
+            <div class="table-responsive">
                 <table>
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Nombre</th>
-                            <th>Documento</th>
-                            <th>Carnet/Token</th>
-                            <th>Tipo</th>
-                            <th>Fecha Registro</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th>Estado</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($usuarios as $usuario): ?>
+                        <?php if (empty($usuarios)): ?>
                             <tr>
-                                <td><strong>#<?php echo $usuario['id']; ?></strong></td>
-                                <td><?php echo htmlspecialchars($usuario['nombre']); ?></td>
-                                <td><?php echo htmlspecialchars($usuario['documento'] ?? '—'); ?></td>
-                                <td>
-                                    <?php if (!empty($usuario['carnet_policial'])): ?>
-                                        <strong><?php echo htmlspecialchars($usuario['carnet_policial']); ?></strong>
-                                    <?php elseif (!empty($usuario['token_temporal'])): ?>
-                                        <code style="background: #edf2f7; padding: 4px 8px; border-radius: 4px; font-size: 11px;">
-                                            <?php echo htmlspecialchars($usuario['token_temporal']); ?>
-                                        </code>
-                                    <?php else: ?>
-                                        <span style="color: #a0aec0;">—</span>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <?php
-                                    $badgeClass = 'badge-' . $usuario['tipo'];
-                                    $tipoTexto = $tiposUsuario[$usuario['tipo']] ?? $usuario['tipo'];
-                                    ?>
-                                    <span class="badge <?php echo $badgeClass; ?>">
-                                        <?php echo $tipoTexto; ?>
-                                    </span>
-                                </td>
-                                <td><?php echo date('d/m/Y', strtotime($usuario['fecha_registro'])); ?></td>
-                                <td>
-                                    <div class="actions">
-                                        <a href="index.php?ruta=usuarios/editar&id=<?php echo $usuario['id']; ?>" 
-                                           class="btn btn-success" 
-                                           title="Editar">
-                                            ✏️ Editar
-                                        </a>
-                                        <a href="index.php?ruta=usuarios/eliminar&id=<?php echo $usuario['id']; ?>" 
-                                           class="btn btn-danger" 
-                                           title="Eliminar"
-                                           onclick="return confirm('¿Estás seguro de eliminar este usuario?\n\nUsuario: <?php echo htmlspecialchars($usuario['nombre']); ?>');">
-                                            🗑️ Eliminar
-                                        </a>
-                                    </div>
+                                <td colspan="6" style="text-align:center;padding:40px;color:#7f8c8d;">
+                                    No hay usuarios registrados
                                 </td>
                             </tr>
-                        <?php endforeach; ?>
+                        <?php else: ?>
+                            <?php foreach ($usuarios as $usuario): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($usuario['id'] ?? '') ?></td>
+                                    <td><strong><?= htmlspecialchars($usuario['nombre'] ?? 'Sin nombre') ?></strong></td>
+                                    <td><?= htmlspecialchars($usuario['email'] ?? '') ?></td>
+                                    <td>
+                                        <?php 
+                                        $rol = $usuario['rol'] ?? $usuario['tipo_usuario'] ?? 'usuario';
+                                        $badgeClass = (strtolower($rol) === 'admin' || strtolower($rol) === 'administrador') ? 'danger' : 'info';
+                                        ?>
+                                        <span class="badge badge-<?= $badgeClass ?>">
+                                            <?= htmlspecialchars(ucfirst($rol)) ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <?php 
+                                        $estado = $usuario['activo'] ?? $usuario['estado'] ?? 1;
+                                        $estaActivo = ($estado == 1 || $estado === true);
+                                        ?>
+                                        <span class="badge badge-<?= $estaActivo ? 'success' : 'secondary' ?>">
+                                            <?= $estaActivo ? 'Activo' : 'Inactivo' ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div style="display:flex;gap:8px;">
+                                            <a href="index.php?ruta=usuarios&accion=editar&id=<?= $usuario['id'] ?>" 
+                                               class="btn btn-warning btn-sm">
+                                                ✏️ Editar
+                                            </a>
+                                            <?php if ($usuario['id'] != ($_SESSION['usuario_id'] ?? 0)): ?>
+                                            <button class="btn btn-danger btn-sm" 
+                                                    onclick="if(confirm('¿Eliminar este usuario?')) location.href='index.php?ruta=usuarios&accion=eliminar&id=<?= $usuario['id'] ?>'">
+                                                🗑️ Eliminar
+                                            </button>
+                                            <?php endif; ?>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
-            <?php endif; ?>
+            </div>
         </div>
     </div>
 </body>

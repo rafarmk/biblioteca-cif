@@ -1,38 +1,55 @@
 ﻿<?php
-require_once 'core/models/Administrador.php';
+require_once __DIR__ . '/../config/Database.php';
 
 class AuthController {
+    private $db;
+    
+    public function __construct() {
+        $database = new Database();
+        $this->db = $database->getConnection();
+    }
+    
     public function login() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $email = $_POST['email'] ?? '';
             $password = $_POST['password'] ?? '';
-            
-            $admin = new Administrador();
-            $resultado = $admin->login($email, $password);
-            
-            if ($resultado) {
-                $_SESSION['admin_id'] = $resultado['id'];
-                $_SESSION['admin_nombre'] = $resultado['nombre'];
-                $_SESSION['admin_email'] = $resultado['email'];
-                $_SESSION['admin_rol'] = $resultado['rol'];
-                $_SESSION['logueado'] = true;
-                
-                // Redirigir al LANDING (página de bienvenida bonita)
-                header('Location: index.php?ruta=landing');
-                exit();
-            } else {
-                $error = "Email o contraseña incorrectos";
-                require_once 'views/auth/login.php';
+
+            try {
+                $stmt = $this->db->prepare("
+                    SELECT id, nombre, email, password, tipo_usuario, estado 
+                    FROM usuarios 
+                    WHERE email = ?
+                ");
+                $stmt->execute([$email]);
+                $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($usuario && password_verify($password, $usuario['password'])) {
+                    if ($usuario['estado'] !== 'activo') {
+                        $error = "Tu cuenta está pendiente de aprobación o inactiva";
+                    } else {
+                        $_SESSION['logueado'] = true;
+                        $_SESSION['usuario_id'] = $usuario['id'];
+                        $_SESSION['usuario_nombre'] = $usuario['nombre'];
+                        $_SESSION['usuario_email'] = $usuario['email'];
+                        $_SESSION['tipo_usuario'] = $usuario['tipo_usuario'];
+
+                        header('Location: index.php?ruta=landing');
+                        exit;
+                    }
+                } else {
+                    $error = "Credenciales incorrectas";
+                }
+            } catch (PDOException $e) {
+                $error = "Error en el sistema: " . $e->getMessage();
             }
-        } else {
-            require_once 'views/auth/login.php';
         }
+
+        require_once __DIR__ . '/../views/login.php';
     }
-    
+
     public function logout() {
-        session_unset();
         session_destroy();
         header('Location: index.php?ruta=login');
-        exit();
+        exit;
     }
 }

@@ -1,265 +1,176 @@
-﻿<?php require_once __DIR__ . '/../layouts/navbar.php'; ?>
+﻿<?php
+$pageTitle = 'Detalles del Préstamo - Biblioteca CIF';
+if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
+require_once __DIR__ . '/../layouts/header.php';
+require_once __DIR__ . '/../layouts/navbar.php';
 
-<style>
-.main-container {
-    max-width: 1000px;
-    margin: 40px auto;
-    padding: 0 20px;
-    position: relative;
-    z-index: 1;
-}
+// Calcular información adicional
+$hoy = new DateTime();
+$fecha_prestamo = new DateTime($prestamo['fecha_prestamo']);
+$fecha_devolucion = new DateTime($prestamo['fecha_devolucion']);
+$dias_transcurridos = $fecha_prestamo->diff($hoy)->days;
+$dias_restantes = $hoy->diff($fecha_devolucion)->days;
+$atrasado = $hoy > $fecha_devolucion && $prestamo['estado'] == 'activo';
+?>
 
-.page-header {
-    background: var(--bg-card);
-    border-radius: 16px;
-    padding: 30px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 20px var(--shadow);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
-    border: 2px solid var(--border-color);
-}
+<div class="page-container fade-in">
+    <div class="content-wrapper">
+        <h1 class="page-title">📋 Detalles del Préstamo</h1>
+        <p class="page-subtitle">Información completa del préstamo registrado</p>
 
-[data-theme="premium"] .page-header {
-    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
-    border-color: rgba(56, 189, 248, 0.2);
-}
-
-.page-header h1 {
-    font-size: 2rem;
-    color: var(--text-primary);
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.btn {
-    padding: 12px 24px;
-    border: none;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.btn-secondary {
-    background: var(--secondary);
-    color: white;
-}
-
-.btn-secondary:hover {
-    opacity: 0.9;
-    transform: translateY(-2px);
-}
-
-.content-card {
-    background: var(--bg-card);
-    border-radius: 16px;
-    box-shadow: 0 4px 20px var(--shadow);
-    overflow: hidden;
-    border: 2px solid var(--border-color);
-    padding: 40px;
-}
-
-[data-theme="premium"] .content-card {
-    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
-    border-color: rgba(56, 189, 248, 0.2);
-}
-
-.detail-row {
-    display: grid;
-    grid-template-columns: 200px 1fr;
-    gap: 20px;
-    padding: 20px 0;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.detail-row:last-child {
-    border-bottom: none;
-}
-
-.detail-label {
-    font-weight: 700;
-    color: var(--text-primary);
-    font-size: 1rem;
-}
-
-.detail-value {
-    color: var(--text-secondary);
-    font-size: 1rem;
-}
-
-.badge {
-    padding: 8px 16px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 600;
-    display: inline-block;
-}
-
-.badge-activo {
-    background: #d1fae5;
-    color: #065f46;
-}
-
-.badge-devuelto {
-    background: #dbeafe;
-    color: #1e40af;
-}
-
-.badge-atrasado {
-    background: #fee2e2;
-    color: #991b1b;
-}
-
-@media (max-width: 768px) {
-    .detail-row {
-        grid-template-columns: 1fr;
-        gap: 10px;
-    }
-}
-</style>
-
-<div class="main-container">
-    <div class="page-header">
-        <h1> Detalles del Préstamo</h1>
-        <a href="index.php?ruta=prestamos" class="btn btn-secondary">
-             Volver a Préstamos
-        </a>
-    </div>
-
-    <div class="content-card">
-        <?php if (isset($datos)): ?>
-            <div class="detail-row">
-                <div class="detail-label">ID del Préstamo:</div>
-                <div class="detail-value">#<?php echo htmlspecialchars($datos['id']); ?></div>
-            </div>
-
-            <div class="detail-row">
-                <div class="detail-label">Usuario:</div>
-                <div class="detail-value">
-                    <strong><?php echo htmlspecialchars($datos['usuario_nombre'] ?? 'N/A'); ?></strong>
-                    <?php if (isset($datos['usuario_correo'])): ?>
-                        <br><small><?php echo htmlspecialchars($datos['usuario_correo']); ?></small>
-                    <?php endif; ?>
+        <div class="row">
+            <!-- Información del Usuario -->
+            <div class="col-2">
+                <div class="card">
+                    <h2 class="section-title">👤 Información del Usuario</h2>
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: var(--text-light); font-size: 0.9rem;">Nombre:</label>
+                        <p style="color: var(--text-white); font-weight: 600; margin: 5px 0;">
+                            <?php echo htmlspecialchars($prestamo['usuario_nombre']); ?>
+                        </p>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: var(--text-light); font-size: 0.9rem;">Email:</label>
+                        <p style="color: var(--text-white); margin: 5px 0;">
+                            <?php echo htmlspecialchars($prestamo['usuario_email'] ?? 'No disponible'); ?>
+                        </p>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: var(--text-light); font-size: 0.9rem;">Tipo:</label>
+                        <p style="margin: 5px 0;">
+                            <span class="badge badge-primary">
+                                <?php echo ucfirst(str_replace('_', ' ', $prestamo['usuario_tipo'] ?? 'N/A')); ?>
+                            </span>
+                        </p>
+                    </div>
                 </div>
             </div>
 
-            <div class="detail-row">
-                <div class="detail-label">Libro:</div>
-                <div class="detail-value">
-                    <strong><?php echo htmlspecialchars($datos['libro_titulo'] ?? 'N/A'); ?></strong>
-                    <?php if (isset($datos['libro_autor'])): ?>
-                        <br><small>Autor: <?php echo htmlspecialchars($datos['libro_autor']); ?></small>
-                    <?php endif; ?>
-                    <?php if (isset($datos['libro_isbn'])): ?>
-                        <br><small>ISBN: <?php echo htmlspecialchars($datos['libro_isbn']); ?></small>
-                    <?php endif; ?>
+            <!-- Información del Libro -->
+            <div class="col-2">
+                <div class="card">
+                    <h2 class="section-title">📚 Información del Libro</h2>
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: var(--text-light); font-size: 0.9rem;">Título:</label>
+                        <p style="color: var(--text-white); font-weight: 600; margin: 5px 0;">
+                            <?php echo htmlspecialchars($prestamo['libro_titulo']); ?>
+                        </p>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: var(--text-light); font-size: 0.9rem;">Autor:</label>
+                        <p style="color: var(--text-white); margin: 5px 0;">
+                            <?php echo htmlspecialchars($prestamo['libro_autor'] ?? 'No disponible'); ?>
+                        </p>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="color: var(--text-light); font-size: 0.9rem;">ISBN:</label>
+                        <p style="color: var(--text-white); margin: 5px 0;">
+                            <?php echo htmlspecialchars($prestamo['libro_isbn'] ?? 'No disponible'); ?>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Información del Préstamo -->
+        <div class="card mt-3">
+            <h2 class="section-title">📅 Información del Préstamo</h2>
+            
+            <div class="row">
+                <div class="col-3">
+                    <div style="margin-bottom: 20px;">
+                        <label style="color: var(--text-light); font-size: 0.9rem;">Fecha de Préstamo:</label>
+                        <p style="color: var(--text-white); font-weight: 600; margin: 5px 0; font-size: 1.1rem;">
+                            <?php echo date('d/m/Y', strtotime($prestamo['fecha_prestamo'])); ?>
+                        </p>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div style="margin-bottom: 20px;">
+                        <label style="color: var(--text-light); font-size: 0.9rem;">Fecha de Devolución:</label>
+                        <p style="color: var(--text-white); font-weight: 600; margin: 5px 0; font-size: 1.1rem;">
+                            <?php echo date('d/m/Y', strtotime($prestamo['fecha_devolucion'])); ?>
+                        </p>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div style="margin-bottom: 20px;">
+                        <label style="color: var(--text-light); font-size: 0.9rem;">Estado:</label>
+                        <p style="margin: 5px 0;">
+                            <?php if ($prestamo['estado'] == 'activo' && !$atrasado): ?>
+                                <span class="badge badge-success" style="font-size: 1rem; padding: 8px 20px;">Activo</span>
+                            <?php elseif ($prestamo['estado'] == 'activo' && $atrasado): ?>
+                                <span class="badge badge-danger" style="font-size: 1rem; padding: 8px 20px;">Atrasado</span>
+                            <?php else: ?>
+                                <span class="badge badge-secondary" style="font-size: 1rem; padding: 8px 20px;">Devuelto</span>
+                            <?php endif; ?>
+                        </p>
+                    </div>
                 </div>
             </div>
 
-            <div class="detail-row">
-                <div class="detail-label">Fecha de Préstamo:</div>
-                <div class="detail-value">
-                    <?php 
-                    if (isset($datos['fecha_prestamo'])) {
-                        echo date('d/m/Y H:i', strtotime($datos['fecha_prestamo']));
-                    } else {
-                        echo 'N/A';
-                    }
-                    ?>
+            <?php if ($prestamo['estado'] == 'activo'): ?>
+                <div class="row">
+                    <div class="col-2">
+                        <div style="margin-bottom: 20px;">
+                            <label style="color: var(--text-light); font-size: 0.9rem;">Días Transcurridos:</label>
+                            <p style="color: var(--primary-color); font-weight: 700; margin: 5px 0; font-size: 1.5rem;">
+                                <?php echo $dias_transcurridos; ?> días
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div style="margin-bottom: 20px;">
+                            <label style="color: var(--text-light); font-size: 0.9rem;">
+                                <?php echo $atrasado ? 'Días de Atraso:' : 'Días Restantes:'; ?>
+                            </label>
+                            <p style="color: <?php echo $atrasado ? 'var(--danger-color)' : 'var(--success-color)'; ?>; font-weight: 700; margin: 5px 0; font-size: 1.5rem;">
+                                <?php echo $dias_restantes; ?> días
+                            </p>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="detail-row">
-                <div class="detail-label">Fecha de Devolución Estimada:</div>
-                <div class="detail-value">
-                    <?php 
-                    $fechaDevolucion = $datos['fecha_devolucion_estimada'] ?? 
-                                      $datos['fecha_devolucion'] ?? 
-                                      $datos['fecha_limite'] ?? null;
-                    if ($fechaDevolucion) {
-                        echo date('d/m/Y', strtotime($fechaDevolucion));
-                    } else {
-                        echo 'N/A';
-                    }
-                    ?>
+                <?php if ($atrasado): ?>
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>¡Préstamo Atrasado!</strong> Este libro debió ser devuelto hace <?php echo $dias_restantes; ?> días.
+                    </div>
+                <?php endif; ?>
+            <?php else: ?>
+                <div style="margin-bottom: 20px;">
+                    <label style="color: var(--text-light); font-size: 0.9rem;">Fecha de Devolución Real:</label>
+                    <p style="color: var(--text-white); font-weight: 600; margin: 5px 0; font-size: 1.1rem;">
+                        <?php echo isset($prestamo['fecha_devolucion_real']) ? date('d/m/Y', strtotime($prestamo['fecha_devolucion_real'])) : 'No registrada'; ?>
+                    </p>
                 </div>
-            </div>
-
-            <?php if (isset($datos['fecha_devolucion_real'])): ?>
-            <div class="detail-row">
-                <div class="detail-label">Fecha de Devolución Real:</div>
-                <div class="detail-value">
-                    <?php echo date('d/m/Y H:i', strtotime($datos['fecha_devolucion_real'])); ?>
-                </div>
-            </div>
             <?php endif; ?>
 
-            <div class="detail-row">
-                <div class="detail-label">Estado:</div>
-                <div class="detail-value">
-                    <?php 
-                    $estado = $datos['estado'] ?? 'activo';
-                    $badgeClass = 'badge-activo';
-                    
-                    if ($estado === 'devuelto') {
-                        $badgeClass = 'badge-devuelto';
-                    } elseif ($estado === 'activo' && $fechaDevolucion && strtotime($fechaDevolucion) < time()) {
-                        $estado = 'atrasado';
-                        $badgeClass = 'badge-atrasado';
-                    }
-                    ?>
-                    <span class="badge <?php echo $badgeClass; ?>">
-                        <?php echo ucfirst($estado); ?>
-                    </span>
-                    
-                    <?php if ($estado === 'atrasado'): ?>
-                        <br><small style="color: var(--accent); font-weight: 600;">
-                            Días de retraso: <?php 
-                                $dias = (time() - strtotime($fechaDevolucion)) / (60 * 60 * 24);
-                                echo floor($dias);
-                            ?>
-                        </small>
-                    <?php endif; ?>
+            <?php if (!empty($prestamo['observaciones'])): ?>
+                <div style="margin-top: 20px;">
+                    <label style="color: var(--text-light); font-size: 0.9rem;">Observaciones:</label>
+                    <p style="color: var(--text-white); margin: 5px 0; padding: 15px; background: rgba(26, 31, 58, 0.5); border-radius: 8px;">
+                        <?php echo htmlspecialchars($prestamo['observaciones']); ?>
+                    </p>
                 </div>
-            </div>
-
-            <?php if (isset($datos['observaciones']) && !empty($datos['observaciones'])): ?>
-            <div class="detail-row">
-                <div class="detail-label">Observaciones:</div>
-                <div class="detail-value"><?php echo nl2br(htmlspecialchars($datos['observaciones'])); ?></div>
-            </div>
             <?php endif; ?>
+        </div>
 
-            <?php if ($estado === 'activo' || $estado === 'atrasado'): ?>
-            <div style="margin-top: 40px; text-align: center;">
-                <a href="index.php?ruta=prestamos/devolver&id=<?php echo $datos['id']; ?>" 
-                   class="btn btn-secondary"
-                   onclick="return confirm('¿Confirmar devolución del libro?')"
-                   style="background: var(--success); padding: 15px 40px; font-size: 16px;">
-                     Marcar como Devuelto
+        <!-- Botones de acción -->
+        <div class="btn-group mt-4">
+            <?php if ($prestamo['estado'] == 'activo'): ?>
+                <a href="index.php?ruta=prestamos&accion=devolver&id=<?php echo $prestamo['id']; ?>" 
+                   class="btn btn-success btn-lg"
+                   onclick="return confirm('¿Confirmar devolución de este libro?')">
+                    <i class="fas fa-undo"></i> Registrar Devolución
                 </a>
-            </div>
             <?php endif; ?>
-
-        <?php else: ?>
-            <div style="text-align: center; padding: 60px 20px; color: var(--text-secondary);">
-                <div style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;"></div>
-                <h3 style="color: var(--text-primary);">Préstamo no encontrado</h3>
-                <p>El préstamo solicitado no existe o ha sido eliminado</p>
-            </div>
-        <?php endif; ?>
+            <a href="index.php?ruta=prestamos" class="btn btn-secondary btn-lg">
+                <i class="fas fa-arrow-left"></i> Volver a Préstamos
+            </a>
+        </div>
     </div>
 </div>
 
-<?php require_once __DIR__ . '/../layouts/footer.php'; ?>
+</body>
+</html>

@@ -1,289 +1,146 @@
-﻿<?php require_once __DIR__ . '/../layouts/navbar.php'; ?>
-
-<style>
-.main-container {
-    max-width: 1400px;
-    margin: 40px auto;
-    padding: 0 20px;
-    position: relative;
-    z-index: 1;
+<?php
+if (!isset($_SESSION['logueado']) || $_SESSION['logueado'] !== true) {
+    header('Location: index.php?ruta=login');
+    exit();
 }
 
-.page-header {
-    background: var(--bg-card);
-    border-radius: 16px;
-    padding: 30px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 20px var(--shadow);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
-    border: 2px solid var(--border-color);
-}
+require_once __DIR__ . '/../layouts/navbar.php';
 
-[data-theme="premium"] .page-header {
-    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
-    border-color: rgba(56, 189, 248, 0.2);
-}
-
-.page-header h1 {
-    font-size: 2rem;
-    color: var(--text-primary);
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.btn {
-    padding: 12px 24px;
-    border: none;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.btn-primary {
-    background: var(--primary);
-    color: white;
-    box-shadow: 0 4px 15px var(--shadow);
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    opacity: 0.9;
-}
-
-.btn-success {
-    background: var(--success);
-    color: white;
-}
-
-.btn-danger {
-    background: var(--accent);
-    color: white;
-}
-
-.content-card {
-    background: var(--bg-card);
-    border-radius: 16px;
-    box-shadow: 0 4px 20px var(--shadow);
-    overflow: hidden;
-    border: 2px solid var(--border-color);
-}
-
-[data-theme="premium"] .content-card {
-    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
-    border-color: rgba(56, 189, 248, 0.2);
-}
-
-.card-header {
-    padding: 25px 30px;
-    background: var(--bg-secondary);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 15px;
-    border-bottom: 2px solid var(--border-color);
-}
-
-.card-header h2 {
-    color: var(--text-primary);
-    font-size: 1.5rem;
-    font-weight: 600;
-}
-
-.search-input {
-    padding: 12px 20px;
-    border: 2px solid var(--border-color);
-    background: var(--bg-primary);
-    border-radius: 10px;
-    color: var(--text-primary);
-    font-size: 14px;
-    width: 300px;
-    transition: all 0.3s ease;
-}
-
-.search-input:focus {
-    outline: none;
-    border-color: var(--primary);
-}
-
-.table-container {
-    overflow-x: auto;
-    padding: 30px;
-}
-
-.table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.table thead th {
-    background: var(--bg-secondary);
-    padding: 15px 20px;
-    text-align: left;
-    font-weight: 600;
-    color: var(--text-primary);
-    font-size: 13px;
-    text-transform: uppercase;
-    border-bottom: 2px solid var(--border-color);
-}
-
-.table tbody tr {
-    border-bottom: 1px solid var(--border-color);
-    transition: all 0.3s ease;
-}
-
-.table tbody tr:hover {
-    background: var(--bg-secondary);
-}
-
-.table tbody td {
-    padding: 18px 20px;
-    color: var(--text-secondary);
-    font-size: 14px;
-}
-
-.badge {
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    display: inline-block;
-}
-
-.badge-estudiante {
-    background: #dbeafe;
-    color: #1e40af;
-}
-
-.badge-docente {
-    background: #d1fae5;
-    color: #065f46;
-}
-
-.badge-personal {
-    background: #fef3c7;
-    color: #92400e;
-}
-
-.action-buttons {
-    display: flex;
-    gap: 8px;
-}
-
-.btn-sm {
-    padding: 8px 16px;
-    font-size: 13px;
-}
-
-@media (max-width: 768px) {
-    .page-header {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .search-input {
-        width: 100%;
-    }
-
-    .table-container {
-        padding: 15px;
-    }
-}
-</style>
-
-<div class="main-container">
-    <div class="page-header">
-        <h1> Gestión de Usuarios</h1>
-        <a href="index.php?ruta=usuarios&accion=crear" class="btn btn-primary">
-             Agregar Usuario
-        </a>
-    </div>
-
-    <div class="content-card">
-        <div class="card-header">
-            <h2>Lista de Usuarios</h2>
-            <input type="text" id="searchInput" placeholder=" Buscar usuario..." class="search-input">
+$usuarios = $usuarios ?? [];
+$mensaje = $_SESSION['mensaje'] ?? null;
+unset($_SESSION['mensaje']);
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios - Biblioteca CIF</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1f3a 0%, #2d3561 100%);
+            min-height: 100vh; color: #fff;
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 80px 20px 40px; }
+        .header-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        .header-section h1 { font-size: 2.5rem; color: #5b8fd7; font-weight: 700; }
+        .btn-group { display: flex; gap: 15px; }
+        .btn { padding: 12px 25px; border-radius: 50px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px; border: none; cursor: pointer; font-size: 14px; }
+        .btn-primary { background: linear-gradient(135deg, #5b8fd7 0%, #4a7bc4 100%); color: white; box-shadow: 0 5px 15px rgba(91, 143, 215, 0.3); }
+        .btn-primary:hover { box-shadow: 0 8px 25px rgba(91, 143, 215, 0.5); transform: translateY(-2px); }
+        .btn-secondary { background: rgba(91, 143, 215, 0.2); color: #5b8fd7; border: 2px solid #5b8fd7; }
+        .btn-secondary:hover { background: rgba(91, 143, 215, 0.3); transform: translateY(-2px); }
+        .alert { background: rgba(91, 143, 215, 0.2); border: 1px solid #5b8fd7; border-radius: 15px; padding: 15px 20px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
+        .alert-success { background: rgba(46, 204, 113, 0.2); border-color: #2ecc71; color: #2ecc71; }
+        .alert-danger { background: rgba(231, 76, 60, 0.2); border-color: #e74c3c; color: #e74c3c; }
+        .card { background: rgba(45, 53, 97, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(91, 143, 215, 0.2); border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        thead th { background: rgba(91, 143, 215, 0.2); color: #5b8fd7; padding: 15px; text-align: left; font-weight: 600; border-bottom: 2px solid #5b8fd7; }
+        tbody td { padding: 15px; border-bottom: 1px solid rgba(91, 143, 215, 0.1); color: #b8c5d6; }
+        tbody tr:hover { background: rgba(91, 143, 215, 0.1); }
+        .badge { padding: 6px 15px; border-radius: 50px; font-size: 12px; font-weight: 600; display: inline-block; }
+        .badge-danger { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
+        .badge-info { background: linear-gradient(135deg, #3498db, #2980b9); color: white; }
+        .badge-success { background: linear-gradient(135deg, #2ecc71, #27ae60); color: white; }
+        .badge-secondary { background: rgba(149, 165, 166, 0.3); color: #95a5a6; }
+        .btn-sm { padding: 8px 15px; font-size: 12px; }
+        .btn-warning { background: linear-gradient(135deg, #f39c12, #e67e22); color: white; }
+        .btn-danger { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
+        .btn-warning:hover, .btn-danger:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-section">
+            <h1>👥 Gestión de Usuarios</h1>
+            <div class="btn-group">
+                <a href="index.php?ruta=usuarios&accion=importar" class="btn btn-secondary">📥 Importar</a>
+                <a href="index.php?ruta=usuarios&accion=crear" class="btn btn-primary">➕ Nuevo Usuario</a>
+            </div>
         </div>
-        
-        <div class="table-container">
-            <?php if (isset($usuarios) && count($usuarios) > 0): ?>
-                <table class="table">
+
+        <?php if ($mensaje): ?>
+            <div class="alert alert-<?= htmlspecialchars($mensaje['tipo'] ?? 'info', ENT_QUOTES, 'UTF-8') ?>">
+                <span><?= htmlspecialchars($mensaje['texto'] ?? '', ENT_QUOTES, 'UTF-8') ?></span>
+                <button onclick="this.parentElement.remove()" style="background:none;border:none;color:inherit;cursor:pointer;font-size:20px;">×</button>
+            </div>
+        <?php endif; ?>
+
+        <div class="card">
+            <div class="table-responsive">
+                <table>
                     <thead>
                         <tr>
                             <th>ID</th>
                             <th>Nombre</th>
-                            <th>Correo</th>
-                            <th>Teléfono</th>
+                            <th>Email</th>
                             <th>Tipo</th>
+                            <th>Estado</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="usuariosTable">
-                        <?php foreach ($usuarios as $usuario): ?>
+                    <tbody>
+                        <?php if (empty($usuarios)): ?>
                             <tr>
-                                <td><?php echo htmlspecialchars($usuario['id']); ?></td>
-                                <td><?php echo htmlspecialchars($usuario['nombre']); ?></td>
-                                <td><?php echo htmlspecialchars($usuario['correo'] ?? 'N/A'); ?></td>
-                                <td><?php echo htmlspecialchars($usuario['telefono'] ?? 'N/A'); ?></td>
-                                <td>
-                                    <?php 
-                                    $tipo = $usuario['tipo_usuario'] ?? 'estudiante';
-                                    $badgeClass = 'badge-' . strtolower($tipo);
-                                    ?>
-                                    <span class="badge <?php echo $badgeClass; ?>">
-                                        <?php echo ucfirst($tipo); ?>
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <a href="index.php?ruta=usuarios&accion=editar&id=<?php echo $usuario['id']; ?>" 
-                                           class="btn btn-success btn-sm">
-                                             Editar
-                                        </a>
-                                        <a href="index.php?ruta=usuarios&accion=eliminar&id=<?php echo $usuario['id']; ?>" 
-                                           class="btn btn-danger btn-sm" 
-                                           onclick="return confirm('¿Estás seguro de eliminar este usuario?')">
-                                             Eliminar
-                                        </a>
-                                    </div>
+                                <td colspan="6" style="text-align:center;padding:40px;color:#7f8c8d;">
+                                    No hay usuarios registrados
                                 </td>
                             </tr>
-                        <?php endforeach; ?>
+                        <?php else: ?>
+                            <?php foreach ($usuarios as $usuario): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($usuario['id'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+                                    <td><strong><?= htmlspecialchars($usuario['nombre'] ?? 'Sin nombre', ENT_QUOTES, 'UTF-8') ?></strong></td>
+                                    <td><?= htmlspecialchars($usuario['email'] ?? '', ENT_QUOTES, 'UTF-8') ?></td>
+
+                                    <!-- LÍNEAS 68-80 CORREGIDAS -->
+                                    <td>
+                                        <?php
+                                            // usar tipo_usuario y formatear badge
+                                            $tipo = $usuario['tipo_usuario'] ?? 'estudiante_mayor';
+                                            $badgeClass = ($tipo === 'administrador') ? 'danger' : 'info';
+                                            $tipoTexto = str_replace('_', ' ', ucwords(str_replace('_', ' ', $tipo)));
+                                        ?>
+                                        <span class="badge badge-<?= htmlspecialchars($badgeClass, ENT_QUOTES, 'UTF-8') ?>">
+                                            <?= htmlspecialchars($tipoTexto, ENT_QUOTES, 'UTF-8') ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <?php
+                                            // usar estado (activo|inactivo|pendiente)
+                                            $estado = $usuario['estado'] ?? 'pendiente';
+                                            $estaActivo = ($estado === 'activo');
+                                        ?>
+                                        <span class="badge badge-<?= $estaActivo ? 'success' : 'secondary' ?>">
+                                            <?= htmlspecialchars(ucfirst($estado), ENT_QUOTES, 'UTF-8') ?>
+                                        </span>
+                                    </td>
+                                    <!-- FIN CORRECCIÓN -->
+
+                                    <td>
+                                        <div style="display:flex;gap:8px;">
+                                            <a href="index.php?ruta=usuarios&accion=editar&id=<?= htmlspecialchars($usuario['id'] ?? '', ENT_QUOTES, 'UTF-8') ?>"
+                                               class="btn btn-warning btn-sm">
+                                                ✏️ Editar
+                                            </a>
+                                            <?php if (($usuario['id'] ?? 0) != ($_SESSION['usuario_id'] ?? 0)): ?>
+                                            <button class="btn btn-danger btn-sm"
+                                                    onclick="if(confirm('¿Eliminar este usuario?')) location.href='index.php?ruta=usuarios&accion=eliminar&id=<?= htmlspecialchars($usuario['id'] ?? '', ENT_QUOTES, 'UTF-8') ?>'">
+                                                🗑️ Eliminar
+                                            </button>
+                                            <?php endif; ?>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
-            <?php else: ?>
-                <div style="text-align: center; padding: 60px 20px; color: var(--text-secondary);">
-                    <div style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;"></div>
-                    <h3 style="color: var(--text-primary);">No hay usuarios registrados</h3>
-                    <p>Comienza agregando el primer usuario</p>
-                </div>
-            <?php endif; ?>
+            </div>
         </div>
     </div>
-</div>
-
-<script>
-document.getElementById('searchInput').addEventListener('input', function(e) {
-    const searchTerm = e.target.value.toLowerCase();
-    const rows = document.querySelectorAll('#usuariosTable tr');
-    
-    rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        row.style.display = text.includes(searchTerm) ? '' : 'none';
-    });
-});
-</script>
-
-<?php require_once __DIR__ . '/../layouts/footer.php'; ?>
+</body>
+</html>

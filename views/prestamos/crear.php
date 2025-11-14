@@ -1,298 +1,208 @@
-﻿<?php require_once __DIR__ . '/../layouts/navbar.php'; ?>
-
-<style>
-.main-container {
-    max-width: 900px;
-    margin: 40px auto;
-    padding: 0 20px 40px 20px;
-    position: relative;
-    z-index: 1;
+﻿<?php
+if (!isset($_SESSION['logueado'])) {
+    header('Location: index.php?ruta=login');
+    exit;
 }
 
-.page-header {
-    background: var(--bg-card);
-    border-radius: 16px;
-    padding: 30px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 20px var(--shadow);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
-    border: 2px solid var(--border-color);
-}
+require_once __DIR__ . '/../layouts/navbar.php';
+?>
 
-[data-theme="premium"] .page-header {
-    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
-    border-color: rgba(56, 189, 248, 0.2);
-}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Préstamo - Biblioteca CIF</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding-top: 80px;
+        }
 
-.page-header h1 {
-    font-size: 2rem;
-    color: var(--text-primary);
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
 
-.btn {
-    padding: 12px 24px;
-    border: none;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
+        .form-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
 
-.btn-secondary {
-    background: var(--secondary);
-    color: white;
-}
+        .form-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
 
-.btn-secondary:hover {
-    opacity: 0.9;
-    transform: translateY(-2px);
-}
+        .form-header h1 {
+            font-size: 2rem;
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
 
-.btn-primary {
-    background: var(--primary);
-    color: white;
-    width: 100%;
-    justify-content: center;
-    padding: 15px;
-    font-size: 16px;
-}
+        .form-header p {
+            color: #6b7280;
+        }
 
-.btn-primary:hover {
-    opacity: 0.9;
-    transform: translateY(-2px);
-}
+        .form-group {
+            margin-bottom: 25px;
+        }
 
-.content-card {
-    background: var(--bg-card);
-    border-radius: 16px;
-    box-shadow: 0 4px 20px var(--shadow);
-    border: 2px solid var(--border-color);
-    padding: 40px;
-}
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
 
-[data-theme="premium"] .content-card {
-    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
-    border-color: rgba(56, 189, 248, 0.2);
-}
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 12px 18px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: white;
+        }
 
-.form-group {
-    margin-bottom: 25px;
-}
+        .form-group select:focus,
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
 
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: var(--text-primary);
-    font-size: 14px;
-}
+        .btn {
+            padding: 14px 30px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
 
-.form-group select,
-.form-group input[type="date"],
-.form-group input[type="number"],
-.form-group textarea {
-    width: 100%;
-    padding: 12px 15px;
-    border: 2px solid var(--border-color);
-    border-radius: 10px;
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    font-size: 14px;
-    transition: all 0.3s ease;
-}
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 100%;
+            margin-top: 10px;
+        }
 
-.form-group select:focus,
-.form-group input:focus,
-.form-group textarea:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
 
-.form-group textarea {
-    resize: vertical;
-    min-height: 100px;
-}
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
 
-.form-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-}
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
 
-.alert {
-    padding: 15px 20px;
-    border-radius: 10px;
-    margin-bottom: 25px;
-    font-weight: 500;
-}
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
 
-.alert-error {
-    background: #fee2e2;
-    color: #991b1b;
-    border: 2px solid #fecaca;
-}
+        .alert-danger {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #ef4444;
+        }
 
-.alert-success {
-    background: #d1fae5;
-    color: #065f46;
-    border: 2px solid #a7f3d0;
-}
+        .alert-warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 2px solid #f59e0b;
+        }
+    </style>
+</head>
+<body>
 
-@media (max-width: 768px) {
-    .page-header {
-        flex-direction: column;
-        align-items: stretch;
-    }
+<div class="container">
+    <a href="index.php?ruta=prestamos" class="btn btn-secondary">← Volver a Préstamos</a>
 
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-
-    .content-card {
-        padding: 25px;
-    }
-}
-</style>
-
-<div class="main-container">
-    <div class="page-header">
-        <h1> Nuevo Préstamo</h1>
-        <a href="index.php?ruta=prestamos" class="btn btn-secondary">
-             Volver
-        </a>
-    </div>
-
-    <?php if (isset($_SESSION['error'])): ?>
-        <div class="alert alert-error">
-            <?php 
-            echo $_SESSION['error'];
-            unset($_SESSION['error']);
-            ?>
+    <div class="form-card">
+        <div class="form-header">
+            <h1>📖 Nuevo Préstamo</h1>
+            <p>Registra un nuevo préstamo de libro</p>
         </div>
-    <?php endif; ?>
 
-    <div class="content-card">
-        <form action="index.php?ruta=prestamos/guardar" method="POST" id="formPrestamo">
-            
-            <div class="form-group">
-                <label for="usuario_id"> Usuario *</label>
-                <select name="usuario_id" id="usuario_id" required>
-                    <option value="">Seleccione un usuario</option>
-                    <?php if (isset($usuarios) && count($usuarios) > 0): ?>
+        <?php if (isset($_GET['error'])): ?>
+            <div class="alert alert-danger">
+                ❌ El libro seleccionado no está disponible
+            </div>
+        <?php endif; ?>
+
+        <?php if (empty($usuarios)): ?>
+            <div class="alert alert-warning">
+                ⚠️ No hay usuarios aprobados. <a href="index.php?ruta=usuarios">Ir a Usuarios</a>
+            </div>
+        <?php endif; ?>
+
+        <?php if (empty($libros)): ?>
+            <div class="alert alert-warning">
+                ⚠️ No hay libros disponibles. <a href="index.php?ruta=libros">Ir a Libros</a>
+            </div>
+        <?php endif; ?>
+
+        <?php if (!empty($usuarios) && !empty($libros)): ?>
+            <form method="POST" action="index.php?ruta=prestamos&accion=guardar">
+                <div class="form-group">
+                    <label for="usuario_id">👤 Usuario *</label>
+                    <select name="usuario_id" id="usuario_id" required>
+                        <option value="">Selecciona un usuario</option>
                         <?php foreach ($usuarios as $usuario): ?>
-                            <option value="<?php echo $usuario['id']; ?>">
-                                <?php echo htmlspecialchars($usuario['nombre']); ?>
-                                <?php if (isset($usuario['tipo_usuario'])): ?>
-                                    (<?php echo ucfirst($usuario['tipo_usuario']); ?>)
-                                <?php endif; ?>
+                            <option value="<?= $usuario['id'] ?>">
+                                <?= htmlspecialchars($usuario['nombre']) ?> - <?= htmlspecialchars($usuario['email']) ?>
                             </option>
                         <?php endforeach; ?>
-                    <?php endif; ?>
-                </select>
-            </div>
+                    </select>
+                </div>
 
-            <div class="form-group">
-                <label for="libro_id"> Libro *</label>
-                <select name="libro_id" id="libro_id" required>
-                    <option value="">Seleccione un libro</option>
-                    <?php if (isset($libros) && count($libros) > 0): ?>
+                <div class="form-group">
+                    <label for="libro_id">📚 Libro *</label>
+                    <select name="libro_id" id="libro_id" required>
+                        <option value="">Selecciona un libro</option>
                         <?php foreach ($libros as $libro): ?>
-                            <option value="<?php echo $libro['id']; ?>" 
-                                    data-disponibles="<?php echo $libro['cantidad_disponible'] ?? 0; ?>">
-                                <?php echo htmlspecialchars($libro['titulo']); ?>
-                                <?php if (isset($libro['autor'])): ?>
-                                    - <?php echo htmlspecialchars($libro['autor']); ?>
-                                <?php endif; ?>
-                                (Disponibles: <?php echo $libro['cantidad_disponible'] ?? 0; ?>)
+                            <option value="<?= $libro['id'] ?>">
+                                <?= htmlspecialchars($libro['titulo']) ?> - <?= htmlspecialchars($libro['autor']) ?> (<?= $libro['cantidad_disponible'] ?> disponibles)
                             </option>
                         <?php endforeach; ?>
-                    <?php endif; ?>
-                </select>
-                <small style="color: var(--text-secondary); display: block; margin-top: 5px;">
-                    Solo se muestran libros con stock disponible
-                </small>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="fecha_prestamo"> Fecha de Préstamo *</label>
-                    <input type="date" 
-                           name="fecha_prestamo" 
-                           id="fecha_prestamo" 
-                           value="<?php echo date('Y-m-d'); ?>"
-                           required>
+                    </select>
                 </div>
 
                 <div class="form-group">
-                    <label for="fecha_devolucion_esperada"> Fecha de Devolución Esperada *</label>
-                    <input type="date" 
-                           name="fecha_devolucion_esperada" 
-                           id="fecha_devolucion_esperada" 
-                           value="<?php echo date('Y-m-d', strtotime('+7 days')); ?>"
-                           required>
+                    <label for="fecha_devolucion">📅 Fecha de Devolución *</label>
+                    <input type="date" name="fecha_devolucion" id="fecha_devolucion" 
+                           min="<?= date('Y-m-d', strtotime('+1 day')) ?>" 
+                           value="<?= date('Y-m-d', strtotime('+7 days')) ?>" required>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <label for="observaciones"> Observaciones</label>
-                <textarea name="observaciones" 
-                          id="observaciones" 
-                          placeholder="Ingrese observaciones adicionales (opcional)"></textarea>
-            </div>
-
-            <button type="submit" class="btn btn-primary">
-                 Registrar Préstamo
-            </button>
-        </form>
+                <button type="submit" class="btn btn-primary">
+                    ✅ Registrar Préstamo
+                </button>
+            </form>
+        <?php endif; ?>
     </div>
 </div>
 
-<script>
-// Validar disponibilidad del libro
-document.getElementById('libro_id').addEventListener('change', function() {
-    const selectedOption = this.options[this.selectedIndex];
-    const disponibles = parseInt(selectedOption.getAttribute('data-disponibles') || 0);
-    
-    if (disponibles <= 0) {
-        alert(' Este libro no tiene ejemplares disponibles');
-        this.value = '';
-    }
-});
-
-// Validar fechas
-document.getElementById('fecha_devolucion_esperada').addEventListener('change', function() {
-    const fechaPrestamo = new Date(document.getElementById('fecha_prestamo').value);
-    const fechaDevolucion = new Date(this.value);
-    
-    if (fechaDevolucion <= fechaPrestamo) {
-        alert(' La fecha de devolución debe ser posterior a la fecha de préstamo');
-        this.value = '';
-    }
-});
-
-// Confirmar antes de enviar
-document.getElementById('formPrestamo').addEventListener('submit', function(e) {
-    const usuario = document.getElementById('usuario_id').options[document.getElementById('usuario_id').selectedIndex].text;
-    const libro = document.getElementById('libro_id').options[document.getElementById('libro_id').selectedIndex].text;
-    
-    if (!confirm(`¿Confirmar préstamo?\n\nUsuario: ${usuario}\nLibro: ${libro}`)) {
-        e.preventDefault();
-    }
-});
-</script>
-
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>
+</body>
+</html>

@@ -1,12 +1,14 @@
 ﻿<?php
 class Database {
-    private $host = 'localhost';
-    private $db_name = 'bibloteca_cif';
-    private $username = 'root';
-    private $password = '';
-    private $conn = null;
+    private $host = "localhost";
+    private $db_name = "biblioteca_cif";
+    private $username = "root";
+    private $password = "";
+    private $conn;
 
     public function getConnection() {
+        $this->conn = null;
+
         try {
             $this->conn = new PDO(
                 "mysql:host=" . $this->host . ";dbname=" . $this->db_name . ";charset=utf8mb4",
@@ -16,12 +18,13 @@ class Database {
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
                     PDO::ATTR_EMULATE_PREPARES => false,
+                    PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
                 ]
             );
         } catch(PDOException $e) {
-            echo "Error de conexión: " . $e->getMessage();
-            die();
+            die("Error de conexión: " . $e->getMessage());
         }
+
         return $this->conn;
     }
 }

@@ -1,292 +1,303 @@
-﻿<?php require_once __DIR__ . '/../layouts/navbar.php'; ?>
-
-<style>
-.main-container {
-    max-width: 900px;
-    margin: 40px auto;
-    padding: 0 20px 40px 20px;
-    position: relative;
-    z-index: 1;
+﻿<?php
+if (!isset($_SESSION['logueado'])) {
+    header('Location: index.php?ruta=login');
+    exit;
 }
 
-.page-header {
-    background: var(--bg-card);
-    border-radius: 16px;
-    padding: 30px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 20px var(--shadow);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 20px;
-    border: 2px solid var(--border-color);
-}
+// Detectar tema actual
+$tema = $_SESSION['tema'] ?? 'claro';
+$esOscuro = ($tema === 'oscuro');
 
-[data-theme="premium"] .page-header {
-    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
-    border-color: rgba(56, 189, 248, 0.2);
-}
+require_once __DIR__ . '/../layouts/navbar.php';
+?>
 
-.page-header h1 {
-    font-size: 2rem;
-    color: var(--text-primary);
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Libros - Biblioteca CIF</title>
+    <style>
+        body {
+            <?php if ($esOscuro): ?>
+                background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            <?php else: ?>
+                background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            <?php endif; ?>
+            min-height: 100vh;
+            padding-top: 20px;
+        }
 
-.btn {
-    padding: 12px 24px;
-    border: none;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
 
-.btn-secondary {
-    background: var(--secondary);
-    color: white;
-}
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
 
-.btn-secondary:hover {
-    opacity: 0.9;
-    transform: translateY(-2px);
-}
+        .header h1 {
+            font-size: 2.5rem;
+            color: #fff;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
 
-.btn-primary {
-    background: var(--primary);
-    color: white;
-    width: 100%;
-    justify-content: center;
-    padding: 15px;
-    font-size: 16px;
-}
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+        }
 
-.btn-primary:hover {
-    opacity: 0.9;
-    transform: translateY(-2px);
-}
+        .search-bar {
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+        }
 
-.content-card {
-    background: var(--bg-card);
-    border-radius: 16px;
-    box-shadow: 0 4px 20px var(--shadow);
-    border: 2px solid var(--border-color);
-    padding: 40px;
-}
+        .search-bar input {
+            padding: 14px 20px;
+            border-radius: 25px;
+            border: none;
+            width: 400px;
+            font-size: 1rem;
+        }
 
-[data-theme="premium"] .content-card {
-    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
-    border-color: rgba(56, 189, 248, 0.2);
-}
+        .libros-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
 
-.form-group {
-    margin-bottom: 25px;
-}
+        .libro-card {
+            <?php if ($esOscuro): ?>
+                background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+                border: 2px solid #475569;
+            <?php else: ?>
+                background: white;
+                border: 2px solid rgba(255, 255, 255, 0.3);
+            <?php endif; ?>
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
 
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: var(--text-primary);
-    font-size: 14px;
-}
+        .libro-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
 
-.form-group select,
-.form-group input[type="text"],
-.form-group input[type="number"],
-.form-group textarea {
-    width: 100%;
-    padding: 12px 15px;
-    border: 2px solid var(--border-color);
-    border-radius: 10px;
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    font-size: 14px;
-    transition: all 0.3s ease;
-}
+        .libro-titulo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            <?php if ($esOscuro): ?>
+                color: #e2e8f0;
+            <?php else: ?>
+                color: #1f2937;
+            <?php endif; ?>
+        }
 
-.form-group select:focus,
-.form-group input:focus,
-.form-group textarea:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
+        .libro-autor {
+            font-size: 1rem;
+            margin-bottom: 15px;
+            <?php if ($esOscuro): ?>
+                color: #94a3b8;
+            <?php else: ?>
+                color: #6b7280;
+            <?php endif; ?>
+        }
 
-.form-group textarea {
-    resize: vertical;
-    min-height: 100px;
-}
+        .libro-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid <?php echo $esOscuro ? '#475569' : '#e5e7eb'; ?>;
+        }
 
-.form-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-}
+        .libro-disponible {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
 
-.alert {
-    padding: 15px 20px;
-    border-radius: 10px;
-    margin-bottom: 25px;
-    font-weight: 500;
-}
+        .disponible {
+            background: #d1fae5;
+            color: #065f46;
+        }
 
-.alert-error {
-    background: #fee2e2;
-    color: #991b1b;
-    border: 2px solid #fecaca;
-}
+        .no-disponible {
+            background: #fee2e2;
+            color: #991b1b;
+        }
 
-.info-badge {
-    display: inline-block;
-    padding: 8px 16px;
-    background: var(--bg-secondary);
-    border-radius: 8px;
-    font-size: 13px;
-    color: var(--text-secondary);
-    margin-top: 5px;
-}
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #fff;
+        }
 
-@media (max-width: 768px) {
-    .page-header {
-        flex-direction: column;
-        align-items: stretch;
-    }
+        .empty-state-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
 
-    .form-row {
-        grid-template-columns: 1fr;
-    }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-block;
+            margin: 5px;
+        }
 
-    .content-card {
-        padding: 25px;
-    }
-}
-</style>
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
 
-<div class="main-container">
-    <div class="page-header">
-        <h1> Editar Libro</h1>
-        <a href="index.php?ruta=libros" class="btn btn-secondary">
-             Volver
-        </a>
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            <?php if ($esOscuro): ?>
+                background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            <?php else: ?>
+                background: rgba(255, 255, 255, 0.95);
+            <?php endif; ?>
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #60a5fa;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            <?php if ($esOscuro): ?>
+                color: #cbd5e1;
+            <?php else: ?>
+                color: #4b5563;
+            <?php endif; ?>
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>📚 Catálogo de Libros</h1>
+        <p>Explora nuestra colección completa</p>
     </div>
 
-    <?php if (isset($_SESSION['error'])): ?>
-        <div class="alert alert-error">
-            <?php 
-            echo $_SESSION['error'];
-            unset($_SESSION['error']);
-            ?>
+    <div class="stats">
+        <div class="stat-card">
+            <div class="stat-number"><?= count($libros) ?></div>
+            <div class="stat-label">Total de Libros</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">
+                <?= count(array_filter($libros, fn($l) => $l['cantidad_disponible'] > 0)) ?>
+            </div>
+            <div class="stat-label">Disponibles</div>
+        </div>
+    </div>
+
+    <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="🔍 Buscar por título o autor..." onkeyup="buscarLibro()">
+    </div>
+
+    <?php if (empty($libros)): ?>
+        <div class="empty-state">
+            <div class="empty-state-icon">📚</div>
+            <h3>No hay libros en el catálogo</h3>
+            <p>Importa libros para comenzar</p>
+        </div>
+    <?php else: ?>
+        <div class="libros-grid" id="librosGrid">
+            <?php foreach ($libros as $libro): ?>
+                <div class="libro-card" data-titulo="<?= htmlspecialchars($libro['titulo']) ?>" data-autor="<?= htmlspecialchars($libro['autor']) ?>">
+                    <div class="libro-titulo"><?= htmlspecialchars($libro['titulo']) ?></div>
+                    <div class="libro-autor">📖 <?= htmlspecialchars($libro['autor']) ?></div>
+                    
+                    <?php if (!empty($libro['categoria_nombre'])): ?>
+                        <div class="libro-autor">🏷️ <?= htmlspecialchars($libro['categoria_nombre']) ?></div>
+                    <?php endif; ?>
+                    
+                    <div class="libro-info">
+                        <div>
+                            <strong>ISBN:</strong> <?= htmlspecialchars($libro['isbn']) ?><br>
+                            <strong>Disponibles:</strong> <?= $libro['cantidad_disponible'] ?>/<?= $libro['cantidad_total'] ?>
+                        </div>
+                        
+                        <span class="libro-disponible <?= $libro['cantidad_disponible'] > 0 ? 'disponible' : 'no-disponible' ?>">
+                            <?= $libro['cantidad_disponible'] > 0 ? '✅ Disponible' : '❌ No disponible' ?>
+                        </span>
+                    </div>
+                    
+                    <div style="margin-top: 15px;">
+                        <a href="index.php?ruta=libros&accion=editar&id=<?= $libro['id'] ?>" class="btn btn-primary">
+                            ✏️ Editar
+                        </a>
+                        <?php if ($libro['cantidad_disponible'] > 0): ?>
+                            <a href="index.php?ruta=prestamos&accion=crear&libro_id=<?= $libro['id'] ?>" class="btn btn-success">
+                                📤 Prestar
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
         </div>
     <?php endif; ?>
-
-    <div class="content-card">
-        <?php if (isset($libro)): ?>
-        <form action="index.php?ruta=libros&accion=editar" method="POST" id="formLibro">
-            <input type="hidden" name="id" value="<?php echo $libro['id']; ?>">
-            
-            <div class="form-group">
-                <label for="titulo"> Título del Libro *</label>
-                <input type="text" name="titulo" id="titulo" required 
-                       value="<?php echo htmlspecialchars($libro['titulo']); ?>"
-                       placeholder="Ingrese el título del libro">
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="autor"> Autor *</label>
-                    <input type="text" name="autor" id="autor" required 
-                           value="<?php echo htmlspecialchars($libro['autor']); ?>"
-                           placeholder="Nombre del autor">
-                </div>
-
-                <div class="form-group">
-                    <label for="isbn"> ISBN</label>
-                    <input type="text" name="isbn" id="isbn" 
-                           value="<?php echo htmlspecialchars($libro['isbn'] ?? ''); ?>"
-                           placeholder="978-0-00-000000-0">
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="editorial"> Editorial</label>
-                    <input type="text" name="editorial" id="editorial" 
-                           value="<?php echo htmlspecialchars($libro['editorial'] ?? ''); ?>"
-                           placeholder="Nombre de la editorial">
-                </div>
-
-                <div class="form-group">
-                    <label for="anio_publicacion"> Año de Publicación</label>
-                    <input type="number" name="anio_publicacion" id="anio_publicacion" 
-                           value="<?php echo htmlspecialchars($libro['anio_publicacion'] ?? ''); ?>"
-                           min="1800" max="<?php echo date('Y'); ?>" 
-                           placeholder="<?php echo date('Y'); ?>">
-                </div>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="categoria"> Categoría</label>
-                    <input type="text" name="categoria" id="categoria" 
-                           value="<?php echo htmlspecialchars($libro['categoria'] ?? ''); ?>"
-                           placeholder="Ej: Ficción, Historia, Ciencia">
-                </div>
-
-                <div class="form-group">
-                    <label for="cantidad_total"> Cantidad Total *</label>
-                    <input type="number" name="cantidad_total" id="cantidad_total" required 
-                           value="<?php echo $libro['cantidad_total']; ?>"
-                           min="1" placeholder="Número de ejemplares">
-                    <?php if (isset($libro['cantidad_disponible'])): ?>
-                    <span class="info-badge">
-                         Disponibles: <?php echo $libro['cantidad_disponible']; ?>
-                    </span>
-                    <?php endif; ?>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="ubicacion"> Ubicación en Biblioteca</label>
-                <input type="text" name="ubicacion" id="ubicacion" 
-                       value="<?php echo htmlspecialchars($libro['ubicacion'] ?? ''); ?>"
-                       placeholder="Ej: Estante A - Nivel 2">
-            </div>
-
-            <div class="form-group">
-                <label for="descripcion"> Descripción</label>
-                <textarea name="descripcion" id="descripcion" 
-                          placeholder="Breve descripción del libro (opcional)"><?php echo htmlspecialchars($libro['descripcion'] ?? ''); ?></textarea>
-            </div>
-
-            <button type="submit" class="btn btn-primary">
-                 Actualizar Libro
-            </button>
-        </form>
-        <?php else: ?>
-        <div style="text-align: center; padding: 60px 20px; color: var(--text-secondary);">
-            <div style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;"></div>
-            <h3 style="color: var(--text-primary);">Libro no encontrado</h3>
-        </div>
-        <?php endif; ?>
-    </div>
 </div>
 
 <script>
-document.getElementById('formLibro')?.addEventListener('submit', function(e) {
-    if (!confirm('¿Confirmar actualización del libro?')) {
-        e.preventDefault();
-    }
-});
+function buscarLibro() {
+    const input = document.getElementById('searchInput');
+    const filter = input.value.toUpperCase();
+    const cards = document.querySelectorAll('.libro-card');
+
+    cards.forEach(card => {
+        const titulo = card.dataset.titulo.toUpperCase();
+        const autor = card.dataset.autor.toUpperCase();
+        
+        if (titulo.includes(filter) || autor.includes(filter)) {
+            card.style.display = '';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
 </script>
 
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>
+</body>
+</html>
