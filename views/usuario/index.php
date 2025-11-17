@@ -26,29 +26,39 @@ require_once __DIR__ . '/../layouts/navbar.php';
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: var(--bg-primary);
             min-height: 100vh;
             padding-top: 100px;
             padding-bottom: 150px;
         }
+
         .container {
             max-width: 1600px;
             margin: 0 auto;
             padding: 30px 20px;
         }
+
         .header {
             text-align: center;
             margin-bottom: 40px;
         }
+
         .header h1 {
             font-size: 2.5rem;
-            color: #fff;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            color: var(--text-primary);
+            text-shadow: 2px 2px 4px var(--shadow);
         }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
         .actions {
             text-align: center;
             margin-bottom: 30px;
         }
+
         .btn {
             padding: 12px 30px;
             border-radius: 12px;
@@ -57,54 +67,70 @@ require_once __DIR__ . '/../layouts/navbar.php';
             transition: all 0.3s;
             display: inline-block;
             margin: 5px;
+            box-shadow: 0 4px 15px var(--shadow);
         }
+
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-        }
+
         .btn-danger {
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             color: white;
         }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--shadow);
+        }
+
         .btn-small {
             padding: 6px 14px;
             font-size: 0.85rem;
         }
+
         .table-container {
-            background: white;
+            background: var(--bg-card);
             border-radius: 15px;
             padding: 30px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 20px var(--shadow);
             overflow-x: auto;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             min-width: 800px;
         }
+
         thead {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
         }
-        th, td {
+
+        th {
             padding: 15px;
             text-align: left;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        th {
             font-weight: 600;
         }
+
+        td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
         tbody tr {
             transition: all 0.3s;
+            background: var(--bg-card);
         }
+
         tbody tr:hover {
-            background: #f9fafb;
+            background: var(--bg-secondary);
         }
+
         .badge {
             padding: 6px 14px;
             border-radius: 20px;
@@ -112,18 +138,22 @@ require_once __DIR__ . '/../layouts/navbar.php';
             font-weight: 600;
             display: inline-block;
         }
+
         .badge-activo {
             background: #d1fae5;
             color: #065f46;
         }
+
         .badge-pendiente {
             background: #fef3c7;
             color: #92400e;
         }
+
         .badge-inactivo {
             background: #fee2e2;
             color: #991b1b;
         }
+
         .alert {
             padding: 15px 20px;
             border-radius: 10px;
@@ -133,15 +163,17 @@ require_once __DIR__ . '/../layouts/navbar.php';
             margin-left: auto;
             margin-right: auto;
         }
+
         .alert-success {
             background: #d1fae5;
             color: #065f46;
             border: 2px solid #10b981;
         }
+
         .empty-state {
             text-align: center;
             padding: 60px 20px;
-            color: #6b7280;
+            color: var(--text-secondary);
         }
     </style>
 </head>
@@ -150,7 +182,7 @@ require_once __DIR__ . '/../layouts/navbar.php';
 <div class="container">
     <div class="header">
         <h1>👥 Gestión de Usuarios</h1>
-        <p style="color: rgba(255,255,255,0.9);">Administra todos los usuarios del sistema</p>
+        <p>Administra todos los usuarios del sistema</p>
     </div>
 
     <?php if (isset($_SESSION['mensaje'])): ?>

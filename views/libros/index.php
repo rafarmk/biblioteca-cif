@@ -16,7 +16,6 @@ if (!empty($busqueda)) {
 }
 
 $query .= " ORDER BY titulo ASC";
-
 $stmt = $conn->prepare($query);
 
 if (!empty($busqueda)) {
@@ -29,19 +28,19 @@ $libros = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 require_once __DIR__ . '/../layouts/navbar.php';
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Libros - Biblioteca CIF</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: var(--bg-primary);
             min-height: 100vh;
             padding-top: 100px;
-            padding-bottom: 50px;
+            padding-bottom: 150px;
         }
 
         .container {
@@ -57,9 +56,13 @@ require_once __DIR__ . '/../layouts/navbar.php';
 
         .header h1 {
             font-size: 2.5rem;
-            color: #fff;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            color: var(--text-primary);
+            text-shadow: 2px 2px 4px var(--shadow);
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
         }
 
         .actions {
@@ -68,22 +71,6 @@ require_once __DIR__ . '/../layouts/navbar.php';
             justify-content: center;
             margin-bottom: 30px;
             flex-wrap: wrap;
-        }
-
-        .search-form {
-            max-width: 600px;
-            margin: 0 auto 30px;
-            display: flex;
-            gap: 10px;
-        }
-
-        .search-input {
-            flex: 1;
-            padding: 15px 20px;
-            border-radius: 12px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            font-size: 1rem;
-            background: rgba(255, 255, 255, 0.9);
         }
 
         .btn {
@@ -95,13 +82,11 @@ require_once __DIR__ . '/../layouts/navbar.php';
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            border: none;
-            cursor: pointer;
+            box-shadow: 0 4px 15px var(--shadow);
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
         }
 
@@ -110,91 +95,105 @@ require_once __DIR__ . '/../layouts/navbar.php';
             color: white;
         }
 
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
         .btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 6px 25px var(--shadow);
         }
 
-        .libros-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 25px;
+        .btn-small {
+            padding: 6px 14px;
+            font-size: 0.85rem;
         }
 
-        .libro-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s;
+        .search-box {
+            max-width: 600px;
+            margin: 0 auto 30px;
         }
 
-        .libro-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .libro-icon {
-            font-size: 3rem;
-            text-align: center;
-            margin-bottom: 15px;
-        }
-
-        .libro-titulo {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: #1f2937;
-        }
-
-        .libro-autor {
-            color: #6b7280;
-            margin-bottom: 15px;
-        }
-
-        .libro-info {
-            margin: 15px 0;
-            padding: 15px 0;
-            border-top: 1px solid #e5e7eb;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .info-row {
+        .search-form {
             display: flex;
-            justify-content: space-between;
-            margin: 8px 0;
-            color: #4b5563;
-            font-size: 0.9rem;
+            gap: 10px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: 2px solid var(--border-color);
+            font-size: 1rem;
+            background: var(--bg-card);
+            color: var(--text-primary);
+        }
+
+        .table-container {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 20px var(--shadow);
+            overflow-x: auto;
+        }
+
+        .table-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 25px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        thead {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        tbody tr {
+            transition: all 0.3s;
+            background: var(--bg-card);
+        }
+
+        tbody tr:hover {
+            background: var(--bg-secondary);
+            transform: scale(1.01);
+        }
+
+        .badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
         }
 
         .badge-disponible {
             background: #d1fae5;
             color: #065f46;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
         }
 
         .badge-agotado {
             background: #fee2e2;
             color: #991b1b;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        .libro-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .btn-small {
-            padding: 8px 16px;
-            font-size: 0.85rem;
-            flex: 1;
         }
 
         .alert {
@@ -212,6 +211,12 @@ require_once __DIR__ . '/../layouts/navbar.php';
             color: #065f46;
             border: 2px solid #10b981;
         }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
     </style>
 </head>
 <body>
@@ -219,12 +224,12 @@ require_once __DIR__ . '/../layouts/navbar.php';
 <div class="container">
     <div class="header">
         <h1>📚 Gestión de Libros</h1>
-        <p style="color: rgba(255,255,255,0.9);">Administra el catálogo completo de la biblioteca</p>
+        <p>Administra el catálogo completo de la biblioteca</p>
     </div>
 
     <?php if (isset($_SESSION['mensaje'])): ?>
         <div class="alert alert-success">
-            <?= $_SESSION['mensaje'] ?>
+            <?= htmlspecialchars($_SESSION['mensaje']) ?>
         </div>
         <?php unset($_SESSION['mensaje']); ?>
     <?php endif; ?>
@@ -238,74 +243,77 @@ require_once __DIR__ . '/../layouts/navbar.php';
         </a>
     </div>
 
-    <form method="GET" action="" class="search-form">
-        <input type="hidden" name="ruta" value="libros">
-        <input 
-            type="text" 
-            name="buscar" 
-            class="search-input" 
-            placeholder="🔍 Buscar por título, autor o ISBN..."
-            value="<?= htmlspecialchars($busqueda) ?>"
-        >
-        <button type="submit" class="btn btn-primary">
-            <i class="fas fa-search"></i> Buscar
-        </button>
-    </form>
+    <div class="search-box">
+        <form method="GET" class="search-form">
+            <input type="hidden" name="ruta" value="libros">
+            <input type="text" name="buscar" class="search-input" 
+                   placeholder="🔍 Buscar por título, autor o ISBN..."
+                   value="<?= htmlspecialchars($busqueda) ?>">
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-search"></i> Buscar
+            </button>
+        </form>
+    </div>
 
-    <div class="libros-grid">
-        <?php foreach ($libros as $libro): ?>
-            <div class="libro-card">
-                <div class="libro-icon">📖</div>
-                <div class="libro-titulo">
-                    <?= htmlspecialchars($libro['titulo']) ?>
-                </div>
-                <div class="libro-autor">
-                    <i class="fas fa-user"></i> <?= htmlspecialchars($libro['autor']) ?>
-                </div>
+    <div class="table-container">
+        <div class="table-title">📖 Listado de Libros</div>
 
-                <div class="libro-info">
-                    <div class="info-row">
-                        <span><strong>ISBN:</strong></span>
-                        <span><?= htmlspecialchars($libro['isbn']) ?></span>
-                    </div>
-                    <div class="info-row">
-                        <span><strong>Editorial:</strong></span>
-                        <span><?= htmlspecialchars($libro['editorial']) ?></span>
-                    </div>
-                    <div class="info-row">
-                        <span><strong>Año:</strong></span>
-                        <span><?= htmlspecialchars($libro['anio_publicacion']) ?></span>
-                    </div>
-                    <div class="info-row">
-                        <span><strong>Total:</strong></span>
-                        <span><?= $libro['cantidad_total'] ?> copias</span>
-                    </div>
-                    <div class="info-row">
-                        <span><strong>Disponibles:</strong></span>
-                        <?php if ($libro['cantidad_disponible'] > 0): ?>
-                            <span class="badge-disponible">
-                                ✅ <?= $libro['cantidad_disponible'] ?>
-                            </span>
-                        <?php else: ?>
-                            <span class="badge-agotado">❌ Agotado</span>
-                        <?php endif; ?>
-                    </div>
-                </div>
-
-                <div class="libro-actions">
-                    <a href="index.php?ruta=libros&accion=editar&id=<?= $libro['id'] ?>" 
-                       class="btn btn-primary btn-small">
-                        <i class="fas fa-edit"></i> Editar
-                    </a>
-                    <a href="index.php?ruta=libros&accion=eliminar&id=<?= $libro['id'] ?>" 
-                       class="btn btn-danger btn-small"
-                       onclick="return confirm('¿Eliminar este libro?')"
-                       style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
-                        <i class="fas fa-trash"></i> Eliminar
-                    </a>
-                </div>
+        <?php if (empty($libros)): ?>
+            <div class="empty-state">
+                <div style="font-size: 4rem; margin-bottom: 20px;">📚</div>
+                <h3>No se encontraron libros</h3>
+                <p>Comienza agregando libros al catálogo</p>
             </div>
-        <?php endforeach; ?>
+        <?php else: ?>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Título</th>
+                        <th>Autor</th>
+                        <th>ISBN</th>
+                        <th>Editorial</th>
+                        <th>Año</th>
+                        <th>Disponibles</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($libros as $libro): ?>
+                        <tr>
+                            <td><?= $libro['id'] ?></td>
+                            <td><strong><?= htmlspecialchars($libro['titulo'] ?? 'Sin título') ?></strong></td>
+                            <td><?= htmlspecialchars($libro['autor'] ?? 'Sin autor') ?></td>
+                            <td><?= htmlspecialchars($libro['isbn'] ?? 'N/A') ?></td>
+                            <td><?= htmlspecialchars($libro['editorial'] ?? 'N/A') ?></td>
+                            <td><?= htmlspecialchars($libro['anio_publicacion'] ?? 'N/A') ?></td>
+                            <td>
+                                <?php if ($libro['cantidad_disponible'] > 0): ?>
+                                    <span class="badge badge-disponible">
+                                        ✅ <?= $libro['cantidad_disponible'] ?> / <?= $libro['cantidad_total'] ?>
+                                    </span>
+                                <?php else: ?>
+                                    <span class="badge badge-agotado">
+                                        ❌ Agotado
+                                    </span>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <a href="index.php?ruta=libros&accion=editar&id=<?= $libro['id'] ?>" 
+                                   class="btn btn-primary btn-small">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                                <a href="index.php?ruta=libros&accion=eliminar&id=<?= $libro['id'] ?>" 
+                                   class="btn btn-danger btn-small"
+                                   onclick="return confirm('¿Eliminar este libro?')">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php endif; ?>
     </div>
 </div>
 

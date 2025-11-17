@@ -1,38 +1,74 @@
-﻿<footer style="
-    background: linear-gradient(135deg, #0c4a6e 0%, #0f172a 100%);
-    border-top: 3px solid rgba(56, 189, 248, 0.3);
-    padding: 25px 20px;
-    text-align: center;
-    color: white;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
-    margin-top: 50px;
-">
-    <div style="max-width: 1200px; margin: 0 auto;">
-        <p style="margin: 0; font-weight: 700; font-size: 16px;">
-            🔬 Sistema de Gestión Bibliotecaria
-        </p>
-        <p style="margin: 8px 0; font-size: 14px; opacity: 0.95;">
-            <strong>Laboratorio Científico Forense</strong> - Policía Nacional Civil de El Salvador
-        </p>
-        <div style="
-            margin: 15px 0;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-            display: inline-block;
-        ">
-            <p style="margin: 0; font-size: 13px; font-weight: 600;">
-                Desarrollado por <strong style="color: #fbbf24;">Gestión de Infraestructura</strong>
-            </p>
+﻿<footer class="modern-footer">
+    <div class="footer-content">
+        <div class="footer-text">
+            <strong>🔬 Sistema de Gestión Bibliotecaria</strong>
+            <span class="footer-separator">|</span>
+            <span>Laboratorio Científico Forense - PNC El Salvador</span>
         </div>
-        <p style="margin: 8px 0; font-size: 11px; opacity: 0.8;">
+        <div class="footer-credits">
+            Desarrollado por <strong>Gestión de Infraestructura</strong>
+            <span class="footer-separator">|</span>
             © <?= date('Y') ?> - Todos los derechos reservados
-        </p>
+        </div>
     </div>
 </footer>
 
 <style>
-    body {
-        padding-bottom: 0 !important;
+.modern-footer {
+    background: var(--bg-card);
+    border-top: 3px solid var(--primary);
+    padding: 25px 20px;
+    margin-top: auto;
+    box-shadow: 0 -6px 20px var(--shadow);
+    transition: var(--transition);
+}
+
+.footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    text-align: center;
+    font-size: 0.9rem;
+    line-height: 2;
+}
+
+.footer-text {
+    margin-bottom: 10px;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.footer-text strong {
+    color: var(--primary);
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+
+.footer-credits {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.footer-credits strong {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+.footer-separator {
+    margin: 0 12px;
+    opacity: 0.6;
+    font-weight: 300;
+}
+
+@media (max-width: 768px) {
+    .footer-content {
+        font-size: 0.8rem;
     }
+    .footer-separator {
+        display: none;
+    }
+    .footer-text, .footer-credits {
+        display: block;
+    }
+}
 </style>

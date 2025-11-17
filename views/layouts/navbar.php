@@ -2,31 +2,9 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-
-// Inicializar tema si no existe
-if (!isset($_SESSION['tema'])) {
-    $_SESSION['tema'] = 'original';
-}
-
-// Cambiar tema si se solicita
-if (isset($_GET['cambiar_tema'])) {
-    $_SESSION['tema'] = $_GET['cambiar_tema'];
-    
-    // Reconstruir URL sin el parámetro cambiar_tema
-    $params = $_GET;
-    unset($params['cambiar_tema']);
-    
-    $url = 'index.php';
-    if (!empty($params)) {
-        $url .= '?' . http_build_query($params);
-    }
-    
-    header("Location: $url");
-    exit;
-}
 ?>
 <!DOCTYPE html>
-<html lang="es" data-theme="<?= htmlspecialchars($_SESSION['tema']) ?>">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -37,48 +15,19 @@ if (isset($_GET['cambiar_tema'])) {
 <body>
 
 <style>
-/* === VARIABLES DE TEMAS === */
-:root[data-theme="original"] {
+:root {
     --navbar-from: #1e3c72;
     --navbar-to: #2a5298;
-    --bg-body: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-}
-
-:root[data-theme="claro"] {
-    --navbar-from: #e3f2fd;
-    --navbar-to: #bbdefb;
-    --bg-body: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
-}
-
-:root[data-theme="premium"] {
-    --navbar-from: #1a1a2e;
-    --navbar-to: #16213e;
-    --bg-body: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
-}
-
-:root[data-theme="pnc"] {
-    --navbar-from: #003d82;
-    --navbar-to: #001f4d;
-    --bg-body: linear-gradient(135deg, #003d82 0%, #001f4d 100%);
-}
-
-:root[data-theme="forense"] {
-    --navbar-from: #0a0e27;
-    --navbar-to: #1a1f3a;
-    --bg-body: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
-}
-
-:root {
     --primary: #2a5298;
     --secondary: #1e3c72;
     --accent: #3b82f6;
     --transition: all 0.3s ease;
-    --bg-primary: #ffffff;
-    --bg-secondary: #f8f9fa;
+    --bg-primary: #f0f4f8;
+    --bg-secondary: #e2e8f0;
     --bg-card: #ffffff;
     --text-primary: #2c3e50;
-    --text-secondary: #5a6c7d;
-    --border-color: #e1e8ed;
+    --text-secondary: #64748b;
+    --border-color: #cbd5e1;
     --shadow: rgba(0, 0, 0, 0.1);
 }
 
@@ -90,7 +39,7 @@ if (isset($_GET['cambiar_tema'])) {
 
 body {
     font-family: 'Poppins', sans-serif;
-    background: var(--bg-body);
+    background: var(--bg-primary);
     color: var(--text-primary);
     transition: var(--transition);
     min-height: 100vh;
@@ -181,6 +130,7 @@ body {
     position: relative;
     flex-shrink: 0;
     border: 2px solid transparent;
+    background: none;
 }
 
 .nav-link:hover {
@@ -198,7 +148,6 @@ body {
 .nav-link i {
     font-size: 18px;
     transition: all 0.3s ease;
-    flex-shrink: 0;
 }
 
 .nav-link:hover i {
@@ -245,157 +194,68 @@ body {
     font-size: 18px;
 }
 
-/* === SELECTOR DE TEMAS === */
-.theme-selector {
-    position: relative;
-    flex-shrink: 0;
-}
-
-.theme-btn {
-    padding: 10px 16px;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.25);
-    border: 2px solid rgba(255, 255, 255, 0.4);
-    color: white;
-    font-weight: 600;
-    font-size: 15px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    transition: all 0.3s ease;
-    white-space: nowrap;
-}
-
-.theme-btn:hover {
-    background: rgba(255, 255, 255, 0.35);
-    border-color: rgba(255, 255, 255, 0.6);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    transform: scale(1.05);
-}
-
-.theme-btn i {
-    font-size: 18px;
-}
-
-.theme-dropdown {
-    position: absolute;
-    top: calc(100% + 10px);
-    right: 0;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    min-width: 220px;
-    display: none;
-    z-index: 1001;
-    overflow: hidden;
-}
-
-.theme-dropdown.show {
-    display: block;
-    animation: slideDown 0.3s ease;
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.theme-option {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 18px;
-    color: #333;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    border: none;
-    background: transparent;
-    width: 100%;
-    text-align: left;
-}
-
-.theme-option:hover {
-    background: #f0f0f0;
-}
-
-.theme-option.active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-}
-
-.theme-option i {
-    font-size: 16px;
-    margin-left: auto;
-}
-
-.theme-preview {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    border: 2px solid rgba(0, 0, 0, 0.1);
-    flex-shrink: 0;
-}
-
-.theme-original { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); }
-.theme-claro { background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-color: #999; }
-.theme-premium { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
-.theme-pnc { background: linear-gradient(135deg, #003d82 0%, #001f4d 100%); }
-.theme-forense { background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); }
-
-/* === BOTÓN SALIR SUPER CORREGIDO === */
 .nav-logout {
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
-    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4) !important;
-    padding: 11px 24px !important;
-    min-width: 120px !important;
-    max-width: 120px !important;
-    justify-content: center !important;
-    overflow: visible !important;
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
 }
 
 .nav-logout:hover {
-    box-shadow: 0 6px 25px rgba(245, 87, 108, 0.7) !important;
-    border-color: rgba(255, 255, 255, 0.6) !important;
-    background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%) !important;
-    padding: 11px 24px !important;
+    box-shadow: 0 6px 25px rgba(245, 87, 108, 0.7);
+    border-color: rgba(255, 255, 255, 0.6);
 }
 
-.nav-logout span {
-    display: inline-block !important;
-    white-space: nowrap !important;
-    overflow: visible !important;
-    text-overflow: clip !important;
+/* Theme Selector Dropdown */
+.theme-dropdown {
+    position: relative;
 }
 
-.nav-logout i {
-    flex-shrink: 0 !important;
-    margin-right: 2px !important;
+.theme-dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 10px;
+    box-shadow: 0 8px 25px var(--shadow);
+    min-width: 180px;
+    margin-top: 8px;
+    z-index: 1001;
 }
 
-/* === RESPONSIVE === */
+.theme-dropdown:hover .theme-dropdown-content,
+.theme-dropdown-content.show {
+    display: block;
+}
+
+.theme-option {
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.theme-option:hover {
+    background: var(--bg-secondary);
+    transform: translateX(5px);
+}
+
+.theme-icon {
+    font-size: 18px;
+}
+
 @media (max-width: 1400px) {
     .nav-link span {
         display: none;
     }
-    .nav-logout span {
-        display: inline-block !important;
-    }
     .nav-link {
         padding: 10px 14px;
-    }
-    .nav-logout {
-        padding: 11px 24px !important;
-        min-width: 120px !important;
     }
 }
 
@@ -414,57 +274,23 @@ body {
         height: 45px;
         font-size: 22px;
     }
-    .theme-btn span {
-        display: none;
-    }
-}
-
-/* === TEMA CLARO OVERRIDES === */
-:root[data-theme="claro"] {
-    --text-primary: #1a202c;
-    --text-secondary: #4a5568;
-}
-
-:root[data-theme="claro"] .nav-link {
-    color: #1a202c;
-}
-
-:root[data-theme="claro"] .navbar-logo {
-    color: #1a202c;
-}
-
-:root[data-theme="claro"] .nav-user {
-    color: #1a202c;
-    background: rgba(0, 0, 0, 0.1);
-    border-color: rgba(0, 0, 0, 0.2);
-}
-
-:root[data-theme="claro"] .theme-btn {
-    color: #1a202c;
-    background: rgba(0, 0, 0, 0.1);
-    border-color: rgba(0, 0, 0, 0.2);
-}
-
-:root[data-theme="claro"] .nav-link:hover {
-    background: rgba(0, 0, 0, 0.1);
-    border-color: rgba(0, 0, 0, 0.3);
-}
-
-/* === TEMA PNC === */
-:root[data-theme="pnc"] .logo-icon {
-    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-}
-
-/* === TEMA FORENSE === */
-:root[data-theme="forense"] .badge-notification {
-    background: #00ffff;
-    color: #000;
 }
 </style>
 
 <nav class="modern-navbar">
     <div class="navbar-container">
-        <a href="index.php?ruta=landing" class="navbar-logo">
+        <?php
+        $logoUrl = 'index.php?ruta=landing';
+        if (isset($_SESSION['logueado'])) {
+            if (isset($_SESSION['tipo_usuario']) && $_SESSION['tipo_usuario'] === 'administrador') {
+                $logoUrl = 'index.php?ruta=home';
+            } else {
+                $logoUrl = 'index.php?ruta=catalogo';
+            }
+        }
+        ?>
+        
+        <a href="<?= $logoUrl ?>" class="navbar-logo">
             <div class="logo-icon">
                 <i class="fas fa-book-reader"></i>
             </div>
@@ -479,14 +305,34 @@ body {
                 </div>
             <?php endif; ?>
 
+            <div class="theme-dropdown">
+                <button class="nav-link" onclick="toggleThemeDropdown()">
+                    <i id="theme-icon" class="fas fa-palette"></i>
+                    <span>Temas</span>
+                </button>
+                <div class="theme-dropdown-content" id="themeDropdown">
+                    <div class="theme-option" onclick="applyTheme('light')">
+                        <span class="theme-icon">☀️</span>
+                        <span>Claro</span>
+                    </div>
+                    <div class="theme-option" onclick="applyTheme('dark')">
+                        <span class="theme-icon">🌙</span>
+                        <span>Oscuro</span>
+                    </div>
+                    <div class="theme-option" onclick="applyTheme('ocean')">
+                        <span class="theme-icon">🌊</span>
+                        <span>Océano</span>
+                    </div>
+                    <div class="theme-option" onclick="applyTheme('forest')">
+                        <span class="theme-icon">🌲</span>
+                        <span>Bosque</span>
+                    </div>
+                </div>
+            </div>
+
             <?php
             $esAdmin = isset($_SESSION['tipo_usuario']) && $_SESSION['tipo_usuario'] === 'administrador';
             ?>
-
-            <a href="index.php?ruta=<?= $esAdmin ? 'home' : 'landing' ?>" class="nav-link">
-                <i class="fas fa-home"></i>
-                <span>Inicio</span>
-            </a>
 
             <?php if ($esAdmin): ?>
                 <a href="index.php?ruta=home" class="nav-link">
@@ -544,41 +390,6 @@ body {
                 </a>
             <?php endif; ?>
 
-            <!-- SELECTOR DE TEMAS -->
-            <div class="theme-selector" id="themeSelector">
-                <button type="button" class="theme-btn" id="themeBtn">
-                    <i class="fas fa-palette"></i>
-                    <span>Tema</span>
-                </button>
-                <div class="theme-dropdown" id="themeDropdown">
-                    <a href="?cambiar_tema=original<?= !empty($_GET) ? '&' . http_build_query(array_diff_key($_GET, ['cambiar_tema' => ''])) : '' ?>" class="theme-option <?= $_SESSION['tema'] === 'original' ? 'active' : '' ?>">
-                        <div class="theme-preview theme-original"></div>
-                        <span>Original</span>
-                        <?= $_SESSION['tema'] === 'original' ? '<i class="fas fa-check"></i>' : '' ?>
-                    </a>
-                    <a href="?cambiar_tema=claro<?= !empty($_GET) ? '&' . http_build_query(array_diff_key($_GET, ['cambiar_tema' => ''])) : '' ?>" class="theme-option <?= $_SESSION['tema'] === 'claro' ? 'active' : '' ?>">
-                        <div class="theme-preview theme-claro"></div>
-                        <span>Claro</span>
-                        <?= $_SESSION['tema'] === 'claro' ? '<i class="fas fa-check"></i>' : '' ?>
-                    </a>
-                    <a href="?cambiar_tema=premium<?= !empty($_GET) ? '&' . http_build_query(array_diff_key($_GET, ['cambiar_tema' => ''])) : '' ?>" class="theme-option <?= $_SESSION['tema'] === 'premium' ? 'active' : '' ?>">
-                        <div class="theme-preview theme-premium"></div>
-                        <span>Premium</span>
-                        <?= $_SESSION['tema'] === 'premium' ? '<i class="fas fa-check"></i>' : '' ?>
-                    </a>
-                    <a href="?cambiar_tema=pnc<?= !empty($_GET) ? '&' . http_build_query(array_diff_key($_GET, ['cambiar_tema' => ''])) : '' ?>" class="theme-option <?= $_SESSION['tema'] === 'pnc' ? 'active' : '' ?>">
-                        <div class="theme-preview theme-pnc"></div>
-                        <span>PNC</span>
-                        <?= $_SESSION['tema'] === 'pnc' ? '<i class="fas fa-check"></i>' : '' ?>
-                    </a>
-                    <a href="?cambiar_tema=forense<?= !empty($_GET) ? '&' . http_build_query(array_diff_key($_GET, ['cambiar_tema' => ''])) : '' ?>" class="theme-option <?= $_SESSION['tema'] === 'forense' ? 'active' : '' ?>">
-                        <div class="theme-preview theme-forense"></div>
-                        <span>Forense</span>
-                        <?= $_SESSION['tema'] === 'forense' ? '<i class="fas fa-check"></i>' : '' ?>
-                    </a>
-                </div>
-            </div>
-
             <a href="index.php?ruta=logout" class="nav-link nav-logout" onclick="return confirm('¿Cerrar sesión?')">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Salir</span>
@@ -588,40 +399,104 @@ body {
 </nav>
 
 <script>
-// JavaScript mejorado para selector de temas
-(function() {
-    'use strict';
+// TEMAS MEJORADOS
+const themes = {
+    light: {
+        '--navbar-from': '#1e3c72',
+        '--navbar-to': '#2a5298',
+        '--primary': '#2a5298',
+        '--secondary': '#1e3c72',
+        '--accent': '#3b82f6',
+        '--bg-primary': '#f0f4f8',
+        '--bg-secondary': '#e2e8f0',
+        '--bg-card': '#ffffff',
+        '--text-primary': '#1e293b',
+        '--text-secondary': '#64748b',
+        '--border-color': '#cbd5e1',
+        '--shadow': 'rgba(0, 0, 0, 0.1)'
+    },
+    dark: {
+        '--navbar-from': '#1a1a2e',
+        '--navbar-to': '#16213e',
+        '--primary': '#0f3460',
+        '--secondary': '#1a1a2e',
+        '--accent': '#e94560',
+        '--bg-primary': '#0f0f23',
+        '--bg-secondary': '#16213e',
+        '--bg-card': '#1a1a2e',
+        '--text-primary': '#f1f5f9',
+        '--text-secondary': '#94a3b8',
+        '--border-color': '#2d2d44',
+        '--shadow': 'rgba(0, 0, 0, 0.5)'
+    },
+    ocean: {
+        '--navbar-from': '#006d77',
+        '--navbar-to': '#83c5be',
+        '--primary': '#006d77',
+        '--secondary': '#83c5be',
+        '--accent': '#e29578',
+        '--bg-primary': '#edf6f9',
+        '--bg-secondary': '#83c5be',
+        '--bg-card': '#ffffff',
+        '--text-primary': '#023047',
+        '--text-secondary': '#126782',
+        '--border-color': '#83c5be',
+        '--shadow': 'rgba(0, 109, 119, 0.2)'
+    },
+    forest: {
+        '--navbar-from': '#2d6a4f',
+        '--navbar-to': '#52b788',
+        '--primary': '#2d6a4f',
+        '--secondary': '#1b4332',
+        '--accent': '#95d5b2',
+        '--bg-primary': '#d8f3dc',
+        '--bg-secondary': '#b7e4c7',
+        '--bg-card': '#ffffff',
+        '--text-primary': '#1b4332',
+        '--text-secondary': '#2d6a4f',
+        '--border-color': '#95d5b2',
+        '--shadow': 'rgba(45, 106, 79, 0.2)'
+    }
+};
+
+function loadTheme() {
+    const savedTheme = localStorage.getItem('bibliotecaTheme') || 'light';
+    applyTheme(savedTheme);
+}
+
+function applyTheme(themeName) {
+    const theme = themes[themeName] || themes.light;
+    const root = document.documentElement;
     
-    document.addEventListener('DOMContentLoaded', function() {
-        const themeBtn = document.getElementById('themeBtn');
-        const themeDropdown = document.getElementById('themeDropdown');
-        const themeSelector = document.getElementById('themeSelector');
-        
-        if (!themeBtn || !themeDropdown) return;
-        
-        // Toggle dropdown
-        themeBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            themeDropdown.classList.toggle('show');
-            console.log('Dropdown toggled:', themeDropdown.classList.contains('show'));
-        });
-        
-        // Cerrar al hacer click fuera
-        document.addEventListener('click', function(e) {
-            if (!themeSelector.contains(e.target)) {
-                themeDropdown.classList.remove('show');
-            }
-        });
-        
-        // Prevenir cierre al hacer click dentro del dropdown
-        themeDropdown.addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
-        
-        console.log('Selector de temas inicializado correctamente');
+    Object.keys(theme).forEach(property => {
+        root.style.setProperty(property, theme[property]);
     });
-})();
+    
+    localStorage.setItem('bibliotecaTheme', themeName);
+    
+    // Cerrar dropdown
+    const dropdown = document.getElementById('themeDropdown');
+    if (dropdown) {
+        dropdown.classList.remove('show');
+    }
+}
+
+function toggleThemeDropdown() {
+    const dropdown = document.getElementById('themeDropdown');
+    if (dropdown) {
+        dropdown.classList.toggle('show');
+    }
+}
+
+// Cerrar dropdown al hacer clic fuera
+document.addEventListener('click', function(event) {
+    const dropdown = document.querySelector('.theme-dropdown');
+    if (dropdown && !dropdown.contains(event.target)) {
+        document.getElementById('themeDropdown').classList.remove('show');
+    }
+});
+
+document.addEventListener('DOMContentLoaded', loadTheme);
 </script>
 
 </body>
