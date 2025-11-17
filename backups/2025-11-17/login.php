@@ -26,22 +26,10 @@ if (isset($_SESSION['logueado'])) {
             box-sizing: border-box;
         }
 
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            display: flex;
-            flex-direction: column;
             min-height: 100vh;
-        }
-
-        .page-wrapper {
-            flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -57,7 +45,6 @@ if (isset($_SESSION['logueado'])) {
             max-width: 450px;
             width: 100%;
             animation: slideDown 0.5s ease-out;
-            margin: 20px 0;
         }
 
         @keyframes slideDown {
@@ -176,73 +163,36 @@ if (isset($_SESSION['logueado'])) {
             text-decoration: underline;
         }
 
-        /* Footer pegado al fondo */
         .footer-info {
-            margin-top: auto;
+            margin-top: 30px;
             text-align: center;
             color: white;
-            background: linear-gradient(135deg, #0c4a6e 0%, #0f172a 100%);
-            border-top: 3px solid rgba(56, 189, 248, 0.3);
-            padding: 25px 20px;
-            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
-            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            border-radius: 15px;
+            max-width: 600px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
         }
 
-        .footer-info p:first-child {
-            margin: 0;
-            font-weight: 700;
-            font-size: 16px;
+        .footer-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
         }
 
-        .footer-info p:nth-child(2) {
-            margin: 8px 0;
-            font-size: 14px;
-            opacity: 0.95;
+        .footer-info p {
+            margin: 5px 0;
+            font-size: 0.95rem;
         }
 
-        .footer-highlight {
-            margin: 15px 0;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-            display: inline-block;
-        }
-
-        .footer-highlight p {
-            margin: 0;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .footer-highlight strong {
-            color: #fbbf24;
-        }
-
-        .footer-info p:last-child {
-            margin: 8px 0 0 0;
-            font-size: 11px;
-            opacity: 0.8;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .login-container {
-                margin: 10px 0;
-            }
-            
-            .login-header {
-                padding: 30px 20px;
-            }
-            
-            .login-body {
-                padding: 30px 20px;
-            }
+        .footer-developed {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            font-size: 0.9rem;
         }
     </style>
 </head>
 <body>
-
-<div class="page-wrapper">
     <div class="login-container">
         <div class="login-header">
             <div class="login-icon">🔬</div>
@@ -297,18 +247,15 @@ if (isset($_SESSION['logueado'])) {
             </a>
         </div>
     </div>
-</div>
 
-<footer class="footer-info">
-    <div style="max-width: 1200px; margin: 0 auto;">
-        <p>🔬 Sistema de Gestión Bibliotecaria</p>
-        <p><strong>Laboratorio Científico Forense</strong> - Policía Nacional Civil de El Salvador</p>
-        <div class="footer-highlight">
+    <div class="footer-info">
+        <h3>🔬 Sistema de Gestión Bibliotecaria</h3>
+        <p><strong>Laboratorio Científico Forense</strong></p>
+        <p>Policía Nacional Civil de El Salvador</p>
+        <div class="footer-developed">
             <p>Desarrollado por <strong>Gestión de Infraestructura</strong></p>
+            <p>© <?= date('Y') ?> - Todos los derechos reservados</p>
         </div>
-        <p>© <?= date('Y') ?> - Todos los derechos reservados</p>
     </div>
-</footer>
-
 </body>
 </html>

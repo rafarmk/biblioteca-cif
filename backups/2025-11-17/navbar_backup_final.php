@@ -11,17 +11,17 @@ if (!isset($_SESSION['tema'])) {
 // Cambiar tema si se solicita
 if (isset($_GET['cambiar_tema'])) {
     $_SESSION['tema'] = $_GET['cambiar_tema'];
-    
-    // Reconstruir URL sin el parámetro cambiar_tema
-    $params = $_GET;
-    unset($params['cambiar_tema']);
-    
-    $url = 'index.php';
-    if (!empty($params)) {
-        $url .= '?' . http_build_query($params);
+    // Redirigir para limpiar la URL
+    $current_url = $_SERVER['PHP_SELF'];
+    if (isset($_SERVER['QUERY_STRING'])) {
+        $query_params = [];
+        parse_str($_SERVER['QUERY_STRING'], $query_params);
+        unset($query_params['cambiar_tema']);
+        if (!empty($query_params)) {
+            $current_url .= '?' . http_build_query($query_params);
+        }
     }
-    
-    header("Location: $url");
+    header("Location: $current_url");
     exit;
 }
 ?>
@@ -54,18 +54,6 @@ if (isset($_GET['cambiar_tema'])) {
     --navbar-from: #1a1a2e;
     --navbar-to: #16213e;
     --bg-body: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
-}
-
-:root[data-theme="pnc"] {
-    --navbar-from: #003d82;
-    --navbar-to: #001f4d;
-    --bg-body: linear-gradient(135deg, #003d82 0%, #001f4d 100%);
-}
-
-:root[data-theme="forense"] {
-    --navbar-from: #0a0e27;
-    --navbar-to: #1a1f3a;
-    --bg-body: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
 }
 
 :root {
@@ -198,7 +186,6 @@ body {
 .nav-link i {
     font-size: 18px;
     transition: all 0.3s ease;
-    flex-shrink: 0;
 }
 
 .nav-link:hover i {
@@ -284,15 +271,11 @@ body {
     right: 0;
     background: white;
     border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    min-width: 220px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    min-width: 180px;
     display: none;
     z-index: 1001;
     overflow: hidden;
-}
-
-.theme-dropdown.show {
-    display: block;
     animation: slideDown 0.3s ease;
 }
 
@@ -307,21 +290,20 @@ body {
     }
 }
 
+.theme-dropdown.show {
+    display: block;
+}
+
 .theme-option {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 14px 18px;
+    gap: 10px;
+    padding: 12px 16px;
     color: #333;
     text-decoration: none;
     transition: all 0.2s ease;
     font-weight: 600;
     font-size: 14px;
-    cursor: pointer;
-    border: none;
-    background: transparent;
-    width: 100%;
-    text-align: left;
 }
 
 .theme-option:hover {
@@ -335,51 +317,35 @@ body {
 
 .theme-option i {
     font-size: 16px;
-    margin-left: auto;
 }
 
 .theme-preview {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
     border: 2px solid rgba(0, 0, 0, 0.1);
-    flex-shrink: 0;
 }
 
 .theme-original { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); }
-.theme-claro { background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-color: #999; }
+.theme-claro { background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); }
 .theme-premium { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
-.theme-pnc { background: linear-gradient(135deg, #003d82 0%, #001f4d 100%); }
-.theme-forense { background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); }
 
-/* === BOTÓN SALIR SUPER CORREGIDO === */
+/* === BOTÓN SALIR CORREGIDO === */
 .nav-logout {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
-    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4) !important;
-    padding: 11px 24px !important;
-    min-width: 120px !important;
-    max-width: 120px !important;
-    justify-content: center !important;
-    overflow: visible !important;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+    padding: 10px 18px !important;
+    min-width: 100px;
 }
 
 .nav-logout:hover {
-    box-shadow: 0 6px 25px rgba(245, 87, 108, 0.7) !important;
-    border-color: rgba(255, 255, 255, 0.6) !important;
-    background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%) !important;
-    padding: 11px 24px !important;
+    box-shadow: 0 6px 25px rgba(245, 87, 108, 0.7);
+    border-color: rgba(255, 255, 255, 0.6);
+    padding: 10px 20px !important;
 }
 
 .nav-logout span {
-    display: inline-block !important;
-    white-space: nowrap !important;
-    overflow: visible !important;
-    text-overflow: clip !important;
-}
-
-.nav-logout i {
-    flex-shrink: 0 !important;
-    margin-right: 2px !important;
+    display: inline !important;
 }
 
 /* === RESPONSIVE === */
@@ -388,14 +354,10 @@ body {
         display: none;
     }
     .nav-logout span {
-        display: inline-block !important;
+        display: inline !important;
     }
     .nav-link {
         padding: 10px 14px;
-    }
-    .nav-logout {
-        padding: 11px 24px !important;
-        min-width: 120px !important;
     }
 }
 
@@ -448,17 +410,6 @@ body {
 :root[data-theme="claro"] .nav-link:hover {
     background: rgba(0, 0, 0, 0.1);
     border-color: rgba(0, 0, 0, 0.3);
-}
-
-/* === TEMA PNC === */
-:root[data-theme="pnc"] .logo-icon {
-    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-}
-
-/* === TEMA FORENSE === */
-:root[data-theme="forense"] .badge-notification {
-    background: #00ffff;
-    color: #000;
 }
 </style>
 
@@ -544,37 +495,30 @@ body {
                 </a>
             <?php endif; ?>
 
-            <!-- SELECTOR DE TEMAS -->
+            <!-- SELECTOR DE TEMAS CON JAVASCRIPT -->
             <div class="theme-selector" id="themeSelector">
-                <button type="button" class="theme-btn" id="themeBtn">
+                <button class="theme-btn" id="themeBtn">
                     <i class="fas fa-palette"></i>
                     <span>Tema</span>
                 </button>
                 <div class="theme-dropdown" id="themeDropdown">
-                    <a href="?cambiar_tema=original<?= !empty($_GET) ? '&' . http_build_query(array_diff_key($_GET, ['cambiar_tema' => ''])) : '' ?>" class="theme-option <?= $_SESSION['tema'] === 'original' ? 'active' : '' ?>">
+                    <a href="?cambiar_tema=original<?= isset($_GET['ruta']) ? '&ruta=' . htmlspecialchars($_GET['ruta']) : '' ?><?= isset($_GET['accion']) ? '&accion=' . htmlspecialchars($_GET['accion']) : '' ?><?= isset($_GET['id']) ? '&id=' . htmlspecialchars($_GET['id']) : '' ?>" 
+                       class="theme-option <?= $_SESSION['tema'] === 'original' ? 'active' : '' ?>">
                         <div class="theme-preview theme-original"></div>
                         <span>Original</span>
                         <?= $_SESSION['tema'] === 'original' ? '<i class="fas fa-check"></i>' : '' ?>
                     </a>
-                    <a href="?cambiar_tema=claro<?= !empty($_GET) ? '&' . http_build_query(array_diff_key($_GET, ['cambiar_tema' => ''])) : '' ?>" class="theme-option <?= $_SESSION['tema'] === 'claro' ? 'active' : '' ?>">
+                    <a href="?cambiar_tema=claro<?= isset($_GET['ruta']) ? '&ruta=' . htmlspecialchars($_GET['ruta']) : '' ?><?= isset($_GET['accion']) ? '&accion=' . htmlspecialchars($_GET['accion']) : '' ?><?= isset($_GET['id']) ? '&id=' . htmlspecialchars($_GET['id']) : '' ?>" 
+                       class="theme-option <?= $_SESSION['tema'] === 'claro' ? 'active' : '' ?>">
                         <div class="theme-preview theme-claro"></div>
                         <span>Claro</span>
                         <?= $_SESSION['tema'] === 'claro' ? '<i class="fas fa-check"></i>' : '' ?>
                     </a>
-                    <a href="?cambiar_tema=premium<?= !empty($_GET) ? '&' . http_build_query(array_diff_key($_GET, ['cambiar_tema' => ''])) : '' ?>" class="theme-option <?= $_SESSION['tema'] === 'premium' ? 'active' : '' ?>">
+                    <a href="?cambiar_tema=premium<?= isset($_GET['ruta']) ? '&ruta=' . htmlspecialchars($_GET['ruta']) : '' ?><?= isset($_GET['accion']) ? '&accion=' . htmlspecialchars($_GET['accion']) : '' ?><?= isset($_GET['id']) ? '&id=' . htmlspecialchars($_GET['id']) : '' ?>" 
+                       class="theme-option <?= $_SESSION['tema'] === 'premium' ? 'active' : '' ?>">
                         <div class="theme-preview theme-premium"></div>
                         <span>Premium</span>
                         <?= $_SESSION['tema'] === 'premium' ? '<i class="fas fa-check"></i>' : '' ?>
-                    </a>
-                    <a href="?cambiar_tema=pnc<?= !empty($_GET) ? '&' . http_build_query(array_diff_key($_GET, ['cambiar_tema' => ''])) : '' ?>" class="theme-option <?= $_SESSION['tema'] === 'pnc' ? 'active' : '' ?>">
-                        <div class="theme-preview theme-pnc"></div>
-                        <span>PNC</span>
-                        <?= $_SESSION['tema'] === 'pnc' ? '<i class="fas fa-check"></i>' : '' ?>
-                    </a>
-                    <a href="?cambiar_tema=forense<?= !empty($_GET) ? '&' . http_build_query(array_diff_key($_GET, ['cambiar_tema' => ''])) : '' ?>" class="theme-option <?= $_SESSION['tema'] === 'forense' ? 'active' : '' ?>">
-                        <div class="theme-preview theme-forense"></div>
-                        <span>Forense</span>
-                        <?= $_SESSION['tema'] === 'forense' ? '<i class="fas fa-check"></i>' : '' ?>
                     </a>
                 </div>
             </div>
@@ -588,40 +532,30 @@ body {
 </nav>
 
 <script>
-// JavaScript mejorado para selector de temas
-(function() {
-    'use strict';
+// JavaScript para manejar el dropdown de temas
+document.addEventListener('DOMContentLoaded', function() {
+    const themeBtn = document.getElementById('themeBtn');
+    const themeDropdown = document.getElementById('themeDropdown');
+    const themeSelector = document.getElementById('themeSelector');
     
-    document.addEventListener('DOMContentLoaded', function() {
-        const themeBtn = document.getElementById('themeBtn');
-        const themeDropdown = document.getElementById('themeDropdown');
-        const themeSelector = document.getElementById('themeSelector');
-        
-        if (!themeBtn || !themeDropdown) return;
-        
-        // Toggle dropdown
-        themeBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            themeDropdown.classList.toggle('show');
-            console.log('Dropdown toggled:', themeDropdown.classList.contains('show'));
-        });
-        
-        // Cerrar al hacer click fuera
-        document.addEventListener('click', function(e) {
-            if (!themeSelector.contains(e.target)) {
-                themeDropdown.classList.remove('show');
-            }
-        });
-        
-        // Prevenir cierre al hacer click dentro del dropdown
-        themeDropdown.addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
-        
-        console.log('Selector de temas inicializado correctamente');
+    // Toggle dropdown al hacer click
+    themeBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        themeDropdown.classList.toggle('show');
     });
-})();
+    
+    // Cerrar dropdown al hacer click fuera
+    document.addEventListener('click', function(e) {
+        if (!themeSelector.contains(e.target)) {
+            themeDropdown.classList.remove('show');
+        }
+    });
+    
+    // Prevenir que el dropdown se cierre al hacer click dentro
+    themeDropdown.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+});
 </script>
 
 </body>

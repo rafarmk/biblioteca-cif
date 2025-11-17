@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!isset($_SESSION['logueado'])) {
     header('Location: index.php?ruta=login');
     exit;
@@ -31,32 +31,17 @@ require_once __DIR__ . '/layouts/navbar.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Biblioteca CIF</title>
     <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
         body {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            display: flex;
-            flex-direction: column;
             min-height: 100vh;
-        }
-
-        .page-wrapper {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
             padding-top: 100px;
+            padding-bottom: 50px;
         }
 
         .container {
-            flex: 1;
             max-width: 1400px;
             margin: 0 auto;
             padding: 30px 20px;
-            width: 100%;
         }
 
         .header {
@@ -80,7 +65,6 @@ require_once __DIR__ . '/layouts/navbar.php';
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px;
-            margin-bottom: 50px;
         }
 
         .stat-card {
@@ -139,58 +123,51 @@ require_once __DIR__ . '/layouts/navbar.php';
         .stat-link:hover {
             gap: 10px;
         }
-
-        /* Asegurar que el footer siempre esté al fondo */
-        footer {
-            margin-top: auto;
-        }
     </style>
 </head>
 <body>
 
-<div class="page-wrapper">
-    <div class="container">
-        <div class="header">
-            <h1>📊 Panel de Control</h1>
-            <p>Bienvenido de vuelta, Administrador</p>
+<div class="container">
+    <div class="header">
+        <h1>📊 Panel de Control</h1>
+        <p>Bienvenido de vuelta, Administrador</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon icon-purple">📚</div>
+            <div class="stat-number"><?= $totalLibros ?></div>
+            <div class="stat-label">Total de Libros</div>
+            <a href="index.php?ruta=libros" class="stat-link">
+                Ver Catálogo → 
+            </a>
         </div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon icon-purple">📚</div>
-                <div class="stat-number"><?= $totalLibros ?></div>
-                <div class="stat-label">Total de Libros</div>
-                <a href="index.php?ruta=libros" class="stat-link">
-                    Ver Catálogo → 
-                </a>
-            </div>
+        <div class="stat-card">
+            <div class="stat-icon icon-green">👥</div>
+            <div class="stat-number"><?= $totalUsuarios ?></div>
+            <div class="stat-label">Usuarios Registrados</div>
+            <a href="index.php?ruta=usuarios" class="stat-link">
+                Ver Usuarios →
+            </a>
+        </div>
 
-            <div class="stat-card">
-                <div class="stat-icon icon-green">👥</div>
-                <div class="stat-number"><?= $totalUsuarios ?></div>
-                <div class="stat-label">Usuarios Registrados</div>
-                <a href="index.php?ruta=usuarios" class="stat-link">
-                    Ver Usuarios →
-                </a>
-            </div>
+        <div class="stat-card">
+            <div class="stat-icon icon-pink">📖</div>
+            <div class="stat-number"><?= $prestamosActivos ?></div>
+            <div class="stat-label">Préstamos Activos</div>
+            <a href="index.php?ruta=prestamos" class="stat-link">
+                Ver Activos →
+            </a>
+        </div>
 
-            <div class="stat-card">
-                <div class="stat-icon icon-pink">📖</div>
-                <div class="stat-number"><?= $prestamosActivos ?></div>
-                <div class="stat-label">Préstamos Activos</div>
-                <a href="index.php?ruta=prestamos" class="stat-link">
-                    Ver Activos →
-                </a>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon icon-orange">⚠️</div>
-                <div class="stat-number"><?= $prestamosAtrasados ?></div>
-                <div class="stat-label">Préstamos Atrasados</div>
-                <a href="index.php?ruta=prestamos" class="stat-link">
-                    Ver Atrasados →
-                </a>
-            </div>
+        <div class="stat-card">
+            <div class="stat-icon icon-orange">⚠️</div>
+            <div class="stat-number"><?= $prestamosAtrasados ?></div>
+            <div class="stat-label">Préstamos Atrasados</div>
+            <a href="index.php?ruta=prestamos" class="stat-link">
+                Ver Atrasados →
+            </a>
         </div>
     </div>
 </div>

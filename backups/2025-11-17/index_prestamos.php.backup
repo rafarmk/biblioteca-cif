@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 if (!isset($_SESSION['logueado'])) {
     header('Location: index.php?ruta=login');
     exit;
@@ -7,9 +7,6 @@ if (!isset($_SESSION['logueado'])) {
 require_once __DIR__ . '/../../config/Database.php';
 $db = new Database();
 $conn = $db->getConnection();
-
-// IMPORTANTE: Configurar UTF-8
-$conn->exec("SET NAMES utf8mb4");
 
 // Calcular estadísticas
 $stmt = $conn->query("SELECT COUNT(*) as total FROM prestamos");
@@ -46,13 +43,13 @@ $prestamos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 require_once __DIR__ . '/../layouts/navbar.php';
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Préstamos - Biblioteca CIF</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
@@ -75,8 +72,8 @@ require_once __DIR__ . '/../layouts/navbar.php';
         .header h1 {
             font-size: 2.5rem;
             color: #fff;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
         .header p {
@@ -161,6 +158,21 @@ require_once __DIR__ . '/../layouts/navbar.php';
             font-weight: 600;
         }
 
+        .stat-link {
+            margin-top: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .stat-link:hover {
+            gap: 10px;
+        }
+
         .table-container {
             background: white;
             border-radius: 15px;
@@ -169,11 +181,19 @@ require_once __DIR__ . '/../layouts/navbar.php';
             overflow-x: auto;
         }
 
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
         .table-title {
             font-size: 1.5rem;
             font-weight: 700;
             color: #1f2937;
-            margin-bottom: 25px;
         }
 
         table {
@@ -248,6 +268,12 @@ require_once __DIR__ . '/../layouts/navbar.php';
             color: #6b7280;
         }
 
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
         .alert {
             padding: 15px 20px;
             border-radius: 10px;
@@ -260,6 +286,12 @@ require_once __DIR__ . '/../layouts/navbar.php';
             color: #065f46;
             border: 2px solid #10b981;
         }
+
+        .alert-danger {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #ef4444;
+        }
     </style>
 </head>
 <body>
@@ -271,8 +303,8 @@ require_once __DIR__ . '/../layouts/navbar.php';
     </div>
 
     <?php if (isset($_SESSION['mensaje'])): ?>
-        <div class="alert alert-<?= htmlspecialchars($_SESSION['mensaje']['tipo'] ?? 'success') ?>">
-            <?= htmlspecialchars($_SESSION['mensaje']['texto'] ?? '') ?>
+        <div class="alert alert-<?= $_SESSION['mensaje']['tipo'] ?>">
+            <?= $_SESSION['mensaje']['texto'] ?>
         </div>
         <?php unset($_SESSION['mensaje']); ?>
     <?php endif; ?>
@@ -294,27 +326,38 @@ require_once __DIR__ . '/../layouts/navbar.php';
             <div class="stat-icon">📊</div>
             <div class="stat-number" style="color: #667eea;"><?= $totalPrestamos ?></div>
             <div class="stat-label">Total de Préstamos</div>
+            <a href="#todos" class="stat-link">
+                Ver todos <i class="fas fa-arrow-right"></i>
+            </a>
         </div>
 
         <div class="stat-card">
             <div class="stat-icon">✅</div>
             <div class="stat-number" style="color: #10b981;"><?= $prestamosActivos ?></div>
             <div class="stat-label">Préstamos Activos</div>
+            <a href="#activos" class="stat-link">
+                Ver activos <i class="fas fa-arrow-right"></i>
+            </a>
         </div>
 
         <div class="stat-card">
             <div class="stat-icon">⚠️</div>
             <div class="stat-number" style="color: #ef4444;"><?= $prestamosAtrasados ?></div>
             <div class="stat-label">Préstamos Atrasados</div>
+            <a href="#atrasados" class="stat-link">
+                Ver atrasados <i class="fas fa-arrow-right"></i>
+            </a>
         </div>
     </div>
 
     <div class="table-container">
-        <div class="table-title">📋 Lista de Préstamos</div>
+        <div class="table-header">
+            <div class="table-title">📋 Lista de Préstamos</div>
+        </div>
 
         <?php if (empty($prestamos)): ?>
             <div class="empty-state">
-                <div style="font-size: 4rem; margin-bottom: 20px;">📚</div>
+                <div class="empty-state-icon">📚</div>
                 <h3>No hay préstamos registrados</h3>
                 <p>Comienza creando un nuevo préstamo</p>
             </div>
@@ -335,25 +378,25 @@ require_once __DIR__ . '/../layouts/navbar.php';
                     <?php foreach ($prestamos as $prestamo): ?>
                         <tr>
                             <td>
-                                <strong><?= htmlspecialchars($prestamo['usuario_nombre'] ?? '') ?> <?= htmlspecialchars($prestamo['usuario_apellido'] ?? '') ?></strong><br>
-                                <small style="color: #6b7280;"><?= htmlspecialchars($prestamo['usuario_email'] ?? '') ?></small>
+                                <strong><?= htmlspecialchars($prestamo['usuario_nombre'] . ' ' . $prestamo['usuario_apellido']) ?></strong><br>
+                                <small style="color: #6b7280;"><?= htmlspecialchars($prestamo['usuario_email']) ?></small>
                             </td>
                             <td>
-                                <strong><?= htmlspecialchars($prestamo['libro_titulo'] ?? 'Sin título') ?></strong><br>
-                                <small style="color: #6b7280;"><?= htmlspecialchars($prestamo['libro_autor'] ?? 'Sin autor') ?></small>
+                                <strong><?= htmlspecialchars($prestamo['libro_titulo']) ?></strong><br>
+                                <small style="color: #6b7280;"><?= htmlspecialchars($prestamo['libro_autor']) ?></small>
                             </td>
-                            <td><?= htmlspecialchars($prestamo['isbn'] ?? 'N/A') ?></td>
+                            <td><?= htmlspecialchars($prestamo['isbn']) ?></td>
                             <td><?= date('d/m/Y', strtotime($prestamo['fecha_prestamo'])) ?></td>
-                            <td><?= $prestamo['fecha_devolucion'] ? date('d/m/Y', strtotime($prestamo['fecha_devolucion'])) : 'N/A' ?></td>
+                            <td><?= date('d/m/Y', strtotime($prestamo['fecha_devolucion'])) ?></td>
                             <td>
                                 <?php if ($prestamo['estado'] == 'activo'): ?>
-                                    <?php if (isset($prestamo['dias_restantes']) && $prestamo['dias_restantes'] < 0): ?>
+                                    <?php if ($prestamo['dias_restantes'] < 0): ?>
                                         <span class="badge badge-atrasado">
                                             ⚠️ Atrasado (<?= abs($prestamo['dias_restantes']) ?> días)
                                         </span>
                                     <?php else: ?>
                                         <span class="badge badge-activo">
-                                            ✅ Activo (<?= $prestamo['dias_restantes'] ?? 0 ?> días)
+                                            ✅ Activo (<?= $prestamo['dias_restantes'] ?> días)
                                         </span>
                                     <?php endif; ?>
                                 <?php else: ?>

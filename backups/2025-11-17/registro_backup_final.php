@@ -27,24 +27,11 @@ if (isset($_SESSION['logueado'])) {
             box-sizing: border-box;
         }
 
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            display: flex;
-            flex-direction: column;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-        }
-
-        .page-wrapper {
-            flex: 1;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             padding: 40px 20px;
@@ -58,7 +45,6 @@ if (isset($_SESSION['logueado'])) {
             max-width: 900px;
             width: 100%;
             animation: slideDown 0.5s ease-out;
-            margin: 20px 0;
         }
 
         @keyframes slideDown {
@@ -73,7 +59,7 @@ if (isset($_SESSION['logueado'])) {
         }
 
         .register-header {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 40px 30px;
             text-align: center;
             color: white;
@@ -149,9 +135,9 @@ if (isset($_SESSION['logueado'])) {
         .form-group select:focus,
         .form-group textarea:focus {
             outline: none;
-            border-color: #2a5298;
+            border-color: #667eea;
             background: white;
-            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
         .form-group small {
@@ -164,7 +150,7 @@ if (isset($_SESSION['logueado'])) {
         .btn-register {
             width: 100%;
             padding: 15px;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
             border-radius: 10px;
@@ -172,13 +158,13 @@ if (isset($_SESSION['logueado'])) {
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(42, 82, 152, 0.4);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
             margin-top: 10px;
         }
 
         .btn-register:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(42, 82, 152, 0.6);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
         }
 
         .alert {
@@ -208,7 +194,7 @@ if (isset($_SESSION['logueado'])) {
         }
 
         .register-footer a {
-            color: #2a5298;
+            color: #667eea;
             text-decoration: none;
             font-weight: 600;
         }
@@ -218,61 +204,13 @@ if (isset($_SESSION['logueado'])) {
         }
 
         .info-box {
-            background: #dbeafe;
-            border-left: 4px solid #2a5298;
+            background: #e0e7ff;
+            border-left: 4px solid #667eea;
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 25px;
             font-size: 0.9rem;
-            color: #1e3a8a;
-        }
-
-        /* Footer pegado al fondo */
-        .footer-info {
-            margin-top: auto;
-            text-align: center;
-            color: white;
-            background: linear-gradient(135deg, #0c4a6e 0%, #0f172a 100%);
-            border-top: 3px solid rgba(56, 189, 248, 0.3);
-            padding: 25px 20px;
-            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
-            width: 100%;
-        }
-
-        .footer-info p:first-child {
-            margin: 0;
-            font-weight: 700;
-            font-size: 16px;
-        }
-
-        .footer-info p:nth-child(2) {
-            margin: 8px 0;
-            font-size: 14px;
-            opacity: 0.95;
-        }
-
-        .footer-highlight {
-            margin: 15px 0;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-            display: inline-block;
-        }
-
-        .footer-highlight p {
-            margin: 0;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .footer-highlight strong {
-            color: #fbbf24;
-        }
-
-        .footer-info p:last-child {
-            margin: 8px 0 0 0;
-            font-size: 11px;
-            opacity: 0.8;
+            color: #4338ca;
         }
 
         @media (max-width: 768px) {
@@ -283,16 +221,10 @@ if (isset($_SESSION['logueado'])) {
             .register-body {
                 padding: 30px 20px;
             }
-            
-            .register-container {
-                margin: 10px 0;
-            }
         }
     </style>
 </head>
 <body>
-
-<div class="page-wrapper">
     <div class="register-container">
         <div class="register-header">
             <div class="register-icon">🔬</div>
@@ -395,9 +327,9 @@ if (isset($_SESSION['logueado'])) {
                     </label>
                     <select name="tipo_usuario" required>
                         <option value="">Seleccione su tipo de usuario...</option>
-                        <option value="visitante">👥 Visitante - Acceso a consulta de materiales</option>
-                        <option value="personal_administrativo">📋 Administrativo - Personal de oficina y gestión</option>
-                        <option value="personal_operativo">👮 Operativo - Personal de campo y técnico especializado</option>
+                        <option value="visitante">👥 Visitas en General - Acceso a consulta de materiales</option>
+                        <option value="personal_operativo">👮 Personal Policial Operativo - Personal de campo y técnico especializado</option>
+                        <option value="personal_administrativo">📋 Personal Administrativo - Personal de oficina y gestión</option>
                     </select>
                     <small>Seleccione el tipo que mejor describa su rol en la institución</small>
                 </div>
@@ -417,18 +349,18 @@ if (isset($_SESSION['logueado'])) {
             </a>
         </div>
     </div>
-</div>
 
-<footer class="footer-info">
-    <div style="max-width: 1200px; margin: 0 auto;">
-        <p>🔬 Sistema de Gestión Bibliotecaria</p>
-        <p><strong>Laboratorio Científico Forense</strong> - Policía Nacional Civil de El Salvador</p>
-        <div class="footer-highlight">
-            <p>Desarrollado por <strong>Gestión de Infraestructura</strong></p>
-        </div>
-        <p>© <?= date('Y') ?> - Todos los derechos reservados</p>
+    <div style="
+        position: fixed;
+        bottom: 10px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        color: white;
+        font-size: 0.8rem;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    ">
+        Desarrollado por <strong>Gestión de Infraestructura</strong> | © <?= date('Y') ?> Laboratorio Científico Forense - PNC
     </div>
-</footer>
-
 </body>
 </html>

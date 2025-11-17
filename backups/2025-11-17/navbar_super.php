@@ -12,7 +12,7 @@ if (!isset($_SESSION['tema'])) {
 if (isset($_GET['cambiar_tema'])) {
     $_SESSION['tema'] = $_GET['cambiar_tema'];
     
-    // Reconstruir URL sin el parámetro cambiar_tema
+    // Construir URL completa con todos los parámetros
     $params = $_GET;
     unset($params['cambiar_tema']);
     
@@ -198,7 +198,6 @@ body {
 .nav-link i {
     font-size: 18px;
     transition: all 0.3s ease;
-    flex-shrink: 0;
 }
 
 .nav-link:hover i {
@@ -285,7 +284,7 @@ body {
     background: white;
     border-radius: 12px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-    min-width: 220px;
+    min-width: 200px;
     display: none;
     z-index: 1001;
     overflow: hidden;
@@ -318,10 +317,6 @@ body {
     font-weight: 600;
     font-size: 14px;
     cursor: pointer;
-    border: none;
-    background: transparent;
-    width: 100%;
-    text-align: left;
 }
 
 .theme-option:hover {
@@ -352,34 +347,27 @@ body {
 .theme-pnc { background: linear-gradient(135deg, #003d82 0%, #001f4d 100%); }
 .theme-forense { background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); }
 
-/* === BOTÓN SALIR SUPER CORREGIDO === */
+/* === BOTÓN SALIR CORREGIDO === */
 .nav-logout {
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
-    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4) !important;
-    padding: 11px 24px !important;
-    min-width: 120px !important;
-    max-width: 120px !important;
-    justify-content: center !important;
-    overflow: visible !important;
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+    padding: 10px 20px !important;
+    min-width: 110px !important;
+    justify-content: center;
 }
 
 .nav-logout:hover {
     box-shadow: 0 6px 25px rgba(245, 87, 108, 0.7) !important;
     border-color: rgba(255, 255, 255, 0.6) !important;
     background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%) !important;
-    padding: 11px 24px !important;
 }
 
 .nav-logout span {
-    display: inline-block !important;
-    white-space: nowrap !important;
-    overflow: visible !important;
-    text-overflow: clip !important;
+    display: inline !important;
 }
 
 .nav-logout i {
-    flex-shrink: 0 !important;
-    margin-right: 2px !important;
+    flex-shrink: 0;
 }
 
 /* === RESPONSIVE === */
@@ -388,14 +376,10 @@ body {
         display: none;
     }
     .nav-logout span {
-        display: inline-block !important;
+        display: inline !important;
     }
     .nav-link {
         padding: 10px 14px;
-    }
-    .nav-logout {
-        padding: 11px 24px !important;
-        min-width: 120px !important;
     }
 }
 
@@ -544,34 +528,39 @@ body {
                 </a>
             <?php endif; ?>
 
-            <!-- SELECTOR DE TEMAS -->
+            <!-- SELECTOR DE TEMAS CON JAVASCRIPT -->
             <div class="theme-selector" id="themeSelector">
-                <button type="button" class="theme-btn" id="themeBtn">
+                <button class="theme-btn" id="themeBtn">
                     <i class="fas fa-palette"></i>
                     <span>Tema</span>
                 </button>
                 <div class="theme-dropdown" id="themeDropdown">
-                    <a href="?cambiar_tema=original<?= !empty($_GET) ? '&' . http_build_query(array_diff_key($_GET, ['cambiar_tema' => ''])) : '' ?>" class="theme-option <?= $_SESSION['tema'] === 'original' ? 'active' : '' ?>">
+                    <a href="?cambiar_tema=original<?= isset($_GET['ruta']) ? '&ruta=' . htmlspecialchars($_GET['ruta']) : '' ?><?= isset($_GET['accion']) ? '&accion=' . htmlspecialchars($_GET['accion']) : '' ?><?= isset($_GET['id']) ? '&id=' . htmlspecialchars($_GET['id']) : '' ?>" 
+                       class="theme-option <?= $_SESSION['tema'] === 'original' ? 'active' : '' ?>">
                         <div class="theme-preview theme-original"></div>
                         <span>Original</span>
                         <?= $_SESSION['tema'] === 'original' ? '<i class="fas fa-check"></i>' : '' ?>
                     </a>
-                    <a href="?cambiar_tema=claro<?= !empty($_GET) ? '&' . http_build_query(array_diff_key($_GET, ['cambiar_tema' => ''])) : '' ?>" class="theme-option <?= $_SESSION['tema'] === 'claro' ? 'active' : '' ?>">
+                    <a href="?cambiar_tema=claro<?= isset($_GET['ruta']) ? '&ruta=' . htmlspecialchars($_GET['ruta']) : '' ?><?= isset($_GET['accion']) ? '&accion=' . htmlspecialchars($_GET['accion']) : '' ?><?= isset($_GET['id']) ? '&id=' . htmlspecialchars($_GET['id']) : '' ?>" 
+                       class="theme-option <?= $_SESSION['tema'] === 'claro' ? 'active' : '' ?>">
                         <div class="theme-preview theme-claro"></div>
                         <span>Claro</span>
                         <?= $_SESSION['tema'] === 'claro' ? '<i class="fas fa-check"></i>' : '' ?>
                     </a>
-                    <a href="?cambiar_tema=premium<?= !empty($_GET) ? '&' . http_build_query(array_diff_key($_GET, ['cambiar_tema' => ''])) : '' ?>" class="theme-option <?= $_SESSION['tema'] === 'premium' ? 'active' : '' ?>">
+                    <a href="?cambiar_tema=premium<?= isset($_GET['ruta']) ? '&ruta=' . htmlspecialchars($_GET['ruta']) : '' ?><?= isset($_GET['accion']) ? '&accion=' . htmlspecialchars($_GET['accion']) : '' ?><?= isset($_GET['id']) ? '&id=' . htmlspecialchars($_GET['id']) : '' ?>" 
+                       class="theme-option <?= $_SESSION['tema'] === 'premium' ? 'active' : '' ?>">
                         <div class="theme-preview theme-premium"></div>
                         <span>Premium</span>
                         <?= $_SESSION['tema'] === 'premium' ? '<i class="fas fa-check"></i>' : '' ?>
                     </a>
-                    <a href="?cambiar_tema=pnc<?= !empty($_GET) ? '&' . http_build_query(array_diff_key($_GET, ['cambiar_tema' => ''])) : '' ?>" class="theme-option <?= $_SESSION['tema'] === 'pnc' ? 'active' : '' ?>">
+                    <a href="?cambiar_tema=pnc<?= isset($_GET['ruta']) ? '&ruta=' . htmlspecialchars($_GET['ruta']) : '' ?><?= isset($_GET['accion']) ? '&accion=' . htmlspecialchars($_GET['accion']) : '' ?><?= isset($_GET['id']) ? '&id=' . htmlspecialchars($_GET['id']) : '' ?>" 
+                       class="theme-option <?= $_SESSION['tema'] === 'pnc' ? 'active' : '' ?>">
                         <div class="theme-preview theme-pnc"></div>
-                        <span>PNC</span>
+                        <span>PNC Institucional</span>
                         <?= $_SESSION['tema'] === 'pnc' ? '<i class="fas fa-check"></i>' : '' ?>
                     </a>
-                    <a href="?cambiar_tema=forense<?= !empty($_GET) ? '&' . http_build_query(array_diff_key($_GET, ['cambiar_tema' => ''])) : '' ?>" class="theme-option <?= $_SESSION['tema'] === 'forense' ? 'active' : '' ?>">
+                    <a href="?cambiar_tema=forense<?= isset($_GET['ruta']) ? '&ruta=' . htmlspecialchars($_GET['ruta']) : '' ?><?= isset($_GET['accion']) ? '&accion=' . htmlspecialchars($_GET['accion']) : '' ?><?= isset($_GET['id']) ? '&id=' . htmlspecialchars($_GET['id']) : '' ?>" 
+                       class="theme-option <?= $_SESSION['tema'] === 'forense' ? 'active' : '' ?>">
                         <div class="theme-preview theme-forense"></div>
                         <span>Forense</span>
                         <?= $_SESSION['tema'] === 'forense' ? '<i class="fas fa-check"></i>' : '' ?>
@@ -588,40 +577,33 @@ body {
 </nav>
 
 <script>
-// JavaScript mejorado para selector de temas
-(function() {
-    'use strict';
+// JavaScript para manejar el dropdown de temas
+document.addEventListener('DOMContentLoaded', function() {
+    const themeBtn = document.getElementById('themeBtn');
+    const themeDropdown = document.getElementById('themeDropdown');
+    const themeSelector = document.getElementById('themeSelector');
     
-    document.addEventListener('DOMContentLoaded', function() {
-        const themeBtn = document.getElementById('themeBtn');
-        const themeDropdown = document.getElementById('themeDropdown');
-        const themeSelector = document.getElementById('themeSelector');
-        
-        if (!themeBtn || !themeDropdown) return;
-        
-        // Toggle dropdown
+    if (themeBtn && themeDropdown) {
+        // Toggle dropdown al hacer click
         themeBtn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
             themeDropdown.classList.toggle('show');
-            console.log('Dropdown toggled:', themeDropdown.classList.contains('show'));
         });
         
-        // Cerrar al hacer click fuera
+        // Cerrar dropdown al hacer click fuera
         document.addEventListener('click', function(e) {
             if (!themeSelector.contains(e.target)) {
                 themeDropdown.classList.remove('show');
             }
         });
         
-        // Prevenir cierre al hacer click dentro del dropdown
+        // Prevenir que el dropdown se cierre al hacer click dentro
         themeDropdown.addEventListener('click', function(e) {
             e.stopPropagation();
         });
-        
-        console.log('Selector de temas inicializado correctamente');
-    });
-})();
+    }
+});
 </script>
 
 </body>

@@ -26,22 +26,10 @@ if (isset($_SESSION['logueado'])) {
             box-sizing: border-box;
         }
 
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            display: flex;
-            flex-direction: column;
             min-height: 100vh;
-        }
-
-        .page-wrapper {
-            flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -57,7 +45,6 @@ if (isset($_SESSION['logueado'])) {
             max-width: 450px;
             width: 100%;
             animation: slideDown 0.5s ease-out;
-            margin: 20px 0;
         }
 
         @keyframes slideDown {
@@ -176,16 +163,16 @@ if (isset($_SESSION['logueado'])) {
             text-decoration: underline;
         }
 
-        /* Footer pegado al fondo */
         .footer-info {
-            margin-top: auto;
+            margin-top: 30px;
             text-align: center;
             color: white;
             background: linear-gradient(135deg, #0c4a6e 0%, #0f172a 100%);
-            border-top: 3px solid rgba(56, 189, 248, 0.3);
-            padding: 25px 20px;
-            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
-            width: 100%;
+            border: 3px solid rgba(56, 189, 248, 0.3);
+            padding: 25px;
+            border-radius: 15px;
+            max-width: 600px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
         }
 
         .footer-info p:first-child {
@@ -223,26 +210,9 @@ if (isset($_SESSION['logueado'])) {
             font-size: 11px;
             opacity: 0.8;
         }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .login-container {
-                margin: 10px 0;
-            }
-            
-            .login-header {
-                padding: 30px 20px;
-            }
-            
-            .login-body {
-                padding: 30px 20px;
-            }
-        }
     </style>
 </head>
 <body>
-
-<div class="page-wrapper">
     <div class="login-container">
         <div class="login-header">
             <div class="login-icon">🔬</div>
@@ -297,10 +267,8 @@ if (isset($_SESSION['logueado'])) {
             </a>
         </div>
     </div>
-</div>
 
-<footer class="footer-info">
-    <div style="max-width: 1200px; margin: 0 auto;">
+    <div class="footer-info">
         <p>🔬 Sistema de Gestión Bibliotecaria</p>
         <p><strong>Laboratorio Científico Forense</strong> - Policía Nacional Civil de El Salvador</p>
         <div class="footer-highlight">
@@ -308,7 +276,5 @@ if (isset($_SESSION['logueado'])) {
         </div>
         <p>© <?= date('Y') ?> - Todos los derechos reservados</p>
     </div>
-</footer>
-
 </body>
 </html>
