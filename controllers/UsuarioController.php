@@ -1,132 +1,108 @@
 ﻿<?php
-require_once 'models/Usuario.php';
+require_once __DIR__ . '/../config/Database.php';
 
 class UsuarioController {
+    private $db;
+    
+    public function __construct() {
+        $database = new Database();
+        $this->db = $database->getConnection();
+    }
     
     public function index() {
-        $usuarioModel = new Usuario();
-        
-        if (isset($_GET['buscar']) && !empty($_GET['buscar'])) {
-            $usuarios = $usuarioModel->buscar($_GET['buscar']);
-        } else {
-            $usuarios = $usuarioModel->listar();
-        }
-        
-        require_once 'views/usuarios/index.php';
+        require_once __DIR__ . '/../views/usuario/index.php';
     }
     
     public function crear() {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            try {
-                $usuarioModel = new Usuario();
-                $usuarioModel->nombre = $_POST['nombre'];
-                $usuarioModel->email = $_POST['email'];
-                $usuarioModel->telefono = $_POST['telefono'] ?? null;
-                $usuarioModel->dui = $_POST['dui'] ?? null;
-                $usuarioModel->direccion = $_POST['direccion'] ?? null;
-                $usuarioModel->tipo_usuario = $_POST['tipo_usuario'];
-                $usuarioModel->password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-                $usuarioModel->estado = 'activo';
-                $usuarioModel->puede_prestar = 1;
-                $usuarioModel->dias_max_prestamo = 7;
-                $usuarioModel->max_libros_simultaneos = 3;
-
-                if ($usuarioModel->crear()) {
-                    $_SESSION['mensaje'] = ['tipo' => 'success', 'texto' => '✅ Usuario creado exitosamente'];
-                    header('Location: index.php?ruta=usuarios');
-                    exit();
-                } else {
-                    $_SESSION['mensaje'] = ['tipo' => 'danger', 'texto' => 'Error al crear el usuario'];
-                }
-            } catch (Exception $e) {
-                $_SESSION['mensaje'] = ['tipo' => 'danger', 'texto' => 'Error: ' . $e->getMessage()];
-            }
-        }
-        
-        // CRÍTICO: Asegurarse que el archivo existe
-        $vistaCrear = __DIR__ . '/../views/usuarios/crear.php';
-        if (file_exists($vistaCrear)) {
-            require_once $vistaCrear;
-        } else {
-            die("ERROR: No se encuentra el archivo views/usuarios/crear.php");
-        }
+        require_once __DIR__ . '/../views/usuario/crear.php';
     }
-
-    public function editar() {
-        $id = $_GET['id'] ?? null;
-        
-        if (!$id) {
-            $_SESSION['mensaje'] = ['tipo' => 'danger', 'texto' => 'ID no válido'];
-            header('Location: index.php?ruta=usuarios');
-            exit();
-        }
-
-        $usuarioModel = new Usuario();
-
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            try {
-                $usuarioModel->id = $_POST['id'];
-                $usuarioModel->nombre = $_POST['nombre'];
-                $usuarioModel->email = $_POST['email'];
-                $usuarioModel->telefono = $_POST['telefono'] ?? null;
-                $usuarioModel->dui = $_POST['dui'] ?? null;
-                $usuarioModel->direccion = $_POST['direccion'] ?? null;
-                $usuarioModel->tipo_usuario = $_POST['tipo_usuario'];
-                $usuarioModel->estado = $_POST['estado'] ?? 'activo';
-                $usuarioModel->puede_prestar = isset($_POST['puede_prestar']) ? 1 : 0;
-                $usuarioModel->dias_max_prestamo = $_POST['dias_max_prestamo'] ?? 7;
-                $usuarioModel->max_libros_simultaneos = $_POST['max_libros_simultaneos'] ?? 3;
-
-                if ($usuarioModel->actualizar()) {
-                    $_SESSION['mensaje'] = ['tipo' => 'success', 'texto' => '✅ Usuario actualizado exitosamente'];
-                    header('Location: index.php?ruta=usuarios');
-                    exit();
-                } else {
-                    $_SESSION['mensaje'] = ['tipo' => 'danger', 'texto' => 'Error al actualizar el usuario'];
-                }
-            } catch (Exception $e) {
-                $_SESSION['mensaje'] = ['tipo' => 'danger', 'texto' => 'Error: ' . $e->getMessage()];
-            }
-        }
-
-        $usuario = $usuarioModel->obtenerPorId($id);
-        
-        if (!$usuario) {
-            $_SESSION['mensaje'] = ['tipo' => 'danger', 'texto' => 'Usuario no encontrado'];
-            header('Location: index.php?ruta=usuarios');
-            exit();
-        }
-        
-        $vistaEditar = __DIR__ . '/../views/usuarios/editar.php';
-        if (file_exists($vistaEditar)) {
-            require_once $vistaEditar;
-        } else {
-            die("ERROR: No se encuentra el archivo views/usuarios/editar.php");
-        }
-    }
-
-    public function eliminar() {
-        $id = $_GET['id'] ?? null;
-        
-        if (!$id) {
-            $_SESSION['mensaje'] = ['tipo' => 'danger', 'texto' => 'ID no válido'];
-            header('Location: index.php?ruta=usuarios');
-            exit();
-        }
-        
+    
+    public function store() {
         try {
-            $usuarioModel = new Usuario();
+            $nombre = $_POST['nombre'];
+            $apellido = $_POST['apellido'];
+            $email = $_POST['email'];
+            $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+            $telefono = $_POST['telefono'] ?? null;
+            $direccion = $_POST['direccion'] ?? null;
+            $dui = $_POST['dui'] ?? null;
+            $tipo_usuario = $_POST['tipo_usuario'];
             
-            if ($usuarioModel->eliminar($id)) {
-                $_SESSION['mensaje'] = ['tipo' => 'success', 'texto' => '✅ Usuario eliminado exitosamente'];
-            } else {
-                $_SESSION['mensaje'] = ['tipo' => 'danger', 'texto' => 'Error al eliminar el usuario'];
-            }
-        } catch (Exception $e) {
-            $_SESSION['mensaje'] = ['tipo' => 'danger', 'texto' => 'Error: ' . $e->getMessage()];
+            $stmt = $this->db->prepare("
+                INSERT INTO usuarios (nombre, apellido, email, password, telefono, direccion, dui, tipo_usuario, estado) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'activo')
+            ");
+            $stmt->execute([$nombre, $apellido, $email, $password, $telefono, $direccion, $dui, $tipo_usuario]);
+            
+            $_SESSION['mensaje'] = '✅ Usuario creado exitosamente';
+            
+        } catch (PDOException $e) {
+            $_SESSION['error'] = '❌ Error: ' . $e->getMessage();
         }
         
         header('Location: index.php?ruta=usuarios');
-        exit();
+        exit;
+    }
+    
+    public function editar() {
+        require_once __DIR__ . '/../views/usuario/editar.php';
+    }
+    
+    public function update() {
+        try {
+            $id = $_POST['id'];
+            $nombre = $_POST['nombre'];
+            $apellido = $_POST['apellido'];
+            $email = $_POST['email'];
+            $telefono = $_POST['telefono'] ?? null;
+            $direccion = $_POST['direccion'] ?? null;
+            $dui = $_POST['dui'] ?? null;
+            $tipo_usuario = $_POST['tipo_usuario'];
+            $estado = $_POST['estado'];
+            
+            if (!empty($_POST['password'])) {
+                $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+                $stmt = $this->db->prepare("
+                    UPDATE usuarios 
+                    SET nombre = ?, apellido = ?, email = ?, password = ?, telefono = ?, 
+                        direccion = ?, dui = ?, tipo_usuario = ?, estado = ? 
+                    WHERE id = ?
+                ");
+                $stmt->execute([$nombre, $apellido, $email, $password, $telefono, $direccion, $dui, $tipo_usuario, $estado, $id]);
+            } else {
+                $stmt = $this->db->prepare("
+                    UPDATE usuarios 
+                    SET nombre = ?, apellido = ?, email = ?, telefono = ?, 
+                        direccion = ?, dui = ?, tipo_usuario = ?, estado = ? 
+                    WHERE id = ?
+                ");
+                $stmt->execute([$nombre, $apellido, $email, $telefono, $direccion, $dui, $tipo_usuario, $estado, $id]);
+            }
+            
+            $_SESSION['mensaje'] = '✅ Usuario actualizado exitosamente';
+            
+        } catch (PDOException $e) {
+            $_SESSION['error'] = '❌ Error: ' . $e->getMessage();
+        }
+        
+        header('Location: index.php?ruta=usuarios');
+        exit;
+    }
+    
+    public function eliminar() {
+        try {
+            $id = $_GET['id'];
+            
+            $stmt = $this->db->prepare("DELETE FROM usuarios WHERE id = ?");
+            $stmt->execute([$id]);
+            
+            $_SESSION['mensaje'] = '✅ Usuario eliminado exitosamente';
+            
+        } catch (PDOException $e) {
+            $_SESSION['error'] = '❌ Error: ' . $e->getMessage();
+        }
+        
+        header('Location: index.php?ruta=usuarios');
+        exit;
     }
 }

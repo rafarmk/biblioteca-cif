@@ -35,13 +35,13 @@ class AuthController {
             }
             
             if ($usuario['estado'] === 'pendiente') {
-                $_SESSION['error'] = 'Tu cuenta está pendiente de aprobación. Por favor espera a que un administrador la apruebe.';
+                $_SESSION['error'] = 'Tu cuenta está pendiente de aprobación';
                 header('Location: index.php?ruta=login');
                 exit;
             }
             
             if ($usuario['estado'] === 'inactivo') {
-                $_SESSION['error'] = 'Tu cuenta ha sido desactivada. Contacta al administrador.';
+                $_SESSION['error'] = 'Tu cuenta ha sido desactivada';
                 header('Location: index.php?ruta=login');
                 exit;
             }

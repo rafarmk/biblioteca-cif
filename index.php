@@ -1,14 +1,19 @@
 ﻿<?php
 session_start();
 
-// Obtener la ruta
 $ruta = $_GET['ruta'] ?? 'landing';
 $accion = $_GET['accion'] ?? 'index';
 
-// Router
 switch ($ruta) {
-    // ==================== RUTAS PÚBLICAS ====================
     case 'landing':
+        if (isset($_SESSION['logueado'])) {
+            if ($_SESSION['tipo_usuario'] === 'admin') {
+                header('Location: index.php?ruta=home');
+            } else {
+                header('Location: index.php?ruta=catalogo');
+            }
+            exit;
+        }
         require_once __DIR__ . '/views/landing.php';
         break;
         
@@ -18,17 +23,29 @@ switch ($ruta) {
             $controller = new AuthController();
             $controller->login();
         } else {
+            if (isset($_SESSION['logueado'])) {
+                if ($_SESSION['tipo_usuario'] === 'admin') {
+                    header('Location: index.php?ruta=home');
+                } else {
+                    header('Location: index.php?ruta=catalogo');
+                }
+                exit;
+            }
             require_once __DIR__ . '/views/login.php';
         }
         break;
         
     case 'registro':
-        require_once __DIR__ . '/controllers/RegistroController.php';
-        $controller = new RegistroController();
+        if (isset($_SESSION['logueado'])) {
+            header('Location: index.php?ruta=home');
+            exit;
+        }
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            require_once __DIR__ . '/controllers/RegistroController.php';
+            $controller = new RegistroController();
             $controller->registrar();
         } else {
-            $controller->index();
+            require_once __DIR__ . '/views/registro_publico.php';
         }
         break;
         
@@ -38,14 +55,12 @@ switch ($ruta) {
         exit;
         break;
 
-    // ==================== VERIFICAR LOGIN PARA RUTAS PROTEGIDAS ====================
     default:
         if (!isset($_SESSION['logueado'])) {
             header('Location: index.php?ruta=login');
             exit;
         }
         
-        // ==================== RUTAS PROTEGIDAS ====================
         switch ($ruta) {
             case 'home':
                 require_once __DIR__ . '/controllers/HomeController.php';
@@ -161,17 +176,6 @@ switch ($ruta) {
                         break;
                     default:
                         $controller->index();
-                }
-                break;
-
-            case 'importar':
-                require_once __DIR__ . '/controllers/ImportarController.php';
-                $controller = new ImportarController();
-                
-                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                    $controller->importar();
-                } else {
-                    $controller->index();
                 }
                 break;
 
