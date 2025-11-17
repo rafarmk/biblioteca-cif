@@ -1,9 +1,24 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (isset($_SESSION['logueado'])) {
+    if ($_SESSION['tipo_usuario'] === 'admin') {
+        header('Location: index.php?ruta=home');
+    } else {
+        header('Location: index.php?ruta=catalogo');
+    }
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Biblioteca CIF</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -13,9 +28,10 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             padding: 20px;
@@ -43,7 +59,7 @@
         }
 
         .login-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             padding: 40px 30px;
             text-align: center;
             color: white;
@@ -55,20 +71,9 @@
             font-weight: 700;
         }
 
-        .login-header p {
-            font-size: 1rem;
-            opacity: 0.9;
-        }
-
         .login-icon {
             font-size: 3.5rem;
             margin-bottom: 15px;
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
         }
 
         .login-body {
@@ -84,12 +89,11 @@
             margin-bottom: 8px;
             color: #333;
             font-weight: 600;
-            font-size: 0.95rem;
         }
 
         .form-group input {
             width: 100%;
-            padding: 14px 18px;
+            padding: 15px;
             border: 2px solid #e2e8f0;
             border-radius: 10px;
             font-size: 1rem;
@@ -99,15 +103,15 @@
 
         .form-group input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #2a5298;
             background: white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
         }
 
         .btn-login {
             width: 100%;
             padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
             border: none;
             border-radius: 10px;
@@ -115,30 +119,19 @@
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 15px rgba(42, 82, 152, 0.4);
         }
 
         .btn-login:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-        }
-
-        .btn-login:active {
-            transform: translateY(0);
+            box-shadow: 0 6px 20px rgba(42, 82, 152, 0.6);
         }
 
         .alert {
-            padding: 15px 20px;
+            padding: 15px;
             border-radius: 10px;
             margin-bottom: 20px;
             font-weight: 600;
-            animation: shake 0.5s;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
         }
 
         .alert-danger {
@@ -150,7 +143,7 @@
         .alert-success {
             background: #d1fae5;
             color: #065f46;
-            border: 2px solid #6ee7b7;
+            border: 2px solid #10b981;
         }
 
         .login-footer {
@@ -161,143 +154,108 @@
         }
 
         .login-footer a {
-            color: #667eea;
+            color: #2a5298;
             text-decoration: none;
             font-weight: 600;
-            transition: all 0.3s;
         }
 
         .login-footer a:hover {
-            color: #764ba2;
             text-decoration: underline;
         }
 
-        .divider {
+        .footer-info {
+            margin-top: 30px;
             text-align: center;
-            margin: 25px 0;
-            position: relative;
+            color: white;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            border-radius: 15px;
+            max-width: 600px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
         }
 
-        .divider::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: #e2e8f0;
+        .footer-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
         }
 
-        .divider span {
-            background: white;
-            padding: 0 15px;
-            position: relative;
-            color: #718096;
+        .footer-info p {
+            margin: 5px 0;
+            font-size: 0.95rem;
+        }
+
+        .footer-developed {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
             font-size: 0.9rem;
-        }
-
-        @media (max-width: 480px) {
-            .login-container {
-                margin: 10px;
-            }
-
-            .login-header h1 {
-                font-size: 1.6rem;
-            }
-
-            .login-body {
-                padding: 30px 20px;
-            }
         }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <!-- Header -->
         <div class="login-header">
-            <div class="login-icon">📚</div>
+            <div class="login-icon">🔬</div>
             <h1>Biblioteca CIF</h1>
-            <p>Sistema de Gestión Bibliotecaria</p>
+            <p>Laboratorio Científico Forense - PNC</p>
         </div>
 
-        <!-- Body -->
         <div class="login-body">
-            <?php if (isset($error)): ?>
+            <?php if (isset($_SESSION['error'])): ?>
                 <div class="alert alert-danger">
-                    ⚠️ <?php echo htmlspecialchars($error, ENT_QUOTES, 'UTF-8'); ?>
+                    <i class="fas fa-exclamation-circle"></i>
+                    <?= htmlspecialchars($_SESSION['error']) ?>
                 </div>
+                <?php unset($_SESSION['error']); ?>
             <?php endif; ?>
 
-            <?php if (isset($_GET['mensaje']) && $_GET['mensaje'] === 'logout'): ?>
+            <?php if (isset($_SESSION['success'])): ?>
                 <div class="alert alert-success">
-                    ✅ Sesión cerrada exitosamente
+                    <i class="fas fa-check-circle"></i>
+                    <?= htmlspecialchars($_SESSION['success']) ?>
                 </div>
-            <?php endif; ?>
-
-            <?php if (isset($_GET['mensaje']) && $_GET['mensaje'] === 'registro_exitoso'): ?>
-                <div class="alert alert-success">
-                    ✅ Registro completado. Espera la aprobación del administrador.
-                </div>
+                <?php unset($_SESSION['success']); ?>
             <?php endif; ?>
 
             <form method="POST" action="index.php?ruta=login">
                 <div class="form-group">
-                    <label for="email">📧 Correo Electrónico</label>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        name="email" 
-                        placeholder="tu.correo@ejemplo.com"
-                        required
-                        autocomplete="email"
-                    >
+                    <label>
+                        <i class="fas fa-envelope"></i> Correo Electrónico
+                    </label>
+                    <input type="email" name="email" required placeholder="correo@ejemplo.com" autocomplete="username">
                 </div>
 
                 <div class="form-group">
-                    <label for="password">🔒 Contraseña</label>
-                    <input 
-                        type="password" 
-                        id="password" 
-                        name="password" 
-                        placeholder="Ingresa tu contraseña"
-                        required
-                        autocomplete="current-password"
-                    >
+                    <label>
+                        <i class="fas fa-lock"></i> Contraseña
+                    </label>
+                    <input type="password" name="password" required placeholder="••••••••" autocomplete="current-password">
                 </div>
 
                 <button type="submit" class="btn-login">
-                    Iniciar Sesión 🚀
+                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
                 </button>
             </form>
-
-            <div class="divider">
-                <span>o</span>
-            </div>
         </div>
 
-        <!-- Footer -->
         <div class="login-footer">
             <p style="margin-bottom: 10px; color: #4a5568;">
-                ¿No tienes cuenta?
+                ¿No tienes una cuenta?
             </p>
             <a href="index.php?ruta=registro">
-                Registrarse aquí →
+                <i class="fas fa-user-plus"></i> Registrarse
             </a>
         </div>
     </div>
 
-    <!-- Footer Copyright -->
-    <div style="
-        position: fixed;
-        bottom: 20px;
-        left: 0;
-        right: 0;
-        text-align: center;
-        color: white;
-        font-size: 0.85rem;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    ">
-        © <?php echo date('Y'); ?> Biblioteca CIF | Gestión de Infraestructura
+    <div class="footer-info">
+        <h3>🔬 Sistema de Gestión Bibliotecaria</h3>
+        <p><strong>Laboratorio Científico Forense</strong></p>
+        <p>Policía Nacional Civil de El Salvador</p>
+        <div class="footer-developed">
+            <p>Desarrollado por <strong>Gestión de Infraestructura</strong></p>
+            <p>© <?= date('Y') ?> - Todos los derechos reservados</p>
+        </div>
     </div>
 </body>
 </html>

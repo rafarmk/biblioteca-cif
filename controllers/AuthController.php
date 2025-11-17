@@ -53,7 +53,8 @@ class AuthController {
                 $_SESSION['usuario_email'] = $usuario['email'];
                 $_SESSION['tipo_usuario'] = $usuario['tipo_usuario'];
                 
-                if ($usuario['tipo_usuario'] === 'admin') {
+                // CAMBIO: administrador en lugar de admin
+                if ($usuario['tipo_usuario'] === 'administrador') {
                     header('Location: index.php?ruta=home');
                 } else {
                     header('Location: index.php?ruta=catalogo');

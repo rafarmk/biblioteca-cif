@@ -10,7 +10,7 @@ $conn = $db->getConnection();
 
 $stmt = $conn->query("
     SELECT * FROM usuarios 
-    WHERE tipo_usuario != 'admin'
+    WHERE tipo_usuario != 'administrador'
     ORDER BY id DESC
 ");
 $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);

@@ -7,7 +7,8 @@ $accion = $_GET['accion'] ?? 'index';
 switch ($ruta) {
     case 'landing':
         if (isset($_SESSION['logueado'])) {
-            if ($_SESSION['tipo_usuario'] === 'admin') {
+            // CAMBIO AQUÍ
+            if ($_SESSION['tipo_usuario'] === 'administrador') {
                 header('Location: index.php?ruta=home');
             } else {
                 header('Location: index.php?ruta=catalogo');
@@ -24,7 +25,8 @@ switch ($ruta) {
             $controller->login();
         } else {
             if (isset($_SESSION['logueado'])) {
-                if ($_SESSION['tipo_usuario'] === 'admin') {
+                // CAMBIO AQUÍ
+                if ($_SESSION['tipo_usuario'] === 'administrador') {
                     header('Location: index.php?ruta=home');
                 } else {
                     header('Location: index.php?ruta=catalogo');
