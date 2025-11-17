@@ -1,88 +1,81 @@
 <?php
-session_start();
-
-// Verificar que sea POST
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: ../index.php?ruta=registro');
-    exit;
-}
-
-// Conectar a la base de datos
 require_once __DIR__ . '/../config/Database.php';
-$database = new Database();
-$db = $database->getConnection();
 
-try {
-    // Obtener y limpiar datos
-    $nombre = trim($_POST['nombre'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $carnet = trim($_POST['carnet'] ?? '');
-    $telefono = trim($_POST['telefono'] ?? '');
-    $tipo_usuario = $_POST['tipo_usuario'] ?? '';
-    $password = $_POST['password'] ?? '';
-    $password_confirm = $_POST['password_confirm'] ?? '';
+class RegistroController {
+    private $db;
     
-    // Validaciones
-    if (empty($nombre) || empty($email) || empty($tipo_usuario) || empty($password)) {
-        throw new Exception('Todos los campos obligatorios deben ser completados');
+    public function __construct() {
+        $database = new Database();
+        $this->db = $database->getConnection();
     }
     
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        throw new Exception('El correo electrónico no es válido');
+    public function index() {
+        require_once __DIR__ . '/../views/registro_publico.php';
     }
     
-    if (strlen($password) < 6) {
-        throw new Exception('La contraseña debe tener al menos 6 caracteres');
+    public function registrar() {
+        try {
+            $nombre = trim($_POST['nombre'] ?? '');
+            $apellido = trim($_POST['apellido'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $password = $_POST['password'] ?? '';
+            $telefono = trim($_POST['telefono'] ?? '');
+            $direccion = trim($_POST['direccion'] ?? '');
+            $dui = trim($_POST['dui'] ?? '');
+            $tipo_usuario = $_POST['tipo_usuario'] ?? '';
+            
+            // Validaciones
+            if (empty($nombre) || empty($apellido) || empty($email) || empty($password) || empty($tipo_usuario)) {
+                $_SESSION['error'] = 'Por favor complete todos los campos obligatorios';
+                header('Location: index.php?ruta=registro');
+                exit;
+            }
+            
+            // Verificar si el email ya existe
+            $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM usuarios WHERE email = ?");
+            $stmt->execute([$email]);
+            $existe = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($existe['total'] > 0) {
+                $_SESSION['error'] = 'Este correo electrónico ya está registrado';
+                header('Location: index.php?ruta=registro');
+                exit;
+            }
+            
+            // Encriptar contraseña
+            $password_hash = password_hash($password, PASSWORD_DEFAULT);
+            
+            // Insertar usuario con estado pendiente
+            $stmt = $this->db->prepare("
+                INSERT INTO usuarios (nombre, apellido, email, password, telefono, direccion, dui, tipo_usuario, estado) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pendiente')
+            ");
+            
+            $resultado = $stmt->execute([
+                $nombre, 
+                $apellido, 
+                $email, 
+                $password_hash, 
+                $telefono, 
+                $direccion, 
+                $dui, 
+                $tipo_usuario
+            ]);
+            
+            if ($resultado) {
+                $_SESSION['success'] = '✅ Registro exitoso. Tu cuenta está pendiente de aprobación por un administrador. Te notificaremos cuando puedas acceder al sistema.';
+                header('Location: index.php?ruta=registro');
+                exit;
+            } else {
+                $_SESSION['error'] = 'Error al registrar el usuario. Intenta nuevamente.';
+                header('Location: index.php?ruta=registro');
+                exit;
+            }
+            
+        } catch (PDOException $e) {
+            $_SESSION['error'] = 'Error del sistema: ' . $e->getMessage();
+            header('Location: index.php?ruta=registro');
+            exit;
+        }
     }
-    
-    if ($password !== $password_confirm) {
-        throw new Exception('Las contraseñas no coinciden');
-    }
-    
-    // Verificar si el email ya existe
-    $checkQuery = "SELECT id FROM usuarios WHERE email = :email";
-    $checkStmt = $db->prepare($checkQuery);
-    $checkStmt->bindParam(':email', $email);
-    $checkStmt->execute();
-    
-    if ($checkStmt->fetch()) {
-        throw new Exception('Este correo electrónico ya está registrado');
-    }
-    
-    // Hashear la contraseña
-    $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-    
-    // Insertar usuario (inactivo por defecto, debe ser activado por admin)
-    $query = "INSERT INTO usuarios (nombre, email, password, tipo_usuario, carnet, telefono, activo, created_at) 
-              VALUES (:nombre, :email, :password, :tipo_usuario, :carnet, :telefono, 0, NOW())";
-    
-    $stmt = $db->prepare($query);
-    $stmt->bindParam(':nombre', $nombre);
-    $stmt->bindParam(':email', $email);
-    $stmt->bindParam(':password', $passwordHash);
-    $stmt->bindParam(':tipo_usuario', $tipo_usuario);
-    $stmt->bindParam(':carnet', $carnet);
-    $stmt->bindParam(':telefono', $telefono);
-    
-    if ($stmt->execute()) {
-        // Crear solicitud de registro
-        $solicitudQuery = "INSERT INTO solicitudes_registro (usuario_id, email, nombre, estado, fecha_solicitud) 
-                           VALUES (LAST_INSERT_ID(), :email, :nombre, 'pendiente', NOW())";
-        $solicitudStmt = $db->prepare($solicitudQuery);
-        $solicitudStmt->bindParam(':email', $email);
-        $solicitudStmt->bindParam(':nombre', $nombre);
-        $solicitudStmt->execute();
-        
-        $_SESSION['success'] = '✅ Registro exitoso. Tu cuenta está pendiente de aprobación por un administrador.';
-        header('Location: ../index.php?ruta=login');
-        exit;
-    } else {
-        throw new Exception('Error al crear la cuenta');
-    }
-    
-} catch (Exception $e) {
-    $_SESSION['error'] = $e->getMessage();
-    header('Location: ../index.php?ruta=registro');
-    exit;
 }
-?>

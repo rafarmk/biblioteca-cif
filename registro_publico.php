@@ -1,203 +1,314 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (isset($_SESSION['logueado'])) {
+    header('Location: index.php?ruta=home');
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Usuario - Biblioteca CIF</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Registro - Biblioteca CIF</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
+            justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 40px 20px;
         }
-        .registro-container {
-            max-width: 600px;
-            margin: 0 auto;
+        .register-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            max-width: 900px;
+            width: 100%;
         }
-        .card {
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        .register-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
         }
-        .card-header {
+        .register-header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        .register-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        .register-body {
+            padding: 40px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .form-group label .required {
+            color: #ef4444;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: #f7fafc;
+            font-family: inherit;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+        .btn-register {
+            width: 100%;
+            padding: 15px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            border-radius: 15px 15px 0 0 !important;
-            padding: 2rem;
-            text-align: center;
-        }
-        .form-control:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-        }
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
-            padding: 12px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            margin-top: 10px;
+        }
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
             font-weight: 600;
         }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        .alert-danger {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #fca5a5;
+        }
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 2px solid #6ee7b7;
+        }
+        .register-footer {
+            text-align: center;
+            padding: 20px 30px;
+            background: #f7fafc;
+            border-top: 1px solid #e2e8f0;
+        }
+        .register-footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .info-box {
+            background: #e0e7ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+            color: #4338ca;
+        }
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .register-body {
+                padding: 30px 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="registro-container w-100">
-        <div class="card">
-            <div class="card-header">
-                <h3 class="mb-2">
-                    <i class="fas fa-book-reader"></i> Registro de Usuario
-                </h3>
-                <p class="mb-0">Crea tu cuenta para acceder a la Biblioteca CIF</p>
-            </div>
-            <div class="card-body p-4">
-                <?php if (isset($_SESSION['mensaje'])): ?>
-                    <div class="alert alert-<?= $_SESSION['mensaje']['tipo'] ?> alert-dismissible fade show" role="alert">
-                        <?= htmlspecialchars($_SESSION['mensaje']['texto']) ?>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                    <?php unset($_SESSION['mensaje']); ?>
-                <?php endif; ?>
-
-                <form action="controllers/SolicitudController.php" method="POST" id="formRegistro">
-                    <input type="hidden" name="accion" value="crear">
-
-                    <!-- Nombre Completo -->
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">
-                            Nombre Completo <span class="text-danger">*</span>
-                        </label>
-                        <input type="text" 
-                               class="form-control" 
-                               name="nombre" 
-                               placeholder="Tu nombre completo"
-                               required>
-                    </div>
-
-                    <!-- Correo Electrónico -->
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">
-                            Correo Electrónico <span class="text-danger">*</span>
-                        </label>
-                        <input type="email" 
-                               class="form-control" 
-                               name="email" 
-                               placeholder="ejemplo@correo.com"
-                               required>
-                    </div>
-
-                    <!-- Carnet/Código -->
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">
-                            Carnet/Código
-                        </label>
-                        <input type="text" 
-                               class="form-control" 
-                               name="carnet" 
-                               placeholder="Tu número de carnet (opcional)">
-                    </div>
-
-                    <!-- Teléfono -->
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">
-                            Teléfono
-                        </label>
-                        <input type="tel" 
-                               class="form-control" 
-                               name="telefono" 
-                               placeholder="0000-0000">
-                    </div>
-
-                    <!-- Tipo de Usuario -->
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">
-                            Tipo de Usuario <span class="text-danger">*</span>
-                        </label>
-                        <select class="form-select" name="tipo_usuario" required>
-                            <option value="">Seleccione...</option>
-                            <option value="visitante">Visitante</option>
-                            <option value="personal_operativo">Personal Operativo</option>
-                            <option value="personal_administrativo">Personal Administrativo</option>
-                        </select>
-                    </div>
-
-                    <!-- Contraseña -->
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">
-                            <i class="fas fa-lock"></i> Crear Contraseña
-                        </label>
-                        <small class="text-muted d-block mb-2">La contraseña debe tener al menos 6 caracteres</small>
-                        <input type="password" 
-                               class="form-control" 
-                               name="password" 
-                               id="password"
-                               placeholder="Mínimo 6 caracteres"
-                               minlength="6"
-                               required>
-                    </div>
-
-                    <!-- Confirmar Contraseña -->
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">
-                            Confirmar Contraseña <span class="text-danger">*</span>
-                        </label>
-                        <input type="password" 
-                               class="form-control" 
-                               name="password_confirm" 
-                               id="password_confirm"
-                               placeholder="Repite tu contraseña"
-                               minlength="6"
-                               required>
-                        <div class="invalid-feedback">Las contraseñas no coinciden</div>
-                    </div>
-
-                    <!-- Botones -->
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary btn-lg">
-                            <i class="fas fa-user-plus"></i> Crear Cuenta
-                        </button>
-                        <a href="index.php?ruta=landing" class="btn btn-outline-secondary">
-                            <i class="fas fa-arrow-left"></i> Volver al Inicio
-                        </a>
-                    </div>
-                </form>
-            </div>
+    <div class="register-container">
+        <div class="register-header">
+            <div class="register-icon">🔬</div>
+            <h1>Registro de Usuario</h1>
+            <p>Laboratorio Científico Forense - PNC El Salvador</p>
         </div>
 
-        <div class="text-center mt-3">
-            <p class="text-white">
-                ¿Ya tienes cuenta? 
-                <a href="index.php?ruta=login" class="text-white fw-bold">Inicia Sesión</a>
+        <div class="register-body">
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i> <strong>Importante:</strong> Su cuenta será revisada y aprobada por un administrador antes de poder acceder al sistema.
+            </div>
+
+            <?php if (isset($_SESSION['error'])): ?>
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <?= htmlspecialchars($_SESSION['error']) ?>
+                </div>
+                <?php unset($_SESSION['error']); ?>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['success'])): ?>
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    <?= htmlspecialchars($_SESSION['success']) ?>
+                </div>
+                <?php unset($_SESSION['success']); ?>
+            <?php endif; ?>
+
+            <form method="POST" action="index.php?ruta=registro">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-user"></i> Nombre
+                            <span class="required">*</span>
+                        </label>
+                        <input type="text" name="nombre" required placeholder="Ej: Juan">
+                        <small>Nombre completo o primer nombre</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-user"></i> Apellido
+                            <span class="required">*</span>
+                        </label>
+                        <input type="text" name="apellido" required placeholder="Ej: Pérez García">
+                        <small>Apellidos completos</small>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-envelope"></i> Correo Electrónico
+                            <span class="required">*</span>
+                        </label>
+                        <input type="email" name="email" required placeholder="correo@ejemplo.com">
+                        <small>Será su usuario para iniciar sesión</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-phone"></i> Teléfono
+                        </label>
+                        <input type="tel" name="telefono" placeholder="2234-5678">
+                        <small>Número de contacto (opcional)</small>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-id-card"></i> DUI
+                        </label>
+                        <input type="text" name="dui" placeholder="12345678-9" maxlength="10">
+                        <small>Documento Único de Identidad (opcional)</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <i class="fas fa-lock"></i> Contraseña
+                            <span class="required">*</span>
+                        </label>
+                        <input type="password" name="password" required minlength="6" placeholder="Mínimo 6 caracteres">
+                        <small>Debe tener al menos 6 caracteres</small>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>
+                        <i class="fas fa-map-marker-alt"></i> Dirección
+                    </label>
+                    <textarea name="direccion" placeholder="Dirección completa (opcional)"></textarea>
+                    <small>Dirección de residencia</small>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>
+                        <i class="fas fa-users"></i> Tipo de Usuario
+                        <span class="required">*</span>
+                    </label>
+                    <select name="tipo_usuario" required>
+                        <option value="">Seleccione su tipo de usuario...</option>
+                        <option value="visitante">👥 Visitas en General - Acceso a consulta de materiales</option>
+                        <option value="personal_operativo">👮 Personal Policial Operativo - Personal de campo y técnico especializado</option>
+                        <option value="personal_administrativo">📋 Personal Administrativo - Personal de oficina y gestión</option>
+                    </select>
+                    <small>Seleccione el tipo que mejor describa su rol en la institución</small>
+                </div>
+
+                <button type="submit" class="btn-register">
+                    <i class="fas fa-user-plus"></i> Registrarse Ahora
+                </button>
+            </form>
+        </div>
+
+        <div class="register-footer">
+            <p style="margin-bottom: 10px; color: #4a5568;">
+                ¿Ya tienes una cuenta?
             </p>
+            <a href="index.php?ruta=login">
+                <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+            </a>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Validar que las contraseñas coincidan
-        document.getElementById('formRegistro').addEventListener('submit', function(e) {
-            const password = document.getElementById('password').value;
-            const passwordConfirm = document.getElementById('password_confirm').value;
-            
-            if (password !== passwordConfirm) {
-                e.preventDefault();
-                document.getElementById('password_confirm').classList.add('is-invalid');
-                alert('Las contraseñas no coinciden');
-                return false;
-            }
-        });
-
-        // Remover clase de error al escribir
-        document.getElementById('password_confirm').addEventListener('input', function() {
-            this.classList.remove('is-invalid');
-        });
-    </script>
+    <div style="
+        position: fixed;
+        bottom: 10px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        color: white;
+        font-size: 0.8rem;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    ">
+        Desarrollado por <strong>Gestión de Infraestructura</strong> | © <?= date('Y') ?> Laboratorio Científico Forense - PNC
+    </div>
 </body>
 </html>
