@@ -2,6 +2,16 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+// Si ya está logueado, redirigir
+if (isset($_SESSION['logueado'])) {
+    if ($_SESSION['tipo_usuario'] === 'admin') {
+        header('Location: index.php?ruta=home');
+    } else {
+        header('Location: index.php?ruta=catalogo');
+    }
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -217,9 +227,9 @@ if (session_status() === PHP_SESSION_NONE) {
 <body>
     <div class="register-container">
         <div class="register-header">
-            <div class="register-icon">📝</div>
-            <h1>Crear Cuenta Nueva</h1>
-            <p>Complete todos los campos para registrarse en el sistema</p>
+            <div class="register-icon">🔬</div>
+            <h1>Registro de Usuario</h1>
+            <p>Laboratorio Científico Forense - PNC El Salvador</p>
         </div>
 
         <div class="register-body">
@@ -317,11 +327,11 @@ if (session_status() === PHP_SESSION_NONE) {
                     </label>
                     <select name="tipo_usuario" required>
                         <option value="">Seleccione su tipo de usuario...</option>
-                        <option value="visitante">🚶 Visitante - Acceso general a servicios básicos</option>
-                        <option value="personal_operativo">👷 Personal Operativo - Empleados de operaciones</option>
-                        <option value="personal_administrativo">👔 Personal Administrativo - Empleados administrativos</option>
+                        <option value="visitante">👥 Visitas en General - Acceso a consulta de materiales</option>
+                        <option value="personal_operativo">👮 Personal Policial Operativo - Personal de campo y técnico especializado</option>
+                        <option value="personal_administrativo">📋 Personal Administrativo - Personal de oficina y gestión</option>
                     </select>
-                    <small>Seleccione el tipo que mejor describa su rol</small>
+                    <small>Seleccione el tipo que mejor describa su rol en la institución</small>
                 </div>
 
                 <button type="submit" class="btn-register">
@@ -338,6 +348,19 @@ if (session_status() === PHP_SESSION_NONE) {
                 <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
             </a>
         </div>
+    </div>
+
+    <div style="
+        position: fixed;
+        bottom: 10px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        color: white;
+        font-size: 0.8rem;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    ">
+        Desarrollado por <strong>Gestión de Infraestructura</strong> | © <?= date('Y') ?> Laboratorio Científico Forense - PNC
     </div>
 </body>
 </html>

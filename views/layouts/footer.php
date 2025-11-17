@@ -1,38 +1,38 @@
 ﻿<footer style="
-    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
-    color: white;
-    padding: 30px 20px;
-    margin-top: 60px;
+    background: linear-gradient(135deg, #0c4a6e 0%, #0f172a 100%);
+    border-top: 3px solid rgba(56, 189, 248, 0.3);
+    padding: 25px 20px;
     text-align: center;
-    border-top: 3px solid #667eea;
+    color: white;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+    margin-top: 50px;
 ">
     <div style="max-width: 1200px; margin: 0 auto;">
-        <div style="margin-bottom: 15px;">
-            <h3 style="margin: 0 0 10px 0; font-size: 1.5rem; color: #667eea;">
-                📚 Sistema de Biblioteca CIF
-            </h3>
-            <p style="margin: 0; color: #a0aec0; font-size: 0.95rem;">
-                Gestión eficiente de préstamos y recursos bibliográficos
-            </p>
-        </div>
-        
+        <p style="margin: 0; font-weight: 700; font-size: 16px;">
+            🔬 Sistema de Gestión Bibliotecaria
+        </p>
+        <p style="margin: 8px 0; font-size: 14px; opacity: 0.95;">
+            <strong>Laboratorio Científico Forense</strong> - Policía Nacional Civil de El Salvador
+        </p>
         <div style="
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-top: 20px;
-            margin-top: 20px;
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            display: inline-block;
         ">
-            <p style="margin: 5px 0; color: #cbd5e0; font-size: 0.9rem;">
-                © <?php echo date('Y'); ?> Sistema de Biblioteca CIF. Todos los derechos reservados.
-            </p>
-            <p style="margin: 5px 0; color: #a0aec0; font-size: 0.85rem;">
-                Desarrollado por <strong>Gestión de Infraestructura</strong>
+            <p style="margin: 0; font-size: 13px; font-weight: 600;">
+                Desarrollado por <strong style="color: #fbbf24;">Gestión de Infraestructura</strong>
             </p>
         </div>
-        
-        <div style="margin-top: 15px; color: #718096; font-size: 0.8rem;">
-            <p style="margin: 0;">
-                🔒 Sistema seguro | 📊 Gestión eficiente | 📖 Fácil de usar
-            </p>
-        </div>
+        <p style="margin: 8px 0; font-size: 11px; opacity: 0.8;">
+            © <?= date('Y') ?> - Todos los derechos reservados
+        </p>
     </div>
 </footer>
+
+<style>
+    body {
+        padding-bottom: 0 !important;
+    }
+</style>

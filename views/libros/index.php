@@ -1,244 +1,314 @@
 ﻿<?php
-$pageTitle = 'Gestión de Préstamos - Biblioteca CIF';
-if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
-require_once __DIR__ . '/../layouts/header.php';
+if (!isset($_SESSION['logueado'])) {
+    header('Location: index.php?ruta=login');
+    exit;
+}
+
+require_once __DIR__ . '/../../config/Database.php';
+$db = new Database();
+$conn = $db->getConnection();
+
+$busqueda = $_GET['buscar'] ?? '';
+$query = "SELECT * FROM libros WHERE 1=1";
+
+if (!empty($busqueda)) {
+    $query .= " AND (titulo LIKE :busqueda OR autor LIKE :busqueda OR isbn LIKE :busqueda)";
+}
+
+$query .= " ORDER BY titulo ASC";
+
+$stmt = $conn->prepare($query);
+
+if (!empty($busqueda)) {
+    $busquedaParam = "%$busqueda%";
+    $stmt->bindParam(':busqueda', $busquedaParam);
+}
+
+$stmt->execute();
+$libros = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 require_once __DIR__ . '/../layouts/navbar.php';
 ?>
 
-<div class="page-container fade-in">
-    <div class="content-wrapper">
-        <h1 class="page-title">📖 Gestión de Préstamos</h1>
-        <p class="page-subtitle">Administra todos los préstamos de libros del sistema</p>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Libros - Biblioteca CIF</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding-top: 100px;
+            padding-bottom: 50px;
+        }
 
-        <?php if (isset($_SESSION['success'])): ?>
-            <div class="alert alert-success">
-                <i class="fas fa-check-circle"></i>
-                <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
-            </div>
-        <?php endif; ?>
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
 
-        <?php if (isset($_SESSION['error'])): ?>
-            <div class="alert alert-danger">
-                <i class="fas fa-exclamation-circle"></i>
-                <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
-            </div>
-        <?php endif; ?>
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
 
-        <!-- Toolbar -->
-        <div class="toolbar">
-            <div class="toolbar-left">
-                <a href="index.php?ruta=prestamos&accion=crear" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Nuevo Préstamo
-                </a>
-                <a href="index.php?ruta=prestamos/activos" class="btn btn-success">
-                    <i class="fas fa-book-open"></i> Préstamos Activos
-                </a>
-                <a href="index.php?ruta=prestamos/atrasados" class="btn btn-danger">
-                    <i class="fas fa-exclamation-triangle"></i> Atrasados
-                </a>
-            </div>
-            <div class="toolbar-right">
-                <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="Buscar por usuario o libro..." onkeyup="filtrarPrestamos()">
-                    <i class="fas fa-search"></i>
-                </div>
-            </div>
+        .header h1 {
+            font-size: 2.5rem;
+            color: #fff;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .search-form {
+            max-width: 600px;
+            margin: 0 auto 30px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 15px 20px;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .libros-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .libro-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+        }
+
+        .libro-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .libro-icon {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .libro-titulo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #1f2937;
+        }
+
+        .libro-autor {
+            color: #6b7280;
+            margin-bottom: 15px;
+        }
+
+        .libro-info {
+            margin: 15px 0;
+            padding: 15px 0;
+            border-top: 1px solid #e5e7eb;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            color: #4b5563;
+            font-size: 0.9rem;
+        }
+
+        .badge-disponible {
+            background: #d1fae5;
+            color: #065f46;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-agotado {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .libro-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            flex: 1;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 2px solid #10b981;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>📚 Gestión de Libros</h1>
+        <p style="color: rgba(255,255,255,0.9);">Administra el catálogo completo de la biblioteca</p>
+    </div>
+
+    <?php if (isset($_SESSION['mensaje'])): ?>
+        <div class="alert alert-success">
+            <?= $_SESSION['mensaje'] ?>
         </div>
+        <?php unset($_SESSION['mensaje']); ?>
+    <?php endif; ?>
 
-        <!-- Estadísticas rápidas -->
-        <div class="row" style="margin-bottom: 30px;">
-            <div class="col-4">
-                <div class="card">
-                    <h3 style="color: var(--primary-color); font-size: 2rem; margin-bottom: 5px;">
-                        <?php echo isset($estadisticas['total']) ? (int)$estadisticas['total'] : 0; ?>
-                    </h3>
-                    <p style="color: var(--text-light); margin: 0;">Total de Préstamos</p>
+    <div class="actions">
+        <a href="index.php?ruta=libros&accion=crear" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Nuevo Libro
+        </a>
+        <a href="index.php?ruta=libros&accion=importar" class="btn btn-success">
+            <i class="fas fa-file-excel"></i> Importar Excel
+        </a>
+    </div>
+
+    <form method="GET" action="" class="search-form">
+        <input type="hidden" name="ruta" value="libros">
+        <input 
+            type="text" 
+            name="buscar" 
+            class="search-input" 
+            placeholder="🔍 Buscar por título, autor o ISBN..."
+            value="<?= htmlspecialchars($busqueda) ?>"
+        >
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-search"></i> Buscar
+        </button>
+    </form>
+
+    <div class="libros-grid">
+        <?php foreach ($libros as $libro): ?>
+            <div class="libro-card">
+                <div class="libro-icon">📖</div>
+                <div class="libro-titulo">
+                    <?= htmlspecialchars($libro['titulo']) ?>
+                </div>
+                <div class="libro-autor">
+                    <i class="fas fa-user"></i> <?= htmlspecialchars($libro['autor']) ?>
+                </div>
+
+                <div class="libro-info">
+                    <div class="info-row">
+                        <span><strong>ISBN:</strong></span>
+                        <span><?= htmlspecialchars($libro['isbn']) ?></span>
+                    </div>
+                    <div class="info-row">
+                        <span><strong>Editorial:</strong></span>
+                        <span><?= htmlspecialchars($libro['editorial']) ?></span>
+                    </div>
+                    <div class="info-row">
+                        <span><strong>Año:</strong></span>
+                        <span><?= htmlspecialchars($libro['anio_publicacion']) ?></span>
+                    </div>
+                    <div class="info-row">
+                        <span><strong>Total:</strong></span>
+                        <span><?= $libro['cantidad_total'] ?> copias</span>
+                    </div>
+                    <div class="info-row">
+                        <span><strong>Disponibles:</strong></span>
+                        <?php if ($libro['cantidad_disponible'] > 0): ?>
+                            <span class="badge-disponible">
+                                ✅ <?= $libro['cantidad_disponible'] ?>
+                            </span>
+                        <?php else: ?>
+                            <span class="badge-agotado">❌ Agotado</span>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <div class="libro-actions">
+                    <a href="index.php?ruta=libros&accion=editar&id=<?= $libro['id'] ?>" 
+                       class="btn btn-primary btn-small">
+                        <i class="fas fa-edit"></i> Editar
+                    </a>
+                    <a href="index.php?ruta=libros&accion=eliminar&id=<?= $libro['id'] ?>" 
+                       class="btn btn-danger btn-small"
+                       onclick="return confirm('¿Eliminar este libro?')"
+                       style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </a>
                 </div>
             </div>
-            <div class="col-4">
-                <div class="card">
-                    <h3 style="color: var(--success-color); font-size: 2rem; margin-bottom: 5px;">
-                        <?php echo isset($estadisticas['activos']) ? (int)$estadisticas['activos'] : 0; ?>
-                    </h3>
-                    <p style="color: var(--text-light); margin: 0;">Préstamos Activos</p>
-                </div>
-            </div>
-            <div class="col-4">
-                <div class="card">
-                    <h3 style="color: var(--danger-color); font-size: 2rem; margin-bottom: 5px;">
-                        <?php echo isset($estadisticas['atrasados']) ? (int)$estadisticas['atrasados'] : 0; ?>
-                    </h3>
-                    <p style="color: var(--text-light); margin: 0;">Préstamos Atrasados</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tabla de préstamos -->
-        <div class="table-container">
-            <table class="table" id="prestamosTable">
-                <thead>
-                    <tr>
-                        <th>Usuario</th>
-                        <th>Libro</th>
-                        <th>Fecha Préstamo</th>
-                        <th>Fecha Devolución</th>
-                        <th>Días Restantes</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (!empty($prestamos)): ?>
-                        <?php foreach ($prestamos as $prestamo): ?>
-                            <?php
-                            // --- CÁLCULO DE DÍAS (CORREGIDO) ---
-                            $fechaEsperadaStr = $prestamo['fecha_devolucion_esperada'] ?? null;   // si tu modelo la usa
-                            // Si no manejas 'fecha_devolucion_esperada', comenta la línea anterior
-                            // y usa directamente 'fecha_devolucion' como "esperada" según tu esquema.
-
-                            $fechaRealStr     = $prestamo['fecha_devolucion'] ?? null;            // real si ya se devolvió
-                            $fechaPrestamoStr = $prestamo['fecha_prestamo'] ?? null;
-
-                            $diasValor = null;     // firmado (negativo = atrasado, positivo = faltan días)
-                            $diasAbs   = null;     // absoluto para mostrar
-                            $atrasado  = false;    // flag
-
-                            try {
-                                $hoy = new DateTime();
-
-                                // Construir objetos si existen
-                                $fechaEsperada = $fechaEsperadaStr ? new DateTime($fechaEsperadaStr) : null;
-                                $fechaReal     = $fechaRealStr ? new DateTime($fechaRealStr) : null;
-
-                                if ($fechaEsperada) {
-                                    if ($fechaReal) {
-                                        // Ya devuelto: diferencia entre esperada y real
-                                        $diff = $fechaEsperada->diff($fechaReal);
-                                        $diasValor = (int)$diff->format('%r%a');
-                                        // Si real > esperada => tardó (negativo si consideras "esperada - real")
-                                        // Con esta convención, atrasado si $fechaReal > $fechaEsperada:
-                                        $atrasado = ($fechaReal > $fechaEsperada);
-                                    } else {
-                                        // No devuelto: diferencia entre esperada y hoy
-                                        $diff = $fechaEsperada->diff($hoy);
-                                        $diasValor = (int)$diff->format('%r%a');
-                                        // Si hoy > esperada => atrasado
-                                        $atrasado = ($hoy > $fechaEsperada);
-                                    }
-                                    $diasAbs = abs($diasValor);
-                                }
-                            } catch (\Throwable $e) {
-                                $diasValor = null;
-                                $diasAbs   = null;
-                                $atrasado  = false;
-                            }
-                            ?>
-                            <tr>
-                                <td><strong><?php echo htmlspecialchars($prestamo['usuario_nombre'] ?? 'N/D', ENT_QUOTES, 'UTF-8'); ?></strong></td>
-                                <td><?php echo htmlspecialchars($prestamo['libro_titulo'] ?? 'N/D', ENT_QUOTES, 'UTF-8'); ?></td>
-
-                                <td>
-                                    <?php
-                                    echo $fechaPrestamoStr
-                                        ? date('d/m/Y', strtotime($fechaPrestamoStr))
-                                        : 'N/D';
-                                    ?>
-                                </td>
-
-                                <td>
-                                    <?php
-                                    // Mostramos 'fecha_devolucion' (real) si existe; si no, la esperada si existe.
-                                    if (!empty($fechaRealStr)) {
-                                        echo date('d/m/Y', strtotime($fechaRealStr));
-                                    } elseif (!empty($fechaEsperadaStr)) {
-                                        echo date('d/m/Y', strtotime($fechaEsperadaStr));
-                                    } else {
-                                        echo 'N/D';
-                                    }
-                                    ?>
-                                </td>
-
-                                <td>
-                                    <?php if (!empty($fechaRealStr)): ?>
-                                        <span class="badge badge-secondary">-</span>
-                                    <?php elseif ($diasAbs !== null && $atrasado): ?>
-                                        <span class="badge badge-danger"><?php echo $diasAbs; ?> día(s) atrasado</span>
-                                    <?php elseif ($diasAbs !== null): ?>
-                                        <span class="badge badge-success"><?php echo $diasAbs; ?> día(s)</span>
-                                    <?php else: ?>
-                                        <span class="badge badge-secondary">N/D</span>
-                                    <?php endif; ?>
-                                </td>
-
-                                <td>
-                                    <?php
-                                    $estado = $prestamo['estado'] ?? 'desconocido';
-                                    if ($estado === 'devuelto') {
-                                        echo '<span class="badge badge-secondary">Devuelto</span>';
-                                    } elseif ($estado === 'activo' && $atrasado) {
-                                        echo '<span class="badge badge-danger">Atrasado</span>';
-                                    } elseif ($estado === 'activo') {
-                                        echo '<span class="badge badge-success">Activo</span>';
-                                    } else {
-                                        echo '<span class="badge badge-secondary">'.htmlspecialchars($estado, ENT_QUOTES, 'UTF-8').'</span>';
-                                    }
-                                    ?>
-                                </td>
-
-                                <td>
-                                    <div class="action-buttons">
-                                        <?php if (($prestamo['estado'] ?? '') === 'activo'): ?>
-                                            <a href="index.php?ruta=prestamos&accion=devolver&id=<?php echo (int)($prestamo['id'] ?? 0); ?>"
-                                               class="action-btn action-btn-edit"
-                                               onclick="return confirm('¿Confirmar devolución de este libro?')"
-                                               title="Registrar Devolución">
-                                                <i class="fas fa-undo"></i> Devolver
-                                            </a>
-                                        <?php endif; ?>
-                                        <a href="index.php?ruta=prestamos&accion=ver&id=<?php echo (int)($prestamo['id'] ?? 0); ?>"
-                                           class="action-btn action-btn-view"
-                                           title="Ver Detalles">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <tr>
-                            <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-light);">
-                                <i class="fas fa-book-open" style="font-size: 3rem; margin-bottom: 15px; display: block; opacity: 0.3;"></i>
-                                No hay préstamos registrados aún.
-                                <a href="index.php?ruta=prestamos&accion=crear" style="color: var(--primary-color);">Registrar el primero</a>
-                            </td>
-                        </tr>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </div>
+        <?php endforeach; ?>
     </div>
 </div>
 
-<script>
-function filtrarPrestamos() {
-    const input = document.getElementById('searchInput');
-    const filter = input.value.toUpperCase();
-    const table = document.getElementById('prestamosTable');
-    const tr = table.getElementsByTagName('tr');
-
-    for (let i = 1; i < tr.length; i++) {
-        const tdUsuario = tr[i].getElementsByTagName('td')[0];
-        const tdLibro = tr[i].getElementsByTagName('td')[1];
-
-        if (tdUsuario || tdLibro) {
-            const txtUsuario = (tdUsuario.textContent || tdUsuario.innerText).toUpperCase();
-            const txtLibro   = (tdLibro.textContent   || tdLibro.innerText).toUpperCase();
-
-            tr[i].style.display = (txtUsuario.indexOf(filter) > -1 || txtLibro.indexOf(filter) > -1) ? '' : 'none';
-        }
-    }
-}
-</script>
-
+<?php require_once __DIR__ . '/../layouts/footer.php'; ?>
 </body>
 </html>
