@@ -11,7 +11,7 @@ $conn = $db->getConnection();
 $stmt = $conn->query("
     SELECT * FROM usuarios 
     WHERE tipo_usuario != 'admin'
-    ORDER BY created_at DESC
+    ORDER BY id DESC
 ");
 $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -61,10 +61,11 @@ require_once __DIR__ . '/../layouts/navbar.php';
         .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
-        .btn-success {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
         }
         .btn-danger {
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
@@ -94,6 +95,12 @@ require_once __DIR__ . '/../layouts/navbar.php';
             padding: 15px;
             text-align: left;
             border-bottom: 1px solid #e5e7eb;
+        }
+        th {
+            font-weight: 600;
+        }
+        tbody tr {
+            transition: all 0.3s;
         }
         tbody tr:hover {
             background: #f9fafb;
@@ -129,6 +136,12 @@ require_once __DIR__ . '/../layouts/navbar.php';
         .alert-success {
             background: #d1fae5;
             color: #065f46;
+            border: 2px solid #10b981;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
         }
     </style>
 </head>
@@ -142,7 +155,8 @@ require_once __DIR__ . '/../layouts/navbar.php';
 
     <?php if (isset($_SESSION['mensaje'])): ?>
         <div class="alert alert-success">
-            <?= $_SESSION['mensaje'] ?>
+            <i class="fas fa-check-circle"></i>
+            <?= htmlspecialchars($_SESSION['mensaje']) ?>
         </div>
         <?php unset($_SESSION['mensaje']); ?>
     <?php endif; ?>
@@ -161,7 +175,7 @@ require_once __DIR__ . '/../layouts/navbar.php';
                     <th>Nombre Completo</th>
                     <th>Email</th>
                     <th>Teléfono</th>
-                    <th>Tipo</th>
+                    <th>Tipo Usuario</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
@@ -169,24 +183,42 @@ require_once __DIR__ . '/../layouts/navbar.php';
             <tbody>
                 <?php if (empty($usuarios)): ?>
                     <tr>
-                        <td colspan="7" style="text-align: center; padding: 40px;">
-                            No hay usuarios registrados
+                        <td colspan="7" style="text-align: center;">
+                            <div class="empty-state">
+                                <div style="font-size: 3rem; margin-bottom: 10px;">👥</div>
+                                <p>No hay usuarios registrados</p>
+                            </div>
                         </td>
                     </tr>
                 <?php else: ?>
                     <?php foreach ($usuarios as $usuario): ?>
                         <tr>
-                            <td><?= $usuario['id'] ?></td>
+                            <td><?= intval($usuario['id']) ?></td>
                             <td>
                                 <strong><?= htmlspecialchars($usuario['nombre'] ?? '') ?> <?= htmlspecialchars($usuario['apellido'] ?? '') ?></strong>
                             </td>
                             <td><?= htmlspecialchars($usuario['email'] ?? '') ?></td>
                             <td><?= htmlspecialchars($usuario['telefono'] ?? 'N/A') ?></td>
-                            <td><?= htmlspecialchars($usuario['tipo_usuario'] ?? 'N/A') ?></td>
                             <td>
-                                <?php if ($usuario['estado'] == 'activo'): ?>
+                                <?php
+                                $tipo = $usuario['tipo_usuario'] ?? 'N/A';
+                                if ($tipo == 'visitante') {
+                                    echo '👥 Visitante';
+                                } elseif ($tipo == 'personal_operativo') {
+                                    echo '👮 Personal Operativo';
+                                } elseif ($tipo == 'personal_administrativo') {
+                                    echo '📋 Personal Administrativo';
+                                } else {
+                                    echo htmlspecialchars($tipo);
+                                }
+                                ?>
+                            </td>
+                            <td>
+                                <?php
+                                $estado = $usuario['estado'] ?? 'inactivo';
+                                if ($estado == 'activo'): ?>
                                     <span class="badge badge-activo">✅ Activo</span>
-                                <?php elseif ($usuario['estado'] == 'pendiente'): ?>
+                                <?php elseif ($estado == 'pendiente'): ?>
                                     <span class="badge badge-pendiente">⏳ Pendiente</span>
                                 <?php else: ?>
                                     <span class="badge badge-inactivo">❌ Inactivo</span>
@@ -199,7 +231,7 @@ require_once __DIR__ . '/../layouts/navbar.php';
                                 </a>
                                 <a href="index.php?ruta=usuarios&accion=eliminar&id=<?= $usuario['id'] ?>" 
                                    class="btn btn-danger btn-small"
-                                   onclick="return confirm('¿Eliminar este usuario?')">
+                                   onclick="return confirm('¿Eliminar este usuario?\n\nEsta acción no se puede deshacer.')">
                                     <i class="fas fa-trash"></i> Eliminar
                                 </a>
                             </td>
