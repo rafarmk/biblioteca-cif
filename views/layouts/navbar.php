@@ -5,14 +5,18 @@ if (session_status() === PHP_SESSION_NONE) {
 
 // Contar usuarios pendientes de aprobación
 $usuarios_pendientes = 0;
-if (isset($_SESSION['admin_id'])) {
-    require_once 'config/database.php';
-    $db = new Database();
-    $conn = $db->getConnection();
-    $stmt = $conn->prepare("SELECT COUNT(*) as total FROM usuarios WHERE aprobado = 0");
-    $stmt->execute();
-    $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
-    $usuarios_pendientes = $resultado['total'];
+if (isset($_SESSION['admin_id']) || isset($_SESSION['admin_nombre'])) {
+    try {
+        require_once __DIR__ . '/../../config/database.php';
+        $db = new Database();
+        $conn = $db->getConnection();
+        $stmt = $conn->prepare("SELECT COUNT(*) as total FROM usuarios WHERE aprobado = 0");
+        $stmt->execute();
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        $usuarios_pendientes = $resultado['total'];
+    } catch (Exception $e) {
+        $usuarios_pendientes = 0;
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -78,8 +82,8 @@ if (isset($_SESSION['admin_id'])) {
     --bg-primary: #0f1419;
     --bg-secondary: #1a1f29;
     --bg-card: #1e2533;
-    --text-primary: #c9d1d9;
-    --text-secondary: #8b93a0;
+    --text-primary: #ffffff;
+    --text-secondary: #e5e7eb;
     --border-color: #30363d;
     --shadow: rgba(56, 189, 248, 0.3);
     --primary: #38bdf8;
