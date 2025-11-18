@@ -108,6 +108,7 @@ body {
     transition: var(--transition);
     min-height: 100vh;
     position: relative;
+    padding-top: 100px;
 }
 
 /* Premium mode - EFECTOS VISUALES INCREÍBLES */
@@ -526,11 +527,6 @@ body {
     box-shadow: 0 10px 35px rgba(245, 87, 108, 0.6);
 }
 
-/* Espaciador para compensar el navbar fijo */
-.navbar-spacer {
-    height: 86px;
-}
-
 @media (max-width: 768px) {
     .navbar-container {
         flex-direction: column;
@@ -551,8 +547,8 @@ body {
         display: none;
     }
 
-    .navbar-spacer {
-        height: 140px;
+    body {
+        padding-top: 160px;
     }
 }
 </style>
@@ -619,9 +615,6 @@ body {
         </div>
     </div>
 </nav>
-
-<!-- Espaciador para evitar que el contenido quede debajo del navbar -->
-<div class="navbar-spacer"></div>
 
 <script>
 const themeToggle = document.getElementById('themeToggle');

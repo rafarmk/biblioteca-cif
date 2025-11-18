@@ -23,7 +23,7 @@ body {
 }
 
 /* El contenido principal debe crecer para empujar el footer abajo */
-body > *:not(.footer):not(.modern-navbar):not(.premium-effects):not(.premium-particles):not(.theme-toggle):not(.navbar-spacer) {
+body > *:not(.footer):not(.modern-navbar):not(.premium-effects):not(.premium-particles):not(.theme-toggle) {
     flex: 1;
 }
 
