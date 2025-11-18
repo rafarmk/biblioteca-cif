@@ -50,10 +50,12 @@
 }
 
 .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 25px;
     margin-bottom: 40px;
+    justify-content: space-between;
 }
 
 .stat-card {
@@ -65,6 +67,8 @@
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
+    flex: 1 1 calc(33.333% - 20px);
+    min-width: 250px;
 }
 
 [data-theme="premium"] .stat-card {
@@ -263,7 +267,12 @@
     }
 
     .stats-grid {
-        grid-template-columns: 1fr;
+        flex-direction: column;
+    }
+
+    .stat-card {
+        flex: 1 1 100%;
+        min-width: 100%;
     }
 
     .stat-card-number {
