@@ -95,13 +95,13 @@ class Prestamo {
         
         try {
             // 1. Verificar que el libro esté disponible
-            $sqlVerificar = "SELECT disponible FROM libros WHERE id = ?";
+            $sqlVerificar = "SELECT cantidad_disponible FROM libros WHERE id = ?";
             $stmtVerificar = $this->conexion->prepare($sqlVerificar);
             $stmtVerificar->bind_param("i", $datos['libro_id']);
             $stmtVerificar->execute();
             $libro = $stmtVerificar->get_result()->fetch_assoc();
-            
-            if (!$libro || !$libro['disponible']) {
+
+            if (!$libro || $libro['cantidad_disponible'] <= 0) {
                 throw new Exception("El libro no está disponible");
             }
             
@@ -132,8 +132,8 @@ class Prestamo {
                 throw new Exception("Error al crear el préstamo");
             }
             
-            // 4. Marcar libro como no disponible
-            $sqlActualizar = "UPDATE libros SET disponible = FALSE WHERE id = ?";
+            // 4. Decrementar cantidad disponible del libro
+            $sqlActualizar = "UPDATE libros SET cantidad_disponible = cantidad_disponible - 1 WHERE id = ?";
             $stmtActualizar = $this->conexion->prepare($sqlActualizar);
             $stmtActualizar->bind_param("i", $datos['libro_id']);
             
@@ -200,8 +200,8 @@ class Prestamo {
                 throw new Exception("Error al actualizar el préstamo");
             }
             
-            // 3. Marcar libro como disponible
-            $sqlActualizarLibro = "UPDATE libros SET disponible = TRUE WHERE id = ?";
+            // 3. Incrementar cantidad disponible del libro
+            $sqlActualizarLibro = "UPDATE libros SET cantidad_disponible = cantidad_disponible + 1 WHERE id = ?";
             $stmtActualizarLibro = $this->conexion->prepare($sqlActualizarLibro);
             $stmtActualizarLibro->bind_param("i", $prestamo['libro_id']);
             
