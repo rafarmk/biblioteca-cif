@@ -2,6 +2,18 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+// Contar usuarios pendientes de aprobación
+$usuarios_pendientes = 0;
+if (isset($_SESSION['admin_id'])) {
+    require_once 'config/database.php';
+    $db = new Database();
+    $conn = $db->getConnection();
+    $stmt = $conn->prepare("SELECT COUNT(*) as total FROM usuarios WHERE aprobado = 0");
+    $stmt->execute();
+    $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+    $usuarios_pendientes = $resultado['total'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -438,6 +450,41 @@ body {
     font-size: 19px;
 }
 
+/* Badge de notificación */
+.nav-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #e74c3c;
+    color: white;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(231, 76, 60, 0.5);
+    animation: pulse-badge 2s ease-in-out infinite;
+}
+
+@keyframes pulse-badge {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 2px 8px rgba(231, 76, 60, 0.5);
+    }
+    50% {
+        transform: scale(1.1);
+        box-shadow: 0 4px 12px rgba(231, 76, 60, 0.8);
+    }
+}
+
+[data-theme="premium"] .nav-badge {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.6);
+}
+
 .nav-user {
     display: flex;
     align-items: center;
@@ -551,6 +598,9 @@ body {
             <a href="index.php?ruta=usuarios" class="nav-link">
                 <i class="fas fa-users"></i>
                 <span>Usuarios</span>
+                <?php if ($usuarios_pendientes > 0): ?>
+                    <span class="nav-badge"><?php echo $usuarios_pendientes; ?></span>
+                <?php endif; ?>
             </a>
 
             <a href="index.php?ruta=prestamos" class="nav-link">
