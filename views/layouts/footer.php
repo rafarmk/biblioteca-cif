@@ -3,6 +3,7 @@
 <footer class="footer">
     <div class="footer-content">
         <p>&copy; <?php echo date('Y'); ?> Sistema de Biblioteca CIF. Todos los derechos reservados.</p>
+        <p class="footer-author">Elaborado por Gestión de Infraestructura</p>
     </div>
 </footer>
 
@@ -47,13 +48,25 @@ body > *:not(.footer):not(.modern-navbar):not(.premium-effects):not(.premium-par
 .footer-content p {
     color: var(--text-secondary);
     font-size: 0.9rem;
-    margin: 0;
+    margin: 5px 0;
     font-weight: 500;
+}
+
+.footer-author {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--primary);
+    margin-top: 8px;
 }
 
 [data-theme="premium"] .footer-content p {
     color: #e5e7eb;
-    text-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+}
+
+[data-theme="premium"] .footer-author {
+    color: #38bdf8;
+    text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+    font-weight: 700;
 }
 </style>
 
