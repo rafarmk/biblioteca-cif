@@ -21,11 +21,10 @@ if (session_status() === PHP_SESSION_NONE) {
     --primary: #2a5298;
     --secondary: #1e3c72;
     --accent: #3b82f6;
-    --transition: all 0.3s ease;
     --bg-primary: #f0f4f8;
     --bg-secondary: #e2e8f0;
     --bg-card: #ffffff;
-    --text-primary: #2c3e50;
+    --text-primary: #1e293b;
     --text-secondary: #64748b;
     --border-color: #cbd5e1;
     --shadow: rgba(0, 0, 0, 0.1);
@@ -37,13 +36,18 @@ if (session_status() === PHP_SESSION_NONE) {
     box-sizing: border-box;
 }
 
+html, body {
+    height: 100%;
+}
+
 body {
     font-family: 'Poppins', sans-serif;
     background: var(--bg-primary);
     color: var(--text-primary);
-    transition: var(--transition);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
-    padding-top: 0;
 }
 
 .modern-navbar {
@@ -55,7 +59,6 @@ body {
     left: 0;
     right: 0;
     z-index: 1000;
-    transition: var(--transition);
 }
 
 .navbar-container {
@@ -77,12 +80,10 @@ body {
     font-size: 1.6rem;
     font-weight: 800;
     transition: all 0.3s ease;
-    flex-shrink: 0;
 }
 
 .navbar-logo:hover {
     transform: scale(1.05);
-    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
 }
 
 .logo-icon {
@@ -94,25 +95,13 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 26px;
-    transition: all 0.3s ease;
-}
-
-.navbar-logo:hover .logo-icon {
-    transform: rotate(360deg);
 }
 
 .navbar-menu {
     display: flex;
     gap: 6px;
     align-items: center;
-    overflow-x: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    padding: 5px 0;
-}
-
-.navbar-menu::-webkit-scrollbar {
-    display: none;
+    flex-wrap: wrap;
 }
 
 .nav-link {
@@ -126,32 +115,34 @@ body {
     align-items: center;
     gap: 7px;
     transition: all 0.3s ease;
-    white-space: nowrap;
     position: relative;
-    flex-shrink: 0;
     border: 2px solid transparent;
     background: none;
+    cursor: pointer;
 }
 
 .nav-link:hover {
     background: rgba(255, 255, 255, 0.3);
     border: 2px solid rgba(255, 255, 255, 0.5);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     transform: scale(1.05);
 }
 
-.nav-link:active {
-    transform: scale(0.98);
-    background: rgba(255, 255, 255, 0.4);
+.nav-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 15px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 18px;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
-.nav-link i {
-    font-size: 18px;
-    transition: all 0.3s ease;
-}
-
-.nav-link:hover i {
-    transform: scale(1.15);
+.nav-logout {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
 }
 
 .badge-notification {
@@ -168,48 +159,14 @@ body {
     justify-content: center;
     font-size: 10px;
     font-weight: 700;
-    animation: pulse-notification 2s infinite;
 }
 
-@keyframes pulse-notification {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.15); box-shadow: 0 0 10px rgba(239, 68, 68, 0.6); }
-}
-
-.nav-user {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 9px 15px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 18px;
-    color: white;
-    font-weight: 600;
-    font-size: 14px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    flex-shrink: 0;
-}
-
-.nav-user i {
-    font-size: 18px;
-}
-
-.nav-logout {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
-    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
-}
-
-.nav-logout:hover {
-    box-shadow: 0 6px 25px rgba(245, 87, 108, 0.7);
-    border-color: rgba(255, 255, 255, 0.6);
-}
-
-/* Theme Selector Dropdown */
-.theme-dropdown {
+/* Dropdown de temas */
+.theme-selector {
     position: relative;
 }
 
-.theme-dropdown-content {
+.theme-dropdown {
     display: none;
     position: absolute;
     top: 100%;
@@ -217,14 +174,13 @@ body {
     background: var(--bg-card);
     border-radius: 12px;
     padding: 10px;
-    box-shadow: 0 8px 25px var(--shadow);
-    min-width: 180px;
+    box-shadow: 0 10px 30px var(--shadow);
     margin-top: 8px;
+    min-width: 160px;
     z-index: 1001;
 }
 
-.theme-dropdown:hover .theme-dropdown-content,
-.theme-dropdown-content.show {
+.theme-selector:hover .theme-dropdown {
     display: block;
 }
 
@@ -246,33 +202,9 @@ body {
     transform: translateX(5px);
 }
 
-.theme-icon {
-    font-size: 18px;
-}
-
-@media (max-width: 1400px) {
+@media (max-width: 1200px) {
     .nav-link span {
         display: none;
-    }
-    .nav-link {
-        padding: 10px 14px;
-    }
-}
-
-@media (max-width: 768px) {
-    .navbar-logo span {
-        display: none;
-    }
-    .nav-user span {
-        display: none;
-    }
-    .navbar-logo {
-        font-size: 1.3rem;
-    }
-    .logo-icon {
-        width: 45px;
-        height: 45px;
-        font-size: 22px;
     }
 }
 </style>
@@ -305,34 +237,28 @@ body {
                 </div>
             <?php endif; ?>
 
-            <div class="theme-dropdown">
-                <button class="nav-link" onclick="toggleThemeDropdown()">
-                    <i id="theme-icon" class="fas fa-palette"></i>
+            <div class="theme-selector">
+                <button class="nav-link">
+                    <i class="fas fa-palette"></i>
                     <span>Temas</span>
                 </button>
-                <div class="theme-dropdown-content" id="themeDropdown">
+                <div class="theme-dropdown">
                     <div class="theme-option" onclick="applyTheme('light')">
-                        <span class="theme-icon">☀️</span>
-                        <span>Claro</span>
+                        <span>☀️</span> Claro
                     </div>
                     <div class="theme-option" onclick="applyTheme('dark')">
-                        <span class="theme-icon">🌙</span>
-                        <span>Oscuro</span>
+                        <span>🌙</span> Oscuro
                     </div>
                     <div class="theme-option" onclick="applyTheme('ocean')">
-                        <span class="theme-icon">🌊</span>
-                        <span>Océano</span>
+                        <span>🌊</span> Océano
                     </div>
                     <div class="theme-option" onclick="applyTheme('forest')">
-                        <span class="theme-icon">🌲</span>
-                        <span>Bosque</span>
+                        <span>🌲</span> Bosque
                     </div>
                 </div>
             </div>
 
-            <?php
-            $esAdmin = isset($_SESSION['tipo_usuario']) && $_SESSION['tipo_usuario'] === 'administrador';
-            ?>
+            <?php $esAdmin = isset($_SESSION['tipo_usuario']) && $_SESSION['tipo_usuario'] === 'administrador'; ?>
 
             <?php if ($esAdmin): ?>
                 <a href="index.php?ruta=home" class="nav-link">
@@ -361,11 +287,6 @@ body {
                 <a href="index.php?ruta=libros" class="nav-link">
                     <i class="fas fa-book"></i>
                     <span>Libros</span>
-                </a>
-
-                <a href="index.php?ruta=libros&accion=importar" class="nav-link">
-                    <i class="fas fa-file-excel"></i>
-                    <span>Importar</span>
                 </a>
 
                 <a href="index.php?ruta=usuarios" class="nav-link">
@@ -399,14 +320,12 @@ body {
 </nav>
 
 <script>
-// TEMAS MEJORADOS
 const themes = {
     light: {
         '--navbar-from': '#1e3c72',
         '--navbar-to': '#2a5298',
         '--primary': '#2a5298',
         '--secondary': '#1e3c72',
-        '--accent': '#3b82f6',
         '--bg-primary': '#f0f4f8',
         '--bg-secondary': '#e2e8f0',
         '--bg-card': '#ffffff',
@@ -420,7 +339,6 @@ const themes = {
         '--navbar-to': '#16213e',
         '--primary': '#0f3460',
         '--secondary': '#1a1a2e',
-        '--accent': '#e94560',
         '--bg-primary': '#0f0f23',
         '--bg-secondary': '#16213e',
         '--bg-card': '#1a1a2e',
@@ -434,7 +352,6 @@ const themes = {
         '--navbar-to': '#83c5be',
         '--primary': '#006d77',
         '--secondary': '#83c5be',
-        '--accent': '#e29578',
         '--bg-primary': '#edf6f9',
         '--bg-secondary': '#83c5be',
         '--bg-card': '#ffffff',
@@ -448,7 +365,6 @@ const themes = {
         '--navbar-to': '#52b788',
         '--primary': '#2d6a4f',
         '--secondary': '#1b4332',
-        '--accent': '#95d5b2',
         '--bg-primary': '#d8f3dc',
         '--bg-secondary': '#b7e4c7',
         '--bg-card': '#ffffff',
@@ -459,13 +375,8 @@ const themes = {
     }
 };
 
-function loadTheme() {
-    const savedTheme = localStorage.getItem('bibliotecaTheme') || 'light';
-    applyTheme(savedTheme);
-}
-
 function applyTheme(themeName) {
-    const theme = themes[themeName] || themes.light;
+    const theme = themes[themeName];
     const root = document.documentElement;
     
     Object.keys(theme).forEach(property => {
@@ -473,28 +384,12 @@ function applyTheme(themeName) {
     });
     
     localStorage.setItem('bibliotecaTheme', themeName);
-    
-    // Cerrar dropdown
-    const dropdown = document.getElementById('themeDropdown');
-    if (dropdown) {
-        dropdown.classList.remove('show');
-    }
 }
 
-function toggleThemeDropdown() {
-    const dropdown = document.getElementById('themeDropdown');
-    if (dropdown) {
-        dropdown.classList.toggle('show');
-    }
+function loadTheme() {
+    const savedTheme = localStorage.getItem('bibliotecaTheme') || 'light';
+    applyTheme(savedTheme);
 }
-
-// Cerrar dropdown al hacer clic fuera
-document.addEventListener('click', function(event) {
-    const dropdown = document.querySelector('.theme-dropdown');
-    if (dropdown && !dropdown.contains(event.target)) {
-        document.getElementById('themeDropdown').classList.remove('show');
-    }
-});
 
 document.addEventListener('DOMContentLoaded', loadTheme);
 </script>

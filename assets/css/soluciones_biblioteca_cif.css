@@ -1,0 +1,395 @@
+/* ===================================================================
+   SOLUCIÓN 1: PANEL DE CONTROL HORIZONTAL (NO VERTICAL)
+   =================================================================== */
+
+/* Contenedor principal del panel de control */
+.control-panel-container {
+    display: flex;
+    flex-direction: row; /* HORIZONTAL en lugar de column */
+    gap: 20px;
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+    flex-wrap: wrap; /* Permite que las tarjetas se ajusten en pantallas pequeñas */
+}
+
+/* Tarjetas del panel de control */
+.control-card {
+    flex: 1;
+    min-width: 280px;
+    max-width: 400px;
+    background: linear-gradient(145deg, #2a3447 0%, #1f2937 100%);
+    border-radius: 16px;
+    padding: 30px;
+    text-align: center;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    transition: all 0.3s ease;
+}
+
+.control-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(99, 102, 241, 0.5);
+    box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+}
+
+/* Icono de la tarjeta */
+.control-card .icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+/* Número estadístico */
+.control-card .stat-number {
+    font-size: 48px;
+    font-weight: 700;
+    margin: 15px 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Título de la tarjeta */
+.control-card .stat-title {
+    color: #9ca3af;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+/* Botón de acción */
+.control-card .action-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.control-card .action-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+
+/* ===================================================================
+   SOLUCIÓN 2 Y 3: SELECTOR DE TEMAS MEJORADO Y APLICACIÓN GLOBAL
+   =================================================================== */
+
+/* Contenedor del selector de temas */
+.theme-selector-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+/* Botón de temas */
+.theme-toggle-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.theme-toggle-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+/* Dropdown de temas - MEJORADO PARA NO OCULTARSE RÁPIDO */
+.theme-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: #1f2937;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 12px;
+    padding: 12px;
+    min-width: 200px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    display: none;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+}
+
+/* Estado visible del dropdown */
+.theme-dropdown.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+    animation: fadeInDown 0.3s ease;
+}
+
+/* Mantener el dropdown abierto cuando el mouse está sobre él */
+.theme-selector-wrapper:hover .theme-dropdown,
+.theme-dropdown:hover {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Título del dropdown */
+.theme-dropdown-title {
+    color: #9ca3af;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    padding: 0 8px;
+}
+
+/* Opciones de tema */
+.theme-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 4px;
+}
+
+.theme-option:hover {
+    background: rgba(99, 102, 241, 0.1);
+    transform: translateX(5px);
+}
+
+.theme-option.active {
+    background: rgba(99, 102, 241, 0.2);
+    border-left: 3px solid #667eea;
+}
+
+/* Color preview */
+.theme-color-preview {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Nombre del tema */
+.theme-name {
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Check icon para tema activo */
+.theme-check {
+    margin-left: auto;
+    color: #10b981;
+    font-size: 18px;
+}
+
+
+/* ===================================================================
+   VARIABLES DE TEMA - PARA APLICACIÓN GLOBAL
+   =================================================================== */
+
+/* Tema Oscuro (Default) */
+:root[data-theme="dark"], 
+:root:not([data-theme]) {
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-tertiary: #334155;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --accent-primary: #667eea;
+    --accent-secondary: #764ba2;
+    --border-color: rgba(99, 102, 241, 0.2);
+    --shadow-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Tema Claro */
+:root[data-theme="light"] {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc;
+    --bg-tertiary: #e2e8f0;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --accent-primary: #667eea;
+    --accent-secondary: #764ba2;
+    --border-color: rgba(99, 102, 241, 0.3);
+    --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Tema Azul */
+:root[data-theme="blue"] {
+    --bg-primary: #0c1e35;
+    --bg-secondary: #1a3a5c;
+    --bg-tertiary: #2d5a7b;
+    --text-primary: #e0f2fe;
+    --text-secondary: #7dd3fc;
+    --accent-primary: #0ea5e9;
+    --accent-secondary: #0284c7;
+    --border-color: rgba(14, 165, 233, 0.3);
+    --shadow-color: rgba(14, 165, 233, 0.2);
+}
+
+/* Tema Verde */
+:root[data-theme="green"] {
+    --bg-primary: #0a1f1a;
+    --bg-secondary: #1a3e34;
+    --bg-tertiary: #2d5a4d;
+    --text-primary: #d1fae5;
+    --text-secondary: #6ee7b7;
+    --accent-primary: #10b981;
+    --accent-secondary: #059669;
+    --border-color: rgba(16, 185, 129, 0.3);
+    --shadow-color: rgba(16, 185, 129, 0.2);
+}
+
+/* Tema Morado */
+:root[data-theme="purple"] {
+    --bg-primary: #1e0a2e;
+    --bg-secondary: #2d1b4e;
+    --bg-tertiary: #4a2d6e;
+    --text-primary: #e9d5ff;
+    --text-secondary: #c084fc;
+    --accent-primary: #a855f7;
+    --accent-secondary: #9333ea;
+    --border-color: rgba(168, 85, 247, 0.3);
+    --shadow-color: rgba(168, 85, 247, 0.2);
+}
+
+
+/* ===================================================================
+   APLICACIÓN GLOBAL DE TEMAS A TODO EL SISTEMA
+   =================================================================== */
+
+/* Fondo principal */
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+/* Headers y navegación */
+header, 
+.navbar,
+.header-container {
+    background-color: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Contenedores y tarjetas */
+.container,
+.card,
+.panel,
+.box,
+.section {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+/* Tablas */
+table {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+table thead {
+    background-color: var(--bg-tertiary);
+}
+
+table tbody tr:hover {
+    background-color: rgba(var(--accent-primary), 0.1);
+}
+
+/* Formularios */
+input,
+textarea,
+select {
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(var(--accent-primary), 0.1);
+}
+
+/* Botones */
+.btn-primary,
+.btn-action {
+    background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+}
+
+/* Sidebar */
+.sidebar,
+.side-menu {
+    background-color: var(--bg-secondary);
+    border-right: 1px solid var(--border-color);
+}
+
+/* Modales */
+.modal-content {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+}
+
+/* Texto */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary);
+}
+
+p, span, label {
+    color: var(--text-secondary);
+}
+
+/* Links */
+a {
+    color: var(--accent-primary);
+}
+
+a:hover {
+    color: var(--accent-secondary);
+}
+
+
+/* ===================================================================
+   RESPONSIVE DESIGN
+   =================================================================== */
+
+@media (max-width: 768px) {
+    .control-panel-container {
+        flex-direction: column;
+    }
+    
+    .control-card {
+        max-width: 100%;
+    }
+    
+    .theme-dropdown {
+        right: auto;
+        left: 0;
+    }
+}

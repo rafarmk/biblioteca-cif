@@ -8,22 +8,20 @@ require_once __DIR__ . '/../config/Database.php';
 $db = new Database();
 $conn = $db->getConnection();
 
-// Estadísticas
 $stmt = $conn->query("SELECT COUNT(*) as total FROM libros");
 $totalLibros = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
-$stmt = $conn->query("SELECT COUNT(*) as total FROM usuarios WHERE estado = 'activo'");
+$stmt = $conn->query("SELECT COUNT(*) as total FROM usuarios WHERE tipo_usuario != 'administrador'");
 $totalUsuarios = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
 $stmt = $conn->query("SELECT COUNT(*) as total FROM prestamos WHERE estado = 'activo'");
 $prestamosActivos = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
-$stmt = $conn->query("SELECT COUNT(*) as total FROM prestamos WHERE estado = 'activo' AND fecha_devolucion < CURDATE()");
-$prestamosAtrasados = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+$stmt = $conn->query("SELECT COUNT(*) as total FROM usuarios WHERE estado = 'pendiente'");
+$solicitudesPendientes = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
 require_once __DIR__ . '/layouts/navbar.php';
 ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -31,48 +29,32 @@ require_once __DIR__ . '/layouts/navbar.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Biblioteca CIF</title>
     <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
         body {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        .page-wrapper {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            padding-top: 100px;
+            padding-top: 90px;
+            padding-bottom: 0;
         }
 
         .container {
             flex: 1;
             max-width: 1400px;
             margin: 0 auto;
-            padding: 30px 20px;
-            width: 100%;
+            padding: 40px 20px;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
         }
 
         .header h1 {
             font-size: 2.5rem;
-            color: #fff;
+            color: var(--text-primary);
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            font-weight: 700;
         }
 
         .header p {
-            color: rgba(255, 255, 255, 0.9);
+            color: var(--text-secondary);
             font-size: 1.1rem;
         }
 
@@ -84,113 +66,96 @@ require_once __DIR__ . '/layouts/navbar.php';
         }
 
         .stat-card {
-            background: white;
+            background: var(--bg-card);
+            padding: 35px 25px;
             border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s;
+            box-shadow: 0 8px 20px var(--shadow);
+            text-align: center;
+            transition: all 0.3s ease;
+            border-top: 4px solid var(--card-color);
         }
+
+        .stat-card:nth-child(1) { --card-color: #667eea; }
+        .stat-card:nth-child(2) { --card-color: #10b981; }
+        .stat-card:nth-child(3) { --card-color: #3b82f6; }
+        .stat-card:nth-child(4) { --card-color: #ef4444; }
 
         .stat-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 12px 30px var(--shadow);
         }
 
         .stat-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
+            font-size: 3.5rem;
             margin-bottom: 20px;
         }
 
-        .icon-purple { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .icon-green { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
-        .icon-pink { background: linear-gradient(135deg, #ec4899 0%, #db2777 100%); }
-        .icon-orange { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
-
         .stat-number {
             font-size: 3rem;
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 10px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            color: var(--card-color);
         }
 
         .stat-label {
-            color: #6b7280;
-            font-size: 1rem;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
             font-weight: 600;
+            margin-bottom: 20px;
         }
 
-        .stat-link {
-            margin-top: 15px;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            color: #667eea;
+        .btn-link {
+            display: inline-block;
+            padding: 12px 25px;
+            background: var(--card-color);
+            color: white;
             text-decoration: none;
+            border-radius: 8px;
             font-weight: 600;
             transition: all 0.3s;
         }
 
-        .stat-link:hover {
-            gap: 10px;
-        }
-
-        /* Asegurar que el footer siempre esté al fondo */
-        footer {
-            margin-top: auto;
+        .btn-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px var(--shadow);
         }
     </style>
 </head>
 <body>
 
-<div class="page-wrapper">
-    <div class="container">
-        <div class="header">
-            <h1>📊 Panel de Control</h1>
-            <p>Bienvenido de vuelta, Administrador</p>
+<div class="container">
+    <div class="header">
+        <h1>📊 Panel de Control</h1>
+        <p>Bienvenido, <?= htmlspecialchars($_SESSION['usuario_nombre']) ?></p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">📚</div>
+            <div class="stat-number"><?= $totalLibros ?></div>
+            <div class="stat-label">Total de Libros</div>
+            <a href="index.php?ruta=libros" class="btn-link">Ver Libros</a>
         </div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-icon icon-purple">📚</div>
-                <div class="stat-number"><?= $totalLibros ?></div>
-                <div class="stat-label">Total de Libros</div>
-                <a href="index.php?ruta=libros" class="stat-link">
-                    Ver Catálogo → 
-                </a>
-            </div>
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-number"><?= $totalUsuarios ?></div>
+            <div class="stat-label">Usuarios Registrados</div>
+            <a href="index.php?ruta=usuarios" class="btn-link">Ver Usuarios</a>
+        </div>
 
-            <div class="stat-card">
-                <div class="stat-icon icon-green">👥</div>
-                <div class="stat-number"><?= $totalUsuarios ?></div>
-                <div class="stat-label">Usuarios Registrados</div>
-                <a href="index.php?ruta=usuarios" class="stat-link">
-                    Ver Usuarios →
-                </a>
-            </div>
+        <div class="stat-card">
+            <div class="stat-icon">📖</div>
+            <div class="stat-number"><?= $prestamosActivos ?></div>
+            <div class="stat-label">Préstamos Activos</div>
+            <a href="index.php?ruta=prestamos" class="btn-link">Ver Préstamos</a>
+        </div>
 
-            <div class="stat-card">
-                <div class="stat-icon icon-pink">📖</div>
-                <div class="stat-number"><?= $prestamosActivos ?></div>
-                <div class="stat-label">Préstamos Activos</div>
-                <a href="index.php?ruta=prestamos" class="stat-link">
-                    Ver Activos →
-                </a>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon icon-orange">⚠️</div>
-                <div class="stat-number"><?= $prestamosAtrasados ?></div>
-                <div class="stat-label">Préstamos Atrasados</div>
-                <a href="index.php?ruta=prestamos" class="stat-link">
-                    Ver Atrasados →
-                </a>
-            </div>
+        <div class="stat-card">
+            <div class="stat-icon">🔔</div>
+            <div class="stat-number"><?= $solicitudesPendientes ?></div>
+            <div class="stat-label">Solicitudes Pendientes</div>
+            <a href="index.php?ruta=solicitudes" class="btn-link">Ver Solicitudes</a>
         </div>
     </div>
 </div>
