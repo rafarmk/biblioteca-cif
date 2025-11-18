@@ -301,28 +301,28 @@
 
         <div class="stat-card">
             <div class="stat-card-icon orange"></div>
-            <div class="stat-card-number"><?php echo $stats_prestamos['activos'] ?? 0; ?></div>
+            <div class="stat-card-number"><?php echo $stats_prestamos['prestamos_activos'] ?? 0; ?></div>
             <div class="stat-card-label">Préstamos Activos</div>
             <a href="index.php?ruta=prestamos/activos" class="stat-card-link">
-                Ver Activos 
+                Ver Activos
             </a>
         </div>
 
         <div class="stat-card">
             <div class="stat-card-icon pink"></div>
-            <div class="stat-card-number"><?php echo $stats_prestamos['atrasados'] ?? 0; ?></div>
+            <div class="stat-card-number"><?php echo $stats_prestamos['prestamos_atrasados'] ?? 0; ?></div>
             <div class="stat-card-label">Préstamos Atrasados</div>
             <a href="index.php?ruta=prestamos/atrasados" class="stat-card-link">
-                Ver Atrasados 
+                Ver Atrasados
             </a>
         </div>
 
         <div class="stat-card">
             <div class="stat-card-icon purple"></div>
-            <div class="stat-card-number"><?php echo $stats_prestamos['total'] ?? 0; ?></div>
+            <div class="stat-card-number"><?php echo $stats_prestamos['total_prestamos'] ?? 0; ?></div>
             <div class="stat-card-label">Total Préstamos</div>
             <a href="index.php?ruta=prestamos" class="stat-card-link">
-                Ver Todos 
+                Ver Todos
             </a>
         </div>
 
@@ -354,7 +354,7 @@
                             <p>
                                 Prestado a: <strong><?php echo htmlspecialchars($prestamo['usuario_nombre'] ?? 'Usuario desconocido'); ?></strong> |
                                 Fecha préstamo: <?php echo date('d/m/Y', strtotime($prestamo['fecha_prestamo'])); ?> |
-                                Vence: <?php echo date('d/m/Y', strtotime($prestamo['fecha_devolucion_estimada'])); ?>
+                                Vence: <?php echo date('d/m/Y', strtotime($prestamo['fecha_devolucion_esperada'])); ?>
                             </p>
                         </div>
                         <span class="activity-badge badge-active">Activo</span>
@@ -378,9 +378,9 @@
                             <h4><?php echo htmlspecialchars($prestamo['libro_titulo'] ?? 'Libro desconocido'); ?></h4>
                             <p>
                                 Usuario: <strong><?php echo htmlspecialchars($prestamo['usuario_nombre'] ?? 'Usuario desconocido'); ?></strong> |
-                                Debió devolverse: <?php echo date('d/m/Y', strtotime($prestamo['fecha_devolucion_estimada'])); ?> |
-                                Días de retraso: <?php 
-                                    $dias = (time() - strtotime($prestamo['fecha_devolucion_estimada'])) / (60 * 60 * 24);
+                                Debió devolverse: <?php echo date('d/m/Y', strtotime($prestamo['fecha_devolucion_esperada'])); ?> |
+                                Días de retraso: <?php
+                                    $dias = (time() - strtotime($prestamo['fecha_devolucion_esperada'])) / (60 * 60 * 24);
                                     echo floor($dias);
                                 ?> días
                             </p>

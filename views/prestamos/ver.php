@@ -183,9 +183,9 @@
             <div class="detail-row">
                 <div class="detail-label">Fecha de Devolución Estimada:</div>
                 <div class="detail-value">
-                    <?php 
-                    $fechaDevolucion = $datos['fecha_devolucion_estimada'] ?? 
-                                      $datos['fecha_devolucion'] ?? 
+                    <?php
+                    $fechaDevolucion = $datos['fecha_devolucion_esperada'] ??
+                                      $datos['fecha_devolucion'] ??
                                       $datos['fecha_limite'] ?? null;
                     if ($fechaDevolucion) {
                         echo date('d/m/Y', strtotime($fechaDevolucion));

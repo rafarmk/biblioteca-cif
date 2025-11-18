@@ -247,9 +247,9 @@
                                     ?>
                                 </td>
                                 <td>
-                                    <?php 
-                                    $fechaDevolucion = $prestamo['fecha_devolucion_estimada'] ?? 
-                                                      $prestamo['fecha_devolucion'] ?? 
+                                    <?php
+                                    $fechaDevolucion = $prestamo['fecha_devolucion_esperada'] ??
+                                                      $prestamo['fecha_devolucion'] ??
                                                       $prestamo['fecha_limite'] ?? null;
                                     if ($fechaDevolucion) {
                                         echo date('d/m/Y', strtotime($fechaDevolucion));
