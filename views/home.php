@@ -354,8 +354,8 @@
                             <h4><?php echo htmlspecialchars($prestamo['libro_titulo'] ?? 'Libro desconocido'); ?></h4>
                             <p>
                                 Prestado a: <strong><?php echo htmlspecialchars($prestamo['usuario_nombre'] ?? 'Usuario desconocido'); ?></strong> |
-                                Fecha préstamo: <?php echo date('d/m/Y', strtotime($prestamo['fecha_prestamo'])); ?> |
-                                Vence: <?php echo date('d/m/Y', strtotime($prestamo['fecha_devolucion_estimada'])); ?>
+                                Fecha préstamo: <?php echo isset($prestamo['fecha_prestamo']) ? date('d/m/Y', strtotime($prestamo['fecha_prestamo'])) : 'N/A'; ?> |
+                                Vence: <?php echo isset($prestamo['fecha_devolucion_estimada']) ? date('d/m/Y', strtotime($prestamo['fecha_devolucion_estimada'])) : 'N/A'; ?>
                             </p>
                         </div>
                         <span class="activity-badge badge-active">Activo</span>
@@ -379,10 +379,14 @@
                             <h4><?php echo htmlspecialchars($prestamo['libro_titulo'] ?? 'Libro desconocido'); ?></h4>
                             <p>
                                 Usuario: <strong><?php echo htmlspecialchars($prestamo['usuario_nombre'] ?? 'Usuario desconocido'); ?></strong> |
-                                Debió devolverse: <?php echo date('d/m/Y', strtotime($prestamo['fecha_devolucion_estimada'])); ?> |
-                                Días de retraso: <?php 
-                                    $dias = (time() - strtotime($prestamo['fecha_devolucion_estimada'])) / (60 * 60 * 24);
-                                    echo floor($dias);
+                                Debió devolverse: <?php echo isset($prestamo['fecha_devolucion_estimada']) ? date('d/m/Y', strtotime($prestamo['fecha_devolucion_estimada'])) : 'N/A'; ?> |
+                                Días de retraso: <?php
+                                    if (isset($prestamo['fecha_devolucion_estimada'])) {
+                                        $dias = (time() - strtotime($prestamo['fecha_devolucion_estimada'])) / (60 * 60 * 24);
+                                        echo floor($dias);
+                                    } else {
+                                        echo 'N/A';
+                                    }
                                 ?> días
                             </p>
                         </div>
