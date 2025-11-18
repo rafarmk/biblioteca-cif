@@ -108,7 +108,7 @@ body {
     transition: var(--transition);
     min-height: 100vh;
     position: relative;
-    padding-top: 100px;
+    padding-top: 140px;
 }
 
 /* Premium mode - EFECTOS VISUALES INCREÍBLES */
@@ -529,18 +529,18 @@ body {
 
 @media (max-width: 768px) {
     .navbar-container {
-        flex-direction: column;
+        flex-wrap: wrap;
         gap: 15px;
     }
 
     .navbar-menu {
-        width: 100%;
+        flex-wrap: wrap;
         justify-content: center;
     }
 
     .nav-link {
-        font-size: 13px;
-        padding: 10px 16px;
+        font-size: 12px;
+        padding: 8px 12px;
     }
 
     .theme-toggle-text {
