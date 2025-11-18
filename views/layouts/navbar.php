@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -81,6 +81,10 @@ if (session_status() === PHP_SESSION_NONE) {
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: 'Poppins', sans-serif;
     background: var(--bg-primary);
@@ -88,7 +92,6 @@ body {
     transition: var(--transition);
     min-height: 100vh;
     position: relative;
-    overflow-x: hidden;
 }
 
 /* Premium mode - EFECTOS VISUALES INCREÍBLES */
@@ -96,9 +99,20 @@ body {
     background: linear-gradient(135deg, #0f1419 0%, #1a1f29 50%, #0f1419 100%);
 }
 
-[data-theme="premium"] body::before {
-    content: '';
+/* Contenedor de efectos premium - NO afecta al navbar */
+.premium-effects {
     position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+[data-theme="premium"] .premium-effects::before {
+    content: '';
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -108,8 +122,6 @@ body {
         radial-gradient(circle at 80% 80%, rgba(96, 165, 250, 0.15) 0%, transparent 50%),
         radial-gradient(circle at 40% 20%, rgba(14, 165, 233, 0.15) 0%, transparent 50%);
     animation: premium-glow 15s ease-in-out infinite alternate;
-    pointer-events: none;
-    z-index: 0;
 }
 
 @keyframes premium-glow {
@@ -127,20 +139,18 @@ body {
     }
 }
 
-[data-theme="premium"] body::after {
+[data-theme="premium"] .premium-effects::after {
     content: '';
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, 
-        transparent 0%, 
-        rgba(56, 189, 248, 0.05) 50%, 
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(56, 189, 248, 0.05) 50%,
         transparent 100%);
     animation: premium-scan 8s linear infinite;
-    pointer-events: none;
-    z-index: 0;
 }
 
 @keyframes premium-scan {
@@ -149,16 +159,22 @@ body {
 }
 
 /* Partículas flotantes para Premium */
-[data-theme="premium"] body {
-    overflow: hidden;
+.premium-particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
 }
 
-[data-theme="premium"]::before {
+[data-theme="premium"] .premium-particles::before {
     content: '';
-    position: fixed;
+    position: absolute;
     width: 300%;
     height: 300%;
-    background-image: 
+    background-image:
         radial-gradient(2px 2px at 20% 30%, rgba(56, 189, 248, 0.4), transparent),
         radial-gradient(2px 2px at 60% 70%, rgba(96, 165, 250, 0.4), transparent),
         radial-gradient(2px 2px at 50% 50%, rgba(14, 165, 233, 0.4), transparent),
@@ -167,8 +183,6 @@ body {
     background-size: 200px 200px, 250px 250px, 300px 300px, 220px 220px, 270px 270px;
     background-position: 0 0, 40px 60px, 130px 270px, 70px 100px, 150px 50px;
     animation: premium-stars 120s linear infinite;
-    z-index: 0;
-    pointer-events: none;
 }
 
 @keyframes premium-stars {
@@ -265,15 +279,18 @@ body {
     }
 }
 
-/* Navbar con efectos Premium */
+/* Navbar con efectos Premium - SIEMPRE FIJO EN LA PARTE SUPERIOR */
 .modern-navbar {
     background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
     backdrop-filter: blur(10px);
     padding: 18px 0;
     box-shadow: 0 8px 32px var(--shadow);
-    position: sticky;
+    position: fixed;
     top: 0;
-    z-index: 1000;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 9999;
     border-bottom: 1px solid var(--border-color);
 }
 
@@ -287,12 +304,12 @@ body {
 
 [data-theme="premium"] .modern-navbar {
     background: linear-gradient(135deg, #0c4a6e 0%, #1e293b 50%, #0f172a 100%);
-    box-shadow: 
+    box-shadow:
         0 8px 32px rgba(56, 189, 248, 0.4),
         0 4px 100px rgba(56, 189, 248, 0.2);
     border-bottom: 1px solid rgba(56, 189, 248, 0.3);
-    position: relative;
-    overflow: hidden;
+    position: fixed;
+    overflow: visible;
 }
 
 [data-theme="premium"] .modern-navbar::before {
@@ -302,11 +319,12 @@ body {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, 
-        transparent, 
-        rgba(56, 189, 248, 0.1), 
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(56, 189, 248, 0.1),
         transparent);
     animation: navbar-shine 3s infinite;
+    z-index: 1;
 }
 
 @keyframes navbar-shine {
@@ -322,7 +340,7 @@ body {
     justify-content: space-between;
     align-items: center;
     position: relative;
-    z-index: 1;
+    z-index: 2;
 }
 
 .navbar-logo {
@@ -457,6 +475,11 @@ body {
     box-shadow: 0 10px 35px rgba(245, 87, 108, 0.6);
 }
 
+/* Espaciador para compensar el navbar fijo */
+.navbar-spacer {
+    height: 86px;
+}
+
 @media (max-width: 768px) {
     .navbar-container {
         flex-direction: column;
@@ -476,8 +499,16 @@ body {
     .theme-toggle-text {
         display: none;
     }
+
+    .navbar-spacer {
+        height: 140px;
+    }
 }
 </style>
+
+<!-- Efectos Premium (no interfieren con navbar) -->
+<div class="premium-effects"></div>
+<div class="premium-particles"></div>
 
 <!-- Theme Toggle Button -->
 <div class="theme-toggle" id="themeToggle">
@@ -534,6 +565,9 @@ body {
         </div>
     </div>
 </nav>
+
+<!-- Espaciador para evitar que el contenido quede debajo del navbar -->
+<div class="navbar-spacer"></div>
 
 <script>
 const themeToggle = document.getElementById('themeToggle');
