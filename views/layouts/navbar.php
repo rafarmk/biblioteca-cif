@@ -148,17 +148,13 @@ body {
     100% { transform: translateX(100%); }
 }
 
-/* Partículas flotantes para Premium */
-[data-theme="premium"] body {
-    overflow: hidden;
-}
-
-[data-theme="premium"]::before {
+/* Partículas flotantes para Premium - CORREGIDO */
+html[data-theme="premium"]::before {
     content: '';
     position: fixed;
     width: 300%;
     height: 300%;
-    background-image: 
+    background-image:
         radial-gradient(2px 2px at 20% 30%, rgba(56, 189, 248, 0.4), transparent),
         radial-gradient(2px 2px at 60% 70%, rgba(96, 165, 250, 0.4), transparent),
         radial-gradient(2px 2px at 50% 50%, rgba(14, 165, 233, 0.4), transparent),
