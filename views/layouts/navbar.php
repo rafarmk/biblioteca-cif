@@ -176,7 +176,7 @@ body {
     100% { transform: translate(-100px, -100px); }
 }
 
-/* Theme Toggle - MÁS VISTOSO CON DROPDOWN */
+/* Theme Toggle - MÁS VISTOSO */
 .theme-toggle {
     position: fixed;
     bottom: 30px;
@@ -192,13 +192,12 @@ body {
     gap: 12px;
     box-shadow: 0 8px 30px var(--shadow);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
 }
 
 [data-theme="premium"] .theme-toggle {
     background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
     border-color: #38bdf8;
-    box-shadow: 
+    box-shadow:
         0 8px 30px rgba(56, 189, 248, 0.4),
         0 0 60px rgba(56, 189, 248, 0.2),
         inset 0 1px 0 rgba(255, 255, 255, 0.1);
@@ -207,13 +206,13 @@ body {
 
 @keyframes premium-pulse {
     0%, 100% {
-        box-shadow: 
+        box-shadow:
             0 8px 30px rgba(56, 189, 248, 0.4),
             0 0 60px rgba(56, 189, 248, 0.2),
             inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
     50% {
-        box-shadow: 
+        box-shadow:
             0 8px 40px rgba(56, 189, 248, 0.6),
             0 0 80px rgba(56, 189, 248, 0.3),
             inset 0 1px 0 rgba(255, 255, 255, 0.15);
@@ -226,7 +225,7 @@ body {
 }
 
 [data-theme="premium"] .theme-toggle:hover {
-    box-shadow: 
+    box-shadow:
         0 12px 50px rgba(56, 189, 248, 0.6),
         0 0 100px rgba(56, 189, 248, 0.4);
 }
@@ -245,92 +244,6 @@ body {
     color: var(--text-primary);
     font-size: 15px;
     letter-spacing: 0.5px;
-}
-
-.theme-arrow {
-    font-size: 12px;
-    color: var(--text-primary);
-    transition: transform 0.3s ease;
-}
-
-.theme-toggle.active .theme-arrow {
-    transform: rotate(180deg);
-}
-
-/* Dropdown Menu */
-.theme-dropdown {
-    position: absolute;
-    bottom: 100%;
-    right: 0;
-    margin-bottom: 10px;
-    background: var(--bg-card);
-    border: 2px solid var(--border-color);
-    border-radius: 16px;
-    padding: 8px;
-    min-width: 200px;
-    box-shadow: 0 12px 40px var(--shadow);
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(10px);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    pointer-events: none;
-}
-
-.theme-toggle.active .theme-dropdown {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-    pointer-events: all;
-}
-
-[data-theme="premium"] .theme-dropdown {
-    background: linear-gradient(135deg, #1e2533 0%, #2a3441 100%);
-    border-color: #38bdf8;
-    box-shadow:
-        0 12px 40px rgba(56, 189, 248, 0.4),
-        0 0 60px rgba(56, 189, 248, 0.2);
-}
-
-.theme-option {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    color: var(--text-primary);
-}
-
-.theme-option:hover {
-    background: var(--bg-secondary);
-    transform: translateX(5px);
-}
-
-[data-theme="premium"] .theme-option:hover {
-    background: rgba(56, 189, 248, 0.15);
-    box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
-}
-
-.theme-option.active {
-    background: var(--primary);
-    color: white;
-}
-
-[data-theme="premium"] .theme-option.active {
-    background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
-    box-shadow: 0 4px 20px rgba(56, 189, 248, 0.5);
-}
-
-.theme-option-icon {
-    font-size: 20px;
-    width: 24px;
-    text-align: center;
-}
-
-.theme-option-text {
-    font-weight: 600;
-    font-size: 14px;
 }
 
 /* Particle effect */
@@ -566,31 +479,10 @@ body {
 }
 </style>
 
-<!-- Theme Toggle Button with Dropdown -->
+<!-- Theme Toggle Button -->
 <div class="theme-toggle" id="themeToggle">
     <span class="theme-toggle-icon"></span>
-    <span class="theme-toggle-text">Temas</span>
-    <i class="fas fa-chevron-down theme-arrow"></i>
-
-    <!-- Dropdown Menu -->
-    <div class="theme-dropdown" id="themeDropdown">
-        <div class="theme-option" data-theme="light">
-            <span class="theme-option-icon">☀️</span>
-            <span class="theme-option-text">Modo Claro</span>
-        </div>
-        <div class="theme-option" data-theme="dark">
-            <span class="theme-option-icon">🌙</span>
-            <span class="theme-option-text">Modo Oscuro</span>
-        </div>
-        <div class="theme-option" data-theme="original">
-            <span class="theme-option-icon">🎨</span>
-            <span class="theme-option-text">Modo Original</span>
-        </div>
-        <div class="theme-option" data-theme="premium">
-            <span class="theme-option-icon">✨</span>
-            <span class="theme-option-text">Modo Premium</span>
-        </div>
-    </div>
+    <span class="theme-toggle-text">Modo Claro</span>
 </div>
 
 <nav class="modern-navbar">
@@ -645,84 +537,58 @@ body {
 
 <script>
 const themeToggle = document.getElementById('themeToggle');
-const themeDropdown = document.getElementById('themeDropdown');
 const html = document.documentElement;
 const themeIcon = themeToggle.querySelector('.theme-toggle-icon');
-const themeOptions = document.querySelectorAll('.theme-option');
+const themeText = themeToggle.querySelector('.theme-toggle-text');
 
 const themes = {
-    light: { icon: '☀️' },
-    dark: { icon: '🌙' },
-    original: { icon: '🎨' },
-    premium: { icon: '✨' }
+    light: {
+        icon: '☀️',
+        text: 'Modo Claro',
+        next: 'dark'
+    },
+    dark: {
+        icon: '🌙',
+        text: 'Modo Oscuro',
+        next: 'original'
+    },
+    original: {
+        icon: '🎨',
+        text: 'Modo Original',
+        next: 'premium'
+    },
+    premium: {
+        icon: '✨',
+        text: 'Modo Premium',
+        next: 'light'
+    }
 };
 
-// Cargar tema guardado
 let currentTheme = localStorage.getItem('theme') || 'light';
 html.setAttribute('data-theme', currentTheme);
-updateThemeIcon(currentTheme);
-updateActiveOption(currentTheme);
+updateThemeToggle(currentTheme);
 
-// Toggle dropdown al hacer clic en el botón principal
 themeToggle.addEventListener('click', function(e) {
-    // Evitar que el clic en una opción cierre el dropdown inmediatamente
-    if (e.target.closest('.theme-option')) {
-        return;
+    const rect = themeToggle.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    // Crear partículas
+    for (let i = 0; i < 15; i++) {
+        createParticle(x, y);
     }
 
-    themeToggle.classList.toggle('active');
-    e.stopPropagation();
+    const nextTheme = themes[currentTheme].next;
+    currentTheme = nextTheme;
+    html.setAttribute('data-theme', nextTheme);
+    localStorage.setItem('theme', nextTheme);
+    updateThemeToggle(nextTheme);
 });
 
-// Cerrar dropdown al hacer clic fuera
-document.addEventListener('click', function(e) {
-    if (!themeToggle.contains(e.target)) {
-        themeToggle.classList.remove('active');
-    }
-});
-
-// Manejar selección de temas
-themeOptions.forEach(option => {
-    option.addEventListener('click', function(e) {
-        e.stopPropagation();
-
-        const selectedTheme = this.getAttribute('data-theme');
-
-        // Crear partículas
-        const rect = this.getBoundingClientRect();
-        const x = rect.left + rect.width / 2 - themeToggle.getBoundingClientRect().left;
-        const y = rect.top + rect.height / 2 - themeToggle.getBoundingClientRect().top;
-
-        for (let i = 0; i < 15; i++) {
-            createParticle(x, y);
-        }
-
-        // Cambiar tema
-        currentTheme = selectedTheme;
-        html.setAttribute('data-theme', selectedTheme);
-        localStorage.setItem('theme', selectedTheme);
-        updateThemeIcon(selectedTheme);
-        updateActiveOption(selectedTheme);
-
-        // Cerrar dropdown después de un breve delay
-        setTimeout(() => {
-            themeToggle.classList.remove('active');
-        }, 300);
-    });
-});
-
-function updateThemeIcon(theme) {
-    themeIcon.textContent = themes[theme].icon;
-}
-
-function updateActiveOption(theme) {
-    themeOptions.forEach(option => {
-        if (option.getAttribute('data-theme') === theme) {
-            option.classList.add('active');
-        } else {
-            option.classList.remove('active');
-        }
-    });
+function updateThemeToggle(theme) {
+    const themeConfig = themes[theme];
+    themeIcon.textContent = themeConfig.icon;
+    themeText.textContent = themeConfig.text;
 }
 
 function createParticle(x, y) {
