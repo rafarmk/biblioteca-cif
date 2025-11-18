@@ -108,7 +108,7 @@ body {
     transition: var(--transition);
     min-height: 100vh;
     position: relative;
-    padding-top: 180px;
+    padding-top: 250px;
 }
 
 /* Premium mode - EFECTOS VISUALES INCREÍBLES */
@@ -548,7 +548,7 @@ body {
     }
 
     body {
-        padding-top: 200px;
+        padding-top: 250px;
     }
 }
 </style>

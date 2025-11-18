@@ -263,11 +263,16 @@
     }
 
     .stats-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
     }
 
     .stat-card-number {
-        font-size: 2.5rem;
+        font-size: 2rem;
+    }
+
+    .stat-card {
+        padding: 20px;
     }
 }
 </style>
