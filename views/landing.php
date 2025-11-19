@@ -424,23 +424,23 @@ body {
 <!-- Hero Section -->
 <section class="hero">
     <div class="hero-content">
-        <div class="hero-icon"></div>
+        <div class="hero-icon">📚</div>
         <h1>Sistema de Biblioteca CIF</h1>
         <p>Gestión moderna y eficiente de préstamos bibliotecarios</p>
         <div class="hero-buttons">
             <?php if ($isLoggedIn): ?>
                 <a href="index.php?ruta=libros" class="btn btn-primary">
-                     Ver Catálogo
+                    📖 Ver Catálogo
                 </a>
                 <a href="index.php?ruta=home" class="btn btn-secondary">
-                     Ir al Dashboard
+                    📊 Ir al Dashboard
                 </a>
             <?php else: ?>
                 <a href="index.php?ruta=login" class="btn btn-primary">
-                     Iniciar Sesión
+                    🔐 Iniciar Sesión
                 </a>
                 <a href="#features" class="btn btn-secondary">
-                    ℹ Conocer Más
+                    ℹ️ Conocer Más
                 </a>
             <?php endif; ?>
         </div>
@@ -455,33 +455,33 @@ body {
         <div class="features-grid">
             <?php if ($isLoggedIn): ?>
                 <a href="index.php?ruta=libros" class="feature-card">
-                    <div class="feature-icon"></div>
+                    <div class="feature-icon">📚</div>
                     <h3>Gestión de Libros</h3>
                     <p>Administra el catálogo completo de libros de la biblioteca con facilidad. Agrega, edita y elimina registros de manera eficiente.</p>
                 </a>
                 <a href="index.php?ruta=usuarios" class="feature-card">
-                    <div class="feature-icon"></div>
+                    <div class="feature-icon">👥</div>
                     <h3>Control de Usuarios</h3>
                     <p>Registra y gestiona estudiantes, docentes y personal. Mantén un control completo de los miembros de tu biblioteca.</p>
                 </a>
                 <a href="index.php?ruta=prestamos" class="feature-card">
-                    <div class="feature-icon"></div>
+                    <div class="feature-icon">🤝</div>
                     <h3>Préstamos</h3>
                     <p>Controla préstamos y devoluciones con seguimiento en tiempo real. Gestiona multas y fechas de vencimiento automáticamente.</p>
                 </a>
             <?php else: ?>
                 <div class="feature-card" style="cursor: default;">
-                    <div class="feature-icon"></div>
+                    <div class="feature-icon">📚</div>
                     <h3>Gestión de Libros</h3>
                     <p>Administra el catálogo completo de libros de la biblioteca con facilidad. Agrega, edita y elimina registros de manera eficiente.</p>
                 </div>
                 <div class="feature-card" style="cursor: default;">
-                    <div class="feature-icon"></div>
+                    <div class="feature-icon">👥</div>
                     <h3>Control de Usuarios</h3>
                     <p>Registra y gestiona estudiantes, docentes y personal. Mantén un control completo de los miembros de tu biblioteca.</p>
                 </div>
                 <div class="feature-card" style="cursor: default;">
-                    <div class="feature-icon"></div>
+                    <div class="feature-icon">🤝</div>
                     <h3>Préstamos</h3>
                     <p>Controla préstamos y devoluciones con seguimiento en tiempo real. Gestiona multas y fechas de vencimiento automáticamente.</p>
                 </div>

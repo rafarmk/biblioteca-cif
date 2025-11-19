@@ -281,11 +281,15 @@
    APLICACIÓN GLOBAL DE TEMAS A TODO EL SISTEMA
    =================================================================== */
 
-/* Fondo principal */
+/* Fondo principal - FIX NAVBAR */
 body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
     transition: all 0.3s ease;
+    padding-top: 100px; /* ⬅️ FIX: Evita que el navbar tape el contenido */
+    margin: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    min-height: 100vh;
 }
 
 /* Headers y navegación */
@@ -294,6 +298,11 @@ header,
 .header-container {
     background-color: var(--bg-secondary);
     border-bottom: 1px solid var(--border-color);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
 }
 
 /* Contenedores y tarjetas */
@@ -380,6 +389,10 @@ a:hover {
    =================================================================== */
 
 @media (max-width: 768px) {
+    body {
+        padding-top: 80px; /* Menos padding en móviles */
+    }
+    
     .control-panel-container {
         flex-direction: column;
     }
@@ -391,5 +404,11 @@ a:hover {
     .theme-dropdown {
         right: auto;
         left: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding-top: 70px;
     }
 }

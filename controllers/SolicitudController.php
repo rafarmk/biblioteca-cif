@@ -1,71 +1,83 @@
 <?php
-require_once __DIR__ . '/../config/Database.php';
+require_once 'config/Database.php';
 
 class SolicitudController {
     private $db;
-    
+    private $conn;
+
     public function __construct() {
-        $database = new Database();
-        $this->db = $database->getConnection();
+        $this->db = new Database();
+        $this->conn = $this->db->getConnection();
     }
-    
+
+    /**
+     * Mostrar todas las solicitudes (usuarios pendientes)
+     */
     public function index() {
-        // Obtener usuarios pendientes
-        $stmt = $this->db->prepare("
-            SELECT id, nombre, apellido, email, tipo_usuario, fecha_registro 
-            FROM usuarios 
-            WHERE estado = 'pendiente' 
-            ORDER BY fecha_registro DESC
-        ");
-        $stmt->execute();
-        $solicitudes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        require_once __DIR__ . '/../views/solicitudes/index.php';
+        require_once 'views/solicitudes/index.php';
     }
-    
+
+    /**
+     * Aprobar un usuario pendiente
+     */
     public function aprobar() {
         $id = $_GET['id'] ?? null;
-        
-        if ($id) {
-            try {
-                $stmt = $this->db->prepare("UPDATE usuarios SET estado = 'activo' WHERE id = ?");
-                $stmt->execute([$id]);
-                
-                $_SESSION['mensaje'] = ['tipo' => 'success', 'texto' => '✅ Usuario aprobado exitosamente'];
-            } catch (PDOException $e) {
-                $_SESSION['mensaje'] = ['tipo' => 'danger', 'texto' => 'Error: ' . $e->getMessage()];
-            }
+
+        if (!$id) {
+            $_SESSION['error'] = "ID de usuario no válido";
+            header('Location: index.php?ruta=solicitudes');
+            exit();
         }
-        
+
+        try {
+            // Actualizar estado del usuario a 'activo'
+            $query = "UPDATE usuarios SET estado = 'activo' WHERE id = :id AND estado = 'pendiente'";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':id', $id);
+            $stmt->execute();
+
+            if ($stmt->rowCount() > 0) {
+                $_SESSION['mensaje'] = "Usuario aprobado exitosamente";
+            } else {
+                $_SESSION['error'] = "No se pudo aprobar el usuario";
+            }
+        } catch (Exception $e) {
+            $_SESSION['error'] = "Error al aprobar usuario: " . $e->getMessage();
+        }
+
         header('Location: index.php?ruta=solicitudes');
-        exit;
+        exit();
     }
-    
+
+    /**
+     * Rechazar un usuario pendiente
+     */
     public function rechazar() {
         $id = $_GET['id'] ?? null;
-        
-        if ($id) {
-            try {
-                $stmt = $this->db->prepare("DELETE FROM usuarios WHERE id = ?");
-                $stmt->execute([$id]);
-                
-                $_SESSION['mensaje'] = ['tipo' => 'success', 'texto' => '✅ Solicitud rechazada'];
-            } catch (PDOException $e) {
-                $_SESSION['mensaje'] = ['tipo' => 'danger', 'texto' => 'Error: ' . $e->getMessage()];
-            }
+
+        if (!$id) {
+            $_SESSION['error'] = "ID de usuario no válido";
+            header('Location: index.php?ruta=solicitudes');
+            exit();
         }
-        
-        header('Location: index.php?ruta=solicitudes');
-        exit;
-    }
-    
-    public function contarPendientes() {
+
         try {
-            $stmt = $this->db->query("SELECT COUNT(*) as total FROM usuarios WHERE estado = 'pendiente'");
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            return $result['total'] ?? 0;
-        } catch (PDOException $e) {
-            return 0;
+            // Actualizar estado del usuario a 'inactivo'
+            $query = "UPDATE usuarios SET estado = 'inactivo' WHERE id = :id AND estado = 'pendiente'";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':id', $id);
+            $stmt->execute();
+
+            if ($stmt->rowCount() > 0) {
+                $_SESSION['mensaje'] = "Solicitud rechazada correctamente";
+            } else {
+                $_SESSION['error'] = "No se pudo rechazar la solicitud";
+            }
+        } catch (Exception $e) {
+            $_SESSION['error'] = "Error al rechazar solicitud: " . $e->getMessage();
         }
+
+        header('Location: index.php?ruta=solicitudes');
+        exit();
     }
 }
