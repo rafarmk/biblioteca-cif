@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 session_start();
 
 $ruta = $_GET['ruta'] ?? 'landing';
@@ -62,7 +62,7 @@ switch ($ruta) {
             header('Location: index.php?ruta=login');
             exit;
         }
-        
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             require_once __DIR__ . '/controllers/PrestamoController.php';
             $controller = new PrestamoController();
@@ -115,28 +115,16 @@ switch ($ruta) {
 
                 switch ($accion) {
                     case 'crear':
-                        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                            $controller->store();
-                        } else {
-                            $controller->crear();
-                        }
+                        $controller->crear();
                         break;
                     case 'editar':
-                        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                            $controller->update();
-                        } else {
-                            $controller->editar();
-                        }
+                        $controller->editar();
                         break;
                     case 'eliminar':
                         $controller->eliminar();
                         break;
                     case 'importar':
-                        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                            $controller->importar();
-                        } else {
-                            require_once __DIR__ . '/views/libros/importar.php';
-                        }
+                        $controller->importar();
                         break;
                     default:
                         $controller->index();
@@ -148,40 +136,7 @@ switch ($ruta) {
                 break;
 
             case 'mis_prestamos':
-                require_once __DIR__ . '/controllers/PrestamoController.php';
-                $controller = new PrestamoController();
-                
-                if ($accion === 'devolver') {
-                    $controller->devolver();
-                } elseif ($accion === 'procesar_devolucion') {
-                    $controller->procesarDevolucion();
-                } else {
-                    $controller->misPrestamos();
-                }
-                break;
-
-            case 'mi_calificacion':
-                require_once __DIR__ . '/controllers/PrestamoController.php';
-                $controller = new PrestamoController();
-                $controller->miCalificacion();
-                break;
-
-            case 'calificaciones_usuarios':
-                require_once __DIR__ . '/controllers/PrestamoController.php';
-                $controller = new PrestamoController();
-                $controller->calificacionesUsuarios();
-                break;
-
-            case 'registrar_incidente':
-                require_once __DIR__ . '/controllers/PrestamoController.php';
-                $controller = new PrestamoController();
-                $controller->registrarIncidente();
-                break;
-
-            case 'reactivar_usuario':
-                require_once __DIR__ . '/controllers/PrestamoController.php';
-                $controller = new PrestamoController();
-                $controller->reactivarUsuario();
+                require_once __DIR__ . '/views/usuario/mis_prestamos.php';
                 break;
 
             case 'categorias':
@@ -219,6 +174,7 @@ switch ($ruta) {
             case 'prestamos/crear':
             case 'prestamos/guardar':
             case 'prestamos/ver':
+            case 'prestamos/devolver':
             case 'prestamos/historialUsuario':
             case 'prestamos/historialLibro':
                 require_once __DIR__ . '/controllers/PrestamoController.php';
@@ -232,17 +188,16 @@ switch ($ruta) {
                         $controller->atrasados();
                         break;
                     case 'prestamos/crear':
-                        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                            $controller->store();
-                        } else {
-                            $controller->crear();
-                        }
+                        $controller->crear();
                         break;
                     case 'prestamos/guardar':
                         $controller->guardar();
                         break;
                     case 'prestamos/ver':
                         $controller->ver();
+                        break;
+                    case 'prestamos/devolver':
+                        $controller->devolver();
                         break;
                     case 'prestamos/historialUsuario':
                         $controller->historialUsuario();
@@ -251,28 +206,14 @@ switch ($ruta) {
                         $controller->historialLibro();
                         break;
                     default:
-                        switch ($accion) {
-                            case 'crear':
-                                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                                    $controller->store();
-                                } else {
-                                    $controller->crear();
-                                }
-                                break;
-                            case 'editar':
-                                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                                    $controller->update();
-                                } else {
-                                    $controller->editar();
-                                }
-                                break;
-                            case 'eliminar':
-                                $controller->eliminar();
-                                break;
-                            default:
-                                $controller->index();
-                        }
+                        $controller->index();
                 }
+                break;
+
+            case 'calificaciones_usuarios':
+                require_once __DIR__ . '/controllers/PrestamoController.php';
+                $controller = new PrestamoController();
+                $controller->calificacionesUsuarios();
                 break;
 
             case 'usuarios':
@@ -281,18 +222,10 @@ switch ($ruta) {
 
                 switch ($accion) {
                     case 'crear':
-                        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                            $controller->store();
-                        } else {
-                            $controller->crear();
-                        }
+                        $controller->crear();
                         break;
                     case 'editar':
-                        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                            $controller->update();
-                        } else {
-                            $controller->editar();
-                        }
+                        $controller->editar();
                         break;
                     case 'eliminar':
                         $controller->eliminar();

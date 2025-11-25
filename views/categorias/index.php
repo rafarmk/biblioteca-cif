@@ -66,7 +66,7 @@ body { padding-top: 100px; padding-bottom: 50px; background: var(--bg-primary); 
 }
 
 .categoria-card {
-    background: var(--bg-card);
+    background: var(--bg-secondary);
     border-radius: 12px;
     padding: 20px;
     box-shadow: 0 2px 10px var(--shadow-color);
@@ -204,8 +204,14 @@ body { padding-top: 100px; padding-bottom: 50px; background: var(--bg-primary); 
     </div>
 
     <?php if (isset($_SESSION['mensaje'])): ?>
-        <div class="alert alert-<?= $_SESSION['mensaje']['tipo'] ?>" style="padding: 15px; border-radius: 8px; margin-bottom: 20px; background: <?= $_SESSION['mensaje']['tipo'] === 'success' ? '#d1fae5' : ($_SESSION['mensaje']['tipo'] === 'warning' ? '#fef3c7' : '#fee2e2') ?>; color: <?= $_SESSION['mensaje']['tipo'] === 'success' ? '#065f46' : ($_SESSION['mensaje']['tipo'] === 'warning' ? '#92400e' : '#991b1b') ?>;">
-            <?= $_SESSION['mensaje']['texto'] ?>
+        <?php 
+        $tipo = is_array($_SESSION['mensaje']) ? ($_SESSION['mensaje']['tipo'] ?? 'success') : 'success';
+        $texto = is_array($_SESSION['mensaje']) ? ($_SESSION['mensaje']['texto'] ?? '') : $_SESSION['mensaje'];
+        $bgColor = $tipo === 'success' ? '#d1fae5' : ($tipo === 'warning' ? '#fef3c7' : '#fee2e2');
+        $textColor = $tipo === 'success' ? '#065f46' : ($tipo === 'warning' ? '#92400e' : '#991b1b');
+        ?>
+        <div class="alert alert-<?= $tipo ?>" style="padding: 15px; border-radius: 8px; margin-bottom: 20px; background: <?= $bgColor ?>; color: <?= $textColor ?>;">        
+            <?= htmlspecialchars($texto) ?>
         </div>
         <?php unset($_SESSION['mensaje']); ?>
     <?php endif; ?>
@@ -221,31 +227,31 @@ body { padding-top: 100px; padding-bottom: 50px; background: var(--bg-primary); 
     <?php else: ?>
         <div class="categorias-grid">
             <?php foreach ($categorias as $cat): ?>
-                <div class="categoria-card" style="border-left-color: <?= $cat['color'] ?>;">
+                <div class="categoria-card" style="border-left-color: <?= htmlspecialchars($cat['color'] ?? '#3b82f6') ?>;">
                     <div class="categoria-header">
-                        <span class="categoria-icono"><?= $cat['icono'] ?></span>
-                        <span class="categoria-nombre"><?= htmlspecialchars($cat['nombre']) ?></span>
+                        <span class="categoria-icono"><?= htmlspecialchars($cat['icono'] ?? '📚') ?></span>
+                        <span class="categoria-nombre"><?= htmlspecialchars($cat['nombre'] ?? '') ?></span>
                     </div>
-                    
-                    <p class="categoria-descripcion"><?= htmlspecialchars($cat['descripcion']) ?></p>
-                    
+
+                    <p class="categoria-descripcion"><?= htmlspecialchars($cat['descripcion'] ?? '') ?></p>
+
                     <div class="categoria-stats">
                         <span class="stat-item">
-                            📖 <?= $cat['total_libros'] ?> libro(s)
+                            📖 <?= intval($cat['total_libros'] ?? 0) ?> libro(s)
                         </span>
-                        <span class="badge-estado badge-<?= $cat['estado'] ?>">
-                            <?= $cat['estado'] === 'activo' ? '✓ Activo' : '✗ Inactivo' ?>
+                        <span class="badge-estado badge-<?= htmlspecialchars($cat['estado'] ?? 'activo') ?>">
+                            <?= ($cat['estado'] ?? 'activo') === 'activo' ? '✓ Activo' : '✗ Inactivo' ?>
                         </span>
                     </div>
-                    
+
                     <div class="categoria-actions">
-                        <a href="index.php?ruta=categorias&accion=editar&id=<?= $cat['id'] ?>" class="btn-sm btn-edit">
+                        <a href="index.php?ruta=categorias&accion=editar&id=<?= intval($cat['id']) ?>" class="btn-sm btn-edit">
                             ✏️ Editar
                         </a>
-                        <?php if ($cat['total_libros'] == 0): ?>
-                            <a href="index.php?ruta=categorias&accion=eliminar&id=<?= $cat['id'] ?>" 
-                               class="btn-sm btn-delete" 
-                               onclick="return confirm('¿Eliminar categoría <?= htmlspecialchars($cat['nombre']) ?>?')">
+                        <?php if (intval($cat['total_libros'] ?? 0) == 0): ?>
+                            <a href="index.php?ruta=categorias&accion=eliminar&id=<?= intval($cat['id']) ?>"
+                               class="btn-sm btn-delete"
+                               onclick="return confirm('¿Eliminar categoría <?= htmlspecialchars($cat['nombre'] ?? '') ?>?')">
                                 🗑️ Eliminar
                             </a>
                         <?php endif; ?>
