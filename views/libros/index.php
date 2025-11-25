@@ -1,4 +1,7 @@
 ﻿<?php
+$page_title = "Gestión de Libros - Biblioteca CIF";
+require_once __DIR__ . '/../layouts/header.php';
+
 if (!isset($_SESSION['logueado'])) {
     header('Location: index.php?ruta=login');
     exit;
@@ -28,198 +31,183 @@ $libros = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 require_once __DIR__ . '/../layouts/navbar.php';
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Libros - Biblioteca CIF</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body {
-            background: var(--bg-primary);
-            min-height: 100vh;
-            padding-top: 100px;
-            padding-bottom: 150px;
-        }
 
-        .container {
-            max-width: 1600px;
-            margin: 0 auto;
-            padding: 30px 20px;
-        }
+<style>
+.container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 30px 20px;
+}
 
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+}
 
-        .header h1 {
-            font-size: 2.5rem;
-            color: var(--text-primary);
-            text-shadow: 2px 2px 4px var(--shadow);
-        }
+.header h1 {
+    font-size: 2.5rem;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+}
 
-        .header p {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
-        }
+.header p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
 
-        .actions {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
+.actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
 
-        .btn {
-            padding: 12px 30px;
-            border-radius: 12px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 15px var(--shadow);
-        }
+.btn {
+    padding: 12px 30px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px var(--shadow-color);
+}
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-        }
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+    color: white;
+}
 
-        .btn-success {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-        }
+.btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
 
-        .btn-danger {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-        }
+.btn-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+}
 
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 25px var(--shadow);
-        }
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 25px var(--shadow-color);
+}
 
-        .btn-small {
-            padding: 6px 14px;
-            font-size: 0.85rem;
-        }
+.btn-small {
+    padding: 6px 14px;
+    font-size: 0.85rem;
+}
 
-        .search-box {
-            max-width: 600px;
-            margin: 0 auto 30px;
-        }
+.search-box {
+    max-width: 600px;
+    margin: 0 auto 30px;
+}
 
-        .search-form {
-            display: flex;
-            gap: 10px;
-        }
+.search-form {
+    display: flex;
+    gap: 10px;
+}
 
-        .search-input {
-            flex: 1;
-            padding: 12px 20px;
-            border-radius: 10px;
-            border: 2px solid var(--border-color);
-            font-size: 1rem;
-            background: var(--bg-card);
-            color: var(--text-primary);
-        }
+.search-input {
+    flex: 1;
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: 2px solid var(--border-color);
+    font-size: 1rem;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
 
-        .table-container {
-            background: var(--bg-card);
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 8px 20px var(--shadow);
-            overflow-x: auto;
-        }
+.table-container {
+    background: var(--bg-secondary);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 8px 20px var(--shadow-color);
+    overflow-x: auto;
+}
 
-        .table-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 25px;
-        }
+.table-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 25px;
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 800px;
-        }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+}
 
-        thead {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-        }
+thead {
+    background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+    color: white;
+}
 
-        th {
-            padding: 15px;
-            text-align: left;
-            font-weight: 600;
-        }
+th {
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+}
 
-        td {
-            padding: 15px;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-primary);
-        }
+td {
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
 
-        tbody tr {
-            transition: all 0.3s;
-            background: var(--bg-card);
-        }
+tbody tr {
+    transition: all 0.3s;
+    background: var(--bg-secondary);
+}
 
-        tbody tr:hover {
-            background: var(--bg-secondary);
-            transform: scale(1.01);
-        }
+tbody tr:hover {
+    background: var(--bg-tertiary);
+    transform: scale(1.01);
+}
 
-        .badge {
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            display: inline-block;
-        }
+.badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+}
 
-        .badge-disponible {
-            background: #d1fae5;
-            color: #065f46;
-        }
+.badge-disponible {
+    background: #d1fae5;
+    color: #065f46;
+}
 
-        .badge-agotado {
-            background: #fee2e2;
-            color: #991b1b;
-        }
+.badge-agotado {
+    background: #fee2e2;
+    color: #991b1b;
+}
 
-        .alert {
-            padding: 15px 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-weight: 600;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
+.alert {
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
 
-        .alert-success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 2px solid #10b981;
-        }
+.alert-success {
+    background: #d1fae5;
+    color: #065f46;
+    border: 2px solid #10b981;
+}
 
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-secondary);
-        }
-    </style>
-</head>
-<body>
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-secondary);
+}
+</style>
 
 <div class="container">
     <div class="header">
@@ -246,7 +234,7 @@ require_once __DIR__ . '/../layouts/navbar.php';
     <div class="search-box">
         <form method="GET" class="search-form">
             <input type="hidden" name="ruta" value="libros">
-            <input type="text" name="buscar" class="search-input" 
+            <input type="text" name="buscar" class="search-input"
                    placeholder="🔍 Buscar por título, autor o ISBN..."
                    value="<?= htmlspecialchars($busqueda) ?>">
             <button type="submit" class="btn btn-primary">
@@ -299,11 +287,11 @@ require_once __DIR__ . '/../layouts/navbar.php';
                                 <?php endif; ?>
                             </td>
                             <td>
-                                <a href="index.php?ruta=libros&accion=editar&id=<?= $libro['id'] ?>" 
+                                <a href="index.php?ruta=libros&accion=editar&id=<?= $libro['id'] ?>"
                                    class="btn btn-primary btn-small">
                                     <i class="fas fa-edit"></i> Editar
                                 </a>
-                                <a href="index.php?ruta=libros&accion=eliminar&id=<?= $libro['id'] ?>" 
+                                <a href="index.php?ruta=libros&accion=eliminar&id=<?= $libro['id'] ?>"
                                    class="btn btn-danger btn-small"
                                    onclick="return confirm('¿Eliminar este libro?')">
                                     <i class="fas fa-trash"></i> Eliminar
@@ -318,5 +306,3 @@ require_once __DIR__ . '/../layouts/navbar.php';
 </div>
 
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>
-</body>
-</html>

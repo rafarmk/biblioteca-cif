@@ -1,4 +1,6 @@
 <?php
+$page_title = "Importar Libros - Biblioteca CIF";
+require_once __DIR__ . '/../layouts/header.php';
 
 if (!isset($_SESSION['logueado'])) {
     header('Location: index.php?ruta=login');
@@ -8,298 +10,270 @@ if (!isset($_SESSION['logueado'])) {
 require_once __DIR__ . '/../layouts/navbar.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Importar Libros - Biblioteca CIF</title>
-    <style>
-        body {
-            background: #f1f5f9;
-            padding-top: 80px;
-        }
+<style>
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
 
-        .import-container {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
+.import-card {
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 8px 25px var(--shadow-color);
+}
 
-        .import-card {
-            background: white;
-            border-radius: 16px;
-            padding: 40px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
+.import-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
 
-        .import-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
+.import-header h1 {
+    color: var(--text-primary);
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
 
-        .import-header h1 {
-            font-size: 2rem;
-            color: #1f2937;
-            margin-bottom: 10px;
-        }
+.import-header p {
+    color: var(--text-secondary);
+}
 
-        .import-header p {
-            color: #6b7280;
-            font-size: 1rem;
-        }
+.upload-zone {
+    border: 3px dashed var(--border-color);
+    border-radius: 12px;
+    padding: 60px 20px;
+    text-align: center;
+    background: var(--bg-tertiary);
+    transition: all 0.3s;
+    cursor: pointer;
+}
 
-        .file-upload-area {
-            border: 3px dashed #667eea;
-            border-radius: 12px;
-            padding: 60px 20px;
-            text-align: center;
-            background: #f8fafc;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-bottom: 30px;
-        }
+.upload-zone:hover {
+    border-color: var(--accent-primary);
+    background: var(--bg-secondary);
+}
 
-        .file-upload-area:hover {
-            background: #f1f5f9;
-            border-color: #764ba2;
-        }
+.upload-icon {
+    font-size: 4rem;
+    color: var(--accent-primary);
+    margin-bottom: 20px;
+}
 
-        .file-upload-area.active {
-            background: #e0e7ff;
-            border-color: #4f46e5;
-        }
+.upload-text {
+    color: var(--text-primary);
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
 
-        .file-upload-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-        }
+.upload-subtext {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
 
-        .file-upload-text {
-            font-size: 1.2rem;
-            color: #4b5563;
-            margin-bottom: 10px;
-        }
+.file-input {
+    display: none;
+}
 
-        .file-upload-hint {
-            color: #9ca3af;
-            font-size: 0.9rem;
-        }
+.info-box {
+    background: rgba(59, 130, 246, 0.1);
+    border: 2px solid var(--accent-primary);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 30px 0;
+}
 
-        input[type="file"] {
-            display: none;
-        }
+.info-box h3 {
+    color: var(--accent-primary);
+    margin-bottom: 15px;
+}
 
-        .file-info {
-            background: #e0e7ff;
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: none;
-        }
+.info-box ul {
+    color: var(--text-secondary);
+    margin-left: 20px;
+}
 
-        .file-info.show {
-            display: block;
-        }
+.info-box li {
+    margin: 8px 0;
+}
 
-        .btn-import {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
+.btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+    display: inline-block;
+}
 
-        .btn-import:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-        }
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+    color: white;
+    width: 100%;
+    margin-top: 20px;
+}
 
-        .btn-import:disabled {
-            background: #9ca3af;
-            cursor: not-allowed;
-            transform: none;
-        }
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px var(--shadow-color);
+}
 
-        .instructions {
-            background: #fef3c7;
-            border-left: 4px solid #f59e0b;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 30px;
-        }
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
 
-        .instructions h3 {
-            color: #92400e;
-            margin-bottom: 10px;
-        }
+.btn-secondary {
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    border: 2px solid var(--border-color);
+    width: 100%;
+    margin-top: 10px;
+}
 
-        .instructions ul {
-            color: #78350f;
-            margin-left: 20px;
-        }
+.btn-secondary:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
 
-        .instructions li {
-            margin-bottom: 8px;
-        }
+.selected-file {
+    background: var(--bg-tertiary);
+    border: 2px solid var(--accent-primary);
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 20px;
+    display: none;
+}
 
-        .results {
-            margin-top: 30px;
-            padding: 20px;
-            border-radius: 8px;
-        }
+.selected-file.show {
+    display: block;
+}
 
-        .results.success {
-            background: #d1fae5;
-            border: 2px solid #10b981;
-        }
+.selected-file-name {
+    color: var(--text-primary);
+    font-weight: 600;
+}
 
-        .results.error {
-            background: #fee2e2;
-            border: 2px solid #ef4444;
-        }
+.alert {
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
 
-        .results h3 {
-            margin-bottom: 15px;
-        }
+.alert-success {
+    background: #d1fae5;
+    color: #065f46;
+    border: 2px solid #10b981;
+}
 
-        .results ul {
-            margin-left: 20px;
-        }
+.alert-danger {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 2px solid #ef4444;
+}
 
-        .back-btn {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 10px 20px;
-            background: #6b7280;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.3s;
-        }
+.alert-warning {
+    background: #fef3c7;
+    color: #92400e;
+    border: 2px solid #f59e0b;
+}
+</style>
 
-        .back-btn:hover {
-            background: #4b5563;
-        }
-    </style>
-</head>
-<body>
-
-<div class="import-container">
-    <a href="index.php?ruta=libros" class="back-btn">← Volver a Libros</a>
-
+<div class="container">
     <div class="import-card">
         <div class="import-header">
             <h1>📥 Importar Libros</h1>
             <p>Carga un archivo CSV o Excel para importar múltiples libros a la vez</p>
         </div>
 
-        <form method="POST" action="index.php?ruta=libros&accion=importar" enctype="multipart/form-data" id="importForm">
-            <div class="file-upload-area" id="dropArea">
-                <div class="file-upload-icon">📄</div>
-                <div class="file-upload-text">
-                    Haz clic aquí o arrastra tu archivo
-                </div>
-                <div class="file-upload-hint">
-                    Archivos CSV o Excel (.xlsx) - Máximo 10 MB
-                </div>
-                <input type="file" id="fileInput" name="archivo" accept=".csv,.xlsx,.xls" required>
+        <?php if (isset($_SESSION['error'])): ?>
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i>
+                <?= htmlspecialchars($_SESSION['error']) ?>
+            </div>
+            <?php unset($_SESSION['error']); ?>
+        <?php endif; ?>
+
+        <?php if (isset($_SESSION['success'])): ?>
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                <?= htmlspecialchars($_SESSION['success']) ?>
+            </div>
+            <?php unset($_SESSION['success']); ?>
+        <?php endif; ?>
+
+        <form action="index.php?ruta=libros&accion=importar" method="POST" enctype="multipart/form-data" id="importForm">
+            <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">📄</div>
+                <div class="upload-text">Haz clic aquí o arrastra tu archivo</div>
+                <div class="upload-subtext">Archivos CSV o Excel (.xlsx) - Máximo 10 MB</div>
+                <input type="file" 
+                       id="fileInput" 
+                       name="archivo" 
+                       class="file-input" 
+                       accept=".csv,.xlsx,.xls"
+                       required
+                       onchange="showFileName(this)">
             </div>
 
-            <div class="file-info" id="fileInfo">
-                <strong>Archivo seleccionado:</strong> <span id="fileName"></span>
+            <div id="selectedFile" class="selected-file">
+                <i class="fas fa-file-excel" style="color: var(--accent-primary);"></i>
+                <span class="selected-file-name" id="fileName"></span>
             </div>
 
-            <button type="submit" class="btn-import" id="submitBtn" disabled>
-                Importar Libros 🚀
+            <button type="submit" class="btn btn-primary" id="submitBtn" disabled>
+                <i class="fas fa-upload"></i> Importar Libros 🚀
             </button>
+
+            <a href="index.php?ruta=libros" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver a Libros
+            </a>
         </form>
 
-        <div class="instructions">
-            <h3>📋 Instrucciones:</h3>
+        <div class="info-box">
+            <h3>⚡ Formato requerido del archivo:</h3>
             <ul>
-                <li><strong>CSV:</strong> El archivo debe tener columnas: ISBN, TITULO, AUTOR</li>
-                <li><strong>Excel (.xlsx):</strong> Puede tener columnas como: ID DE LIBRO, TITULO, AUTOR, UBICACION, N° DE EJEMPLARES</li>
-                <li>El sistema detecta automáticamente las columnas</li>
-                <li>La primera fila debe contener los nombres de las columnas</li>
-                <li>Columnas opcionales: EDITORIAL, GENERO, AÑO DE PUBLICACION, UBICACION, CANTIDAD</li>
+                <li><strong>ISBN</strong> - Código único internacional del libro</li>
+                <li><strong>Título</strong> - El nombre del libro</li>
+                <li><strong>Autor</strong> - Nombre del autor</li>
+                <li><strong>Editorial</strong> - Editorial (opcional)</li>
+                <li><strong>Año</strong> - Año de publicación (opcional)</li>
+                <li><strong>Categoría</strong> - Categoría del libro (opcional)</li>
+                <li><strong>Cantidad</strong> - Cantidad de copias disponibles</li>
             </ul>
         </div>
 
-        <?php if (isset($this->resultados)): ?>
-            <?php if ($this->resultados['importados'] > 0): ?>
-                <div class="results success">
-                    <h3>✅ Importación Exitosa</h3>
-                    <p><strong><?php echo $this->resultados['importados']; ?></strong> libro(s) importado(s) correctamente.</p>
-                </div>
-            <?php endif; ?>
-
-            <?php if (!empty($this->resultados['errores'])): ?>
-                <div class="results error">
-                    <h3>⚠️ Errores Encontrados:</h3>
-                    <ul>
-                        <?php foreach ($this->resultados['errores'] as $error): ?>
-                            <li><?php echo htmlspecialchars($error, ENT_QUOTES, 'UTF-8'); ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-            <?php endif; ?>
-        <?php endif; ?>
+        <div class="info-box" style="border-color: #f59e0b; background: rgba(245, 158, 11, 0.1);">
+            <h3 style="color: #f59e0b;">⚠️ Importante:</h3>
+            <ul>
+                <li>El archivo debe tener encabezados en la primera fila</li>
+                <li>Los libros duplicados (mismo ISBN) serán ignorados</li>
+                <li>Revisa que los datos sean correctos antes de importar</li>
+            </ul>
+        </div>
     </div>
 </div>
 
 <script>
-    const dropArea = document.getElementById('dropArea');
-    const fileInput = document.getElementById('fileInput');
-    const fileInfo = document.getElementById('fileInfo');
-    const fileName = document.getElementById('fileName');
+function showFileName(input) {
+    const fileName = input.files[0]?.name;
+    const fileNameDisplay = document.getElementById('fileName');
+    const selectedFileDiv = document.getElementById('selectedFile');
     const submitBtn = document.getElementById('submitBtn');
 
-    // Click para abrir selector de archivos
-    dropArea.addEventListener('click', () => {
-        fileInput.click();
-    });
-
-    // Cuando se selecciona un archivo
-    fileInput.addEventListener('change', (e) => {
-        if (e.target.files.length > 0) {
-            const file = e.target.files[0];
-            fileName.textContent = file.name;
-            fileInfo.classList.add('show');
-            submitBtn.disabled = false;
-        }
-    });
-
-    // Drag and drop
-    dropArea.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dropArea.classList.add('active');
-    });
-
-    dropArea.addEventListener('dragleave', () => {
-        dropArea.classList.remove('active');
-    });
-
-    dropArea.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropArea.classList.remove('active');
-        
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-            fileInput.files = files;
-            fileName.textContent = files[0].name;
-            fileInfo.classList.add('show');
-            submitBtn.disabled = false;
-        }
-    });
+    if (fileName) {
+        fileNameDisplay.textContent = fileName;
+        selectedFileDiv.classList.add('show');
+        submitBtn.disabled = false;
+    } else {
+        selectedFileDiv.classList.remove('show');
+        submitBtn.disabled = true;
+    }
+}
 </script>
 
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>
-
-</body>
-</html>

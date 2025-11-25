@@ -1,4 +1,3 @@
-Set-Content -Path "views\prestamos\mis_prestamos.php" -Value @'
 <?php
 $page_title = "Mis Préstamos - Biblioteca CIF";
 require_once __DIR__ . '/../layouts/header.php';
@@ -12,7 +11,7 @@ require_once __DIR__ . '/../../config/Database.php';
 $db = new Database();
 $conn = $db->getConnection();
 
-// Obtener préstamos del usuario
+// ✅ CORREGIDO: Usar usuario_id
 $query = "SELECT p.*, l.titulo, l.autor, l.isbn, l.ubicacion,
           DATEDIFF(p.fecha_devolucion_esperada, CURDATE()) as dias_restantes
           FROM prestamos p
@@ -332,7 +331,7 @@ body {
             <div class="prestamos-grid">
                 <?php foreach ($prestamos_activos as $prestamo): ?>
                     <?php
-                    $dias = $prestamo['dias_restantes'];
+                    $dias = intval($prestamo['dias_restantes']);
                     $clase_estado = '';
                     $badge_texto = '';
                     
@@ -455,4 +454,3 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>
-'@

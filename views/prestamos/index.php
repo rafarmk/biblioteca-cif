@@ -1,4 +1,7 @@
 <?php
+$page_title = "Gestión de Préstamos - Biblioteca CIF";
+require_once __DIR__ . '/../layouts/header.php';
+
 if (!isset($_SESSION['logueado'])) {
     header('Location: index.php?ruta=login');
     exit;
@@ -8,8 +11,8 @@ require_once __DIR__ . '/../../config/Database.php';
 $db = new Database();
 $conn = $db->getConnection();
 
-// IMPORTANTE: Configurar UTF-8
-$conn->exec("SET NAMES utf8mb4");
+// Obtener filtro
+$filtro = $_GET['filtro'] ?? 'todos';
 
 // Calcular estadísticas
 $stmt = $conn->query("SELECT COUNT(*) as total FROM prestamos");
@@ -19,250 +22,255 @@ $stmt = $conn->query("SELECT COUNT(*) as total FROM prestamos WHERE estado = 'ac
 $prestamosActivos = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
 $stmt = $conn->query("
-    SELECT COUNT(*) as total 
-    FROM prestamos 
-    WHERE estado = 'activo' 
-    AND fecha_devolucion < CURDATE()
+    SELECT COUNT(*) as total
+    FROM prestamos
+    WHERE estado = 'activo'
+    AND fecha_devolucion_esperada < CURDATE()
 ");
 $prestamosAtrasados = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
-// Obtener lista de préstamos
-$stmt = $conn->query("
-    SELECT 
+// Obtener lista de préstamos según filtro
+$query = "
+    SELECT
         p.*,
         u.nombre as usuario_nombre,
-        u.apellido as usuario_apellido,
         u.email as usuario_email,
         l.titulo as libro_titulo,
         l.autor as libro_autor,
         l.isbn,
-        DATEDIFF(p.fecha_devolucion, CURDATE()) as dias_restantes
+        DATEDIFF(p.fecha_devolucion_esperada, CURDATE()) as dias_restantes
     FROM prestamos p
     INNER JOIN usuarios u ON p.usuario_id = u.id
     INNER JOIN libros l ON p.libro_id = l.id
-    ORDER BY p.fecha_prestamo DESC
-");
+";
+
+if ($filtro == 'activos') {
+    $query .= " WHERE p.estado = 'activo' AND p.fecha_devolucion_esperada >= CURDATE()";
+} elseif ($filtro == 'atrasados') {
+    $query .= " WHERE p.estado = 'activo' AND p.fecha_devolucion_esperada < CURDATE()";
+}
+
+$query .= " ORDER BY p.fecha_prestamo DESC";
+
+$stmt = $conn->query($query);
 $prestamos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 require_once __DIR__ . '/../layouts/navbar.php';
 ?>
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Préstamos - Biblioteca CIF</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            min-height: 100vh;
-            padding-top: 100px;
-            padding-bottom: 150px;
-        }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 30px 20px;
-        }
+<style>
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 30px 20px;
+}
 
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+}
 
-        .header h1 {
-            font-size: 2.5rem;
-            color: #fff;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            margin-bottom: 10px;
-        }
+.header h1 {
+    font-size: 2.5rem;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+}
 
-        .header p {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1.1rem;
-        }
+.header p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
 
-        .actions {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
+.actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
 
-        .btn {
-            padding: 12px 30px;
-            border-radius: 12px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
+.btn {
+    padding: 12px 30px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px var(--shadow-color);
+}
 
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+    color: white;
+}
 
-        .btn-success {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-        }
+.btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
 
-        .btn-danger {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-        }
+.btn-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+}
 
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
-        }
+.btn-secondary {
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    border: 2px solid var(--border-color);
+}
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 25px var(--shadow-color);
+}
 
-        .stat-card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s;
-        }
+.btn.active {
+    box-shadow: 0 0 0 3px var(--accent-primary);
+}
 
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
-        }
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
+}
 
-        .stat-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
-        }
+.stat-card {
+    background: var(--bg-secondary);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 8px 20px var(--shadow-color);
+    transition: all 0.3s;
+    border: 2px solid var(--border-color);
+}
 
-        .stat-number {
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px var(--shadow-color);
+}
 
-        .stat-label {
-            color: #6b7280;
-            font-size: 1.1rem;
-            font-weight: 600;
-        }
+.stat-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
 
-        .table-container {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-            overflow-x: auto;
-        }
+.stat-number {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+}
 
-        .table-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 25px;
-        }
+.stat-label {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 800px;
-        }
+.table-container {
+    background: var(--bg-secondary);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 8px 20px var(--shadow-color);
+    overflow-x: auto;
+}
 
-        thead {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
+.table-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 25px;
+}
 
-        th {
-            padding: 15px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+}
 
-        td {
-            padding: 15px;
-            border-bottom: 1px solid #e5e7eb;
-        }
+thead {
+    background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+    color: white;
+}
 
-        tbody tr {
-            transition: all 0.3s;
-        }
+th {
+    padding: 15px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
 
-        tbody tr:hover {
-            background: #f9fafb;
-        }
+td {
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
 
-        .badge {
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            display: inline-block;
-        }
+tbody tr {
+    transition: all 0.3s;
+}
 
-        .badge-activo {
-            background: #d1fae5;
-            color: #065f46;
-        }
+tbody tr:hover {
+    background: var(--bg-tertiary);
+}
 
-        .badge-devuelto {
-            background: #e0e7ff;
-            color: #3730a3;
-        }
+.badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+}
 
-        .badge-atrasado {
-            background: #fee2e2;
-            color: #991b1b;
-            animation: pulse 2s infinite;
-        }
+.badge-activo {
+    background: #d1fae5;
+    color: #065f46;
+}
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
+.badge-devuelto {
+    background: #e0e7ff;
+    color: #3730a3;
+}
 
-        .btn-small {
-            padding: 6px 14px;
-            font-size: 0.85rem;
-            border-radius: 8px;
-        }
+.badge-atrasado {
+    background: #fee2e2;
+    color: #991b1b;
+    animation: pulse 2s infinite;
+}
 
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #6b7280;
-        }
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
 
-        .alert {
-            padding: 15px 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
+.btn-small {
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    border-radius: 8px;
+}
 
-        .alert-success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 2px solid #10b981;
-        }
-    </style>
-</head>
-<body>
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-secondary);
+}
+
+.alert {
+    padding: 15px 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.alert-success {
+    background: #d1fae5;
+    color: #065f46;
+    border: 2px solid #10b981;
+}
+</style>
 
 <div class="container">
     <div class="header">
@@ -271,20 +279,32 @@ require_once __DIR__ . '/../layouts/navbar.php';
     </div>
 
     <?php if (isset($_SESSION['mensaje'])): ?>
-        <div class="alert alert-<?= htmlspecialchars($_SESSION['mensaje']['tipo'] ?? 'success') ?>">
-            <?= htmlspecialchars($_SESSION['mensaje']['texto'] ?? '') ?>
+        <?php 
+        if (is_array($_SESSION['mensaje'])) {
+            $mensaje = $_SESSION['mensaje']['texto'] ?? '';
+            $tipo = $_SESSION['mensaje']['tipo'] ?? 'success';
+        } else {
+            $mensaje = $_SESSION['mensaje'];
+            $tipo = 'success';
+        }
+        ?>
+        <div class="alert alert-<?= $tipo ?>">
+            <?= htmlspecialchars($mensaje) ?>
         </div>
         <?php unset($_SESSION['mensaje']); ?>
     <?php endif; ?>
 
     <div class="actions">
-        <a href="index.php?ruta=prestamos&accion=crear" class="btn btn-primary">
+        <a href="index.php?ruta=prestamos/crear" class="btn btn-primary">
             <i class="fas fa-plus"></i> Nuevo Préstamo
         </a>
-        <a href="#activos" class="btn btn-success">
-            <i class="fas fa-list"></i> Préstamos Activos
+        <a href="index.php?ruta=prestamos" class="btn btn-secondary <?= $filtro == 'todos' ? 'active' : '' ?>">
+            <i class="fas fa-list"></i> Todos
         </a>
-        <a href="#atrasados" class="btn btn-danger">
+        <a href="index.php?ruta=prestamos&filtro=activos" class="btn btn-success <?= $filtro == 'activos' ? 'active' : '' ?>">
+            <i class="fas fa-check-circle"></i> Préstamos Activos
+        </a>
+        <a href="index.php?ruta=prestamos&filtro=atrasados" class="btn btn-danger <?= $filtro == 'atrasados' ? 'active' : '' ?>">
             <i class="fas fa-exclamation-triangle"></i> Atrasados
         </a>
     </div>
@@ -292,7 +312,7 @@ require_once __DIR__ . '/../layouts/navbar.php';
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-icon">📊</div>
-            <div class="stat-number" style="color: #667eea;"><?= $totalPrestamos ?></div>
+            <div class="stat-number" style="color: var(--accent-primary);"><?= $totalPrestamos ?></div>
             <div class="stat-label">Total de Préstamos</div>
         </div>
 
@@ -310,7 +330,15 @@ require_once __DIR__ . '/../layouts/navbar.php';
     </div>
 
     <div class="table-container">
-        <div class="table-title">📋 Lista de Préstamos</div>
+        <div class="table-title">📋 Lista de Préstamos 
+            <?php if ($filtro == 'activos'): ?>
+                <span style="color: #10b981;">(Activos)</span>
+            <?php elseif ($filtro == 'atrasados'): ?>
+                <span style="color: #ef4444;">(Atrasados)</span>
+            <?php else: ?>
+                <span style="color: var(--text-secondary);">(Todos)</span>
+            <?php endif; ?>
+        </div>
 
         <?php if (empty($prestamos)): ?>
             <div class="empty-state">
@@ -335,16 +363,16 @@ require_once __DIR__ . '/../layouts/navbar.php';
                     <?php foreach ($prestamos as $prestamo): ?>
                         <tr>
                             <td>
-                                <strong><?= htmlspecialchars($prestamo['usuario_nombre'] ?? '') ?> <?= htmlspecialchars($prestamo['usuario_apellido'] ?? '') ?></strong><br>
-                                <small style="color: #6b7280;"><?= htmlspecialchars($prestamo['usuario_email'] ?? '') ?></small>
+                                <strong><?= htmlspecialchars($prestamo['usuario_nombre'] ?? '') ?></strong><br>
+                                <small style="color: var(--text-secondary);"><?= htmlspecialchars($prestamo['usuario_email'] ?? '') ?></small>
                             </td>
                             <td>
                                 <strong><?= htmlspecialchars($prestamo['libro_titulo'] ?? 'Sin título') ?></strong><br>
-                                <small style="color: #6b7280;"><?= htmlspecialchars($prestamo['libro_autor'] ?? 'Sin autor') ?></small>
+                                <small style="color: var(--text-secondary);"><?= htmlspecialchars($prestamo['libro_autor'] ?? 'Sin autor') ?></small>
                             </td>
                             <td><?= htmlspecialchars($prestamo['isbn'] ?? 'N/A') ?></td>
                             <td><?= date('d/m/Y', strtotime($prestamo['fecha_prestamo'])) ?></td>
-                            <td><?= $prestamo['fecha_devolucion'] ? date('d/m/Y', strtotime($prestamo['fecha_devolucion'])) : 'N/A' ?></td>
+                            <td><?= $prestamo['fecha_devolucion_real'] ? date('d/m/Y', strtotime($prestamo['fecha_devolucion_real'])) : date('d/m/Y', strtotime($prestamo['fecha_devolucion_esperada'])) ?></td>
                             <td>
                                 <?php if ($prestamo['estado'] == 'activo'): ?>
                                     <?php if (isset($prestamo['dias_restantes']) && $prestamo['dias_restantes'] < 0): ?>
@@ -362,7 +390,7 @@ require_once __DIR__ . '/../layouts/navbar.php';
                             </td>
                             <td>
                                 <?php if ($prestamo['estado'] == 'activo'): ?>
-                                    <a href="index.php?ruta=prestamos&accion=devolver&id=<?= $prestamo['id'] ?>" 
+                                    <a href="index.php?ruta=prestamos/devolver&id=<?= $prestamo['id'] ?>"
                                        class="btn btn-success btn-small"
                                        onclick="return confirm('¿Marcar este préstamo como devuelto?')">
                                         <i class="fas fa-check"></i> Devolver
@@ -382,5 +410,3 @@ require_once __DIR__ . '/../layouts/navbar.php';
 </div>
 
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>
-</body>
-</html>

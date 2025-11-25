@@ -1,465 +1,330 @@
 ﻿<?php
+$page_title = "Editar Libro - Biblioteca CIF";
+require_once __DIR__ . '/../layouts/header.php';
+
 if (!isset($_SESSION['logueado'])) {
     header('Location: index.php?ruta=login');
     exit;
 }
 
-// Detectar tema actual
-$tema = $_SESSION['tema'] ?? 'claro';
-$esOscuro = ($tema === 'oscuro');
-
 require_once __DIR__ . '/../layouts/navbar.php';
 ?>
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo de Libros - Biblioteca CIF</title>
-    <style>
-        <style>
+<style>
 body {
-    background: var(--bg-primary);
-    min-height: 100vh;
     padding-top: 100px;
-    padding-bottom: 150px;
+    padding-bottom: 50px;
 }
 
 .container {
-    max-width: 1600px;
+    max-width: 900px;
     margin: 0 auto;
     padding: 30px 20px;
 }
 
-.header {
-    text-align: center;
-    margin-bottom: 40px;
-}
-
-.header h1 {
-    font-size: 2.5rem;
-    color: var(--text-primary);
-    text-shadow: 2px 2px 4px var(--shadow);
-}
-
-.header p {
-    color: var(--text-secondary);
-    font-size: 1.1rem;
-}
-
-.actions {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-    margin-bottom: 30px;
-    flex-wrap: wrap;
-}
-
-.btn {
-    padding: 12px 30px;
-    border-radius: 12px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 4px 15px var(--shadow);
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-    color: white;
-}
-
-.btn-success {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    color: white;
-}
-
-.btn-danger {
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-    color: white;
-}
-
-.btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 25px var(--shadow);
-}
-
-.table-container {
+.card {
     background: var(--bg-card);
     border-radius: 15px;
-    padding: 30px;
-    box-shadow: 0 8px 20px var(--shadow);
-    overflow-x: auto;
+    box-shadow: 0 8px 30px var(--shadow-color);
+    padding: 40px;
+    margin-bottom: 20px;
 }
 
-.table-title {
-    font-size: 1.5rem;
-    font-weight: 700;
+.card-header {
+    border-bottom: 3px solid var(--accent-primary);
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.card-header h2 {
     color: var(--text-primary);
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.form-group {
     margin-bottom: 25px;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 800px;
-}
-
-thead {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-    color: white;
-}
-
-th {
-    padding: 15px;
-    text-align: left;
-    font-weight: 600;
-}
-
-td {
-    padding: 15px;
-    border-bottom: 1px solid var(--border-color);
+.form-group label {
+    display: block;
     color: var(--text-primary);
-}
-
-tbody tr {
-    transition: all 0.3s;
-    background: var(--bg-card);
-}
-
-tbody tr:hover {
-    background: var(--bg-secondary);
-    transform: scale(1.01);
-}
-
-.badge {
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 0.85rem;
     font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--bg-input);
+    color: var(--text-primary);
+    font-size: 1rem;
+    transition: all 0.3s;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px var(--accent-shadow);
+}
+
+.form-control:disabled,
+.form-control[readonly] {
+    background: var(--bg-disabled);
+    color: var(--text-secondary);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+textarea.form-control {
+    resize: vertical;
+    min-height: 120px;
+    font-family: inherit;
+}
+
+select.form-control {
+    cursor: pointer;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 2px solid var(--border-color);
+}
+
+.btn {
+    padding: 14px 35px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
     display: inline-block;
+    font-size: 1rem;
 }
 
-.badge-disponible {
-    background: #d1fae5;
-    color: #065f46;
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+    color: white;
+    box-shadow: 0 4px 15px var(--shadow-color);
 }
 
-.badge-agotado {
-    background: #fee2e2;
-    color: #991b1b;
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--shadow-color);
 }
 
-.btn-small {
-    padding: 6px 14px;
-    font-size: 0.85rem;
+.btn-secondary {
+    background: #6b7280;
+    color: white;
+    box-shadow: 0 4px 15px var(--shadow-color);
+}
+
+.btn-secondary:hover {
+    background: #4b5563;
+    transform: translateY(-2px);
 }
 
 .alert {
-    padding: 15px 20px;
+    padding: 18px 25px;
     border-radius: 10px;
-    margin-bottom: 20px;
-    font-weight: 600;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
+    margin-bottom: 25px;
+    font-weight: 500;
 }
 
-.alert-success {
-    background: #d1fae5;
-    color: #065f46;
-    border: 2px solid #10b981;
+.alert-danger {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 2px solid #fca5a5;
 }
 
-.empty-state {
-    text-align: center;
-    padding: 60px 20px;
+.required {
+    color: #ef4444;
+    font-weight: 700;
+}
+
+small {
     color: var(--text-secondary);
+    font-size: 0.85rem;
+    display: block;
+    margin-top: 5px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+    
+    .card {
+        padding: 25px 20px;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+    
+    .btn {
+        width: 100%;
+        text-align: center;
+    }
 }
 </style>
-            <?php if ($esOscuro): ?>
-                background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            <?php else: ?>
-                background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            <?php endif; ?>
-            min-height: 100vh;
-            padding-top: 20px;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 30px 20px;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
-            color: #fff;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .header p {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1.1rem;
-        }
-
-        .search-bar {
-            margin-bottom: 30px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .search-bar input {
-            padding: 14px 20px;
-            border-radius: 25px;
-            border: none;
-            width: 400px;
-            font-size: 1rem;
-        }
-
-        .libros-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 25px;
-            margin-top: 30px;
-        }
-
-        .libro-card {
-            <?php if ($esOscuro): ?>
-                background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-                border: 2px solid #475569;
-            <?php else: ?>
-                background: white;
-                border: 2px solid rgba(255, 255, 255, 0.3);
-            <?php endif; ?>
-            border-radius: 15px;
-            padding: 25px;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .libro-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-        }
-
-        .libro-titulo {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            <?php if ($esOscuro): ?>
-                color: #e2e8f0;
-            <?php else: ?>
-                color: #1f2937;
-            <?php endif; ?>
-        }
-
-        .libro-autor {
-            font-size: 1rem;
-            margin-bottom: 15px;
-            <?php if ($esOscuro): ?>
-                color: #94a3b8;
-            <?php else: ?>
-                color: #6b7280;
-            <?php endif; ?>
-        }
-
-        .libro-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid <?php echo $esOscuro ? '#475569' : '#e5e7eb'; ?>;
-        }
-
-        .libro-disponible {
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        .disponible {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .no-disponible {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 80px 20px;
-            color: #fff;
-        }
-
-        .empty-state-icon {
-            font-size: 5rem;
-            margin-bottom: 20px;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s;
-            display: inline-block;
-            margin: 5px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        .stat-card {
-            <?php if ($esOscuro): ?>
-                background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-            <?php else: ?>
-                background: rgba(255, 255, 255, 0.95);
-            <?php endif; ?>
-            padding: 25px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #60a5fa;
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            <?php if ($esOscuro): ?>
-                color: #cbd5e1;
-            <?php else: ?>
-                color: #4b5563;
-            <?php endif; ?>
-            font-weight: 600;
-        }
-    </style>
-</head>
-<body>
 
 <div class="container">
-    <div class="header">
-        <h1>📚 Catálogo de Libros</h1>
-        <p>Explora nuestra colección completa</p>
-    </div>
-
-    <div class="stats">
-        <div class="stat-card">
-            <div class="stat-number"><?= count($libros) ?></div>
-            <div class="stat-label">Total de Libros</div>
+    <div class="card">
+        <div class="card-header">
+            <h2>✏️ Editar Libro</h2>
         </div>
-        <div class="stat-card">
-            <div class="stat-number">
-                <?= count(array_filter($libros, fn($l) => $l['cantidad_disponible'] > 0)) ?>
+
+        <?php if (isset($error)): ?>
+            <div class="alert alert-danger">
+                ⚠️ <?= htmlspecialchars($error) ?>
             </div>
-            <div class="stat-label">Disponibles</div>
-        </div>
-    </div>
+        <?php endif; ?>
 
-    <div class="search-bar">
-        <input type="text" id="searchInput" placeholder="🔍 Buscar por título o autor..." onkeyup="buscarLibro()">
-    </div>
+        <form method="POST" action="">
+            <input type="hidden" name="id" value="<?= $libro['id'] ?? '' ?>">
 
-    <?php if (empty($libros)): ?>
-        <div class="empty-state">
-            <div class="empty-state-icon">📚</div>
-            <h3>No hay libros en el catálogo</h3>
-            <p>Importa libros para comenzar</p>
-        </div>
-    <?php else: ?>
-        <div class="libros-grid" id="librosGrid">
-            <?php foreach ($libros as $libro): ?>
-                <div class="libro-card" data-titulo="<?= htmlspecialchars($libro['titulo']) ?>" data-autor="<?= htmlspecialchars($libro['autor']) ?>">
-                    <div class="libro-titulo"><?= htmlspecialchars($libro['titulo']) ?></div>
-                    <div class="libro-autor">📖 <?= htmlspecialchars($libro['autor']) ?></div>
-                    
-                    <?php if (!empty($libro['categoria_nombre'])): ?>
-                        <div class="libro-autor">🏷️ <?= htmlspecialchars($libro['categoria_nombre']) ?></div>
-                    <?php endif; ?>
-                    
-                    <div class="libro-info">
-                        <div>
-                            <strong>ISBN:</strong> <?= htmlspecialchars($libro['isbn']) ?><br>
-                            <strong>Disponibles:</strong> <?= $libro['cantidad_disponible'] ?>/<?= $libro['cantidad_total'] ?>
-                        </div>
-                        
-                        <span class="libro-disponible <?= $libro['cantidad_disponible'] > 0 ? 'disponible' : 'no-disponible' ?>">
-                            <?= $libro['cantidad_disponible'] > 0 ? '✅ Disponible' : '❌ No disponible' ?>
-                        </span>
-                    </div>
-                    
-                    <div style="margin-top: 15px;">
-                        <a href="index.php?ruta=libros&accion=editar&id=<?= $libro['id'] ?>" class="btn btn-primary">
-                            ✏️ Editar
-                        </a>
-                        <?php if ($libro['cantidad_disponible'] > 0): ?>
-                            <a href="index.php?ruta=prestamos&accion=crear&libro_id=<?= $libro['id'] ?>" class="btn btn-success">
-                                📤 Prestar
-                            </a>
-                        <?php endif; ?>
-                    </div>
+            <div class="form-group">
+                <label>ISBN <span class="required">*</span></label>
+                <input type="text" name="isbn" class="form-control" 
+                       value="<?= htmlspecialchars($libro['isbn'] ?? '') ?>" 
+                       readonly>
+                <small>El ISBN no se puede modificar</small>
+            </div>
+
+            <div class="form-group">
+                <label>Título <span class="required">*</span></label>
+                <input type="text" name="titulo" class="form-control" 
+                       value="<?= htmlspecialchars($libro['titulo'] ?? '') ?>" 
+                       required>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Autor <span class="required">*</span></label>
+                    <input type="text" name="autor" class="form-control" 
+                           value="<?= htmlspecialchars($libro['autor'] ?? '') ?>" 
+                           required>
                 </div>
-            <?php endforeach; ?>
-        </div>
-    <?php endif; ?>
+
+                <div class="form-group">
+                    <label>Editorial</label>
+                    <input type="text" name="editorial" class="form-control" 
+                           value="<?= htmlspecialchars($libro['editorial'] ?? '') ?>">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Categoría</label>
+                    <select name="categoria_id" class="form-control">
+                        <option value="">Seleccione...</option>
+                        <?php if (isset($categorias) && is_array($categorias) && count($categorias) > 0): ?>
+                            <?php foreach($categorias as $cat): ?>
+                                <option value="<?= $cat['id'] ?>" 
+                                        <?= (isset($libro['categoria_id']) && $libro['categoria_id'] == $cat['id']) ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($cat['nombre']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Año de Publicación</label>
+                    <input type="number" name="anio_publicacion" class="form-control" 
+                           value="<?= $libro['anio_publicacion'] ?? '' ?>" 
+                           min="1500" max="<?= date('Y') ?>">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Número de Páginas</label>
+                    <input type="number" name="num_paginas" class="form-control" 
+                           value="<?= $libro['num_paginas'] ?? '' ?>" 
+                           min="1">
+                </div>
+
+                <div class="form-group">
+                    <label>Idioma</label>
+                    <select name="idioma" class="form-control">
+                        <option value="Espanol" <?= (isset($libro['idioma']) && $libro['idioma'] == 'Espanol') ? 'selected' : '' ?>>Español</option>
+                        <option value="Ingles" <?= (isset($libro['idioma']) && $libro['idioma'] == 'Ingles') ? 'selected' : '' ?>>Inglés</option>
+                        <option value="Frances" <?= (isset($libro['idioma']) && $libro['idioma'] == 'Frances') ? 'selected' : '' ?>>Francés</option>
+                        <option value="Otro" <?= (isset($libro['idioma']) && $libro['idioma'] == 'Otro') ? 'selected' : '' ?>>Otro</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Cantidad Total <span class="required">*</span></label>
+                    <input type="number" name="cantidad_total" class="form-control" 
+                           value="<?= $libro['cantidad_total'] ?? 1 ?>" 
+                           min="0" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Cantidad Disponible <span class="required">*</span></label>
+                    <input type="number" name="cantidad_disponible" class="form-control" 
+                           value="<?= $libro['cantidad_disponible'] ?? 1 ?>" 
+                           min="0" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Ubicación</label>
+                    <input type="text" name="ubicacion" class="form-control" 
+                           value="<?= htmlspecialchars($libro['ubicacion'] ?? '') ?>" 
+                           placeholder="Ej: ESTANTE A3">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Estado <span class="required">*</span></label>
+                <select name="estado" class="form-control" required>
+                    <option value="disponible" <?= (isset($libro['estado']) && $libro['estado'] == 'disponible') ? 'selected' : '' ?>>✅ Disponible</option>
+                    <option value="no_disponible" <?= (isset($libro['estado']) && $libro['estado'] == 'no_disponible') ? 'selected' : '' ?>>❌ No Disponible</option>
+                    <option value="en_reparacion" <?= (isset($libro['estado']) && $libro['estado'] == 'en_reparacion') ? 'selected' : '' ?>>🔧 En Reparación</option>
+                    <option value="perdido" <?= (isset($libro['estado']) && $libro['estado'] == 'perdido') ? 'selected' : '' ?>>🔍 Perdido</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Descripción</label>
+                <textarea name="descripcion" class="form-control" rows="4" placeholder="Descripción del libro (opcional)"><?= htmlspecialchars($libro['descripcion'] ?? '') ?></textarea>
+            </div>
+
+            <div class="form-actions">
+                <a href="index.php?ruta=libros" class="btn btn-secondary">
+                    ❌ Cancelar
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    💾 Guardar Cambios
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
 
-<script>
-function buscarLibro() {
-    const input = document.getElementById('searchInput');
-    const filter = input.value.toUpperCase();
-    const cards = document.querySelectorAll('.libro-card');
-
-    cards.forEach(card => {
-        const titulo = card.dataset.titulo.toUpperCase();
-        const autor = card.dataset.autor.toUpperCase();
-        
-        if (titulo.includes(filter) || autor.includes(filter)) {
-            card.style.display = '';
-        } else {
-            card.style.display = 'none';
-        }
-    });
-}
-</script>
-
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>
-</body>
-</html>

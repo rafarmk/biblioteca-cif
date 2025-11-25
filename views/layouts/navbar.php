@@ -1,20 +1,17 @@
 <?php
-// Verificar sesión
 if (!isset($_SESSION['logueado'])) {
     header('Location: index.php?ruta=login');
     exit;
 }
 
-// Obtener ruta actual
 $ruta_actual = $_GET['ruta'] ?? 'home';
 
-// Obtener alertas de usuarios pendientes (solo para admin)
 $usuariosPendientes = 0;
 if ($_SESSION['tipo_usuario'] === 'administrador') {
     require_once __DIR__ . '/../../config/database.php';
     $database = new Database();
     $db = $database->getConnection();
-    
+
     $query = "SELECT COUNT(*) as total FROM usuarios WHERE estado = 'pendiente'";
     $stmt = $db->prepare($query);
     $stmt->execute();
@@ -23,28 +20,15 @@ if ($_SESSION['tipo_usuario'] === 'administrador') {
 }
 ?>
 
-<!DOCTYPE html>
-<html lang="es" data-theme="cyberpunk">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/temas_tecnologicos.css">
-</head>
-<body>
-
 <nav class="main-navbar">
     <div class="navbar-container">
-        <!-- Logo -->
         <div class="navbar-brand">
             <i class="fas fa-book"></i>
             <span class="brand-name">Biblioteca CIF</span>
         </div>
 
-        <!-- Menu Principal - A LA IZQUIERDA -->
         <div class="navbar-menu">
             <?php if ($_SESSION['tipo_usuario'] === 'administrador'): ?>
-                <!-- MENU ADMINISTRADOR -->
                 <a href="index.php?ruta=home" class="nav-item <?php echo $ruta_actual === 'home' ? 'active' : ''; ?>">
                     <i class="fas fa-home"></i>
                     <span>Inicio</span>
@@ -53,6 +37,11 @@ if ($_SESSION['tipo_usuario'] === 'administrador') {
                 <a href="index.php?ruta=libros" class="nav-item <?php echo $ruta_actual === 'libros' ? 'active' : ''; ?>">
                     <i class="fas fa-book"></i>
                     <span>Libros</span>
+                </a>
+
+                <a href="index.php?ruta=categorias" class="nav-item <?php echo $ruta_actual === 'categorias' ? 'active' : ''; ?>">
+                    <i class="fas fa-tags"></i>
+                    <span>Categorías</span>
                 </a>
 
                 <a href="index.php?ruta=usuarios" class="nav-item <?php echo $ruta_actual === 'usuarios' ? 'active' : ''; ?>">
@@ -65,6 +54,11 @@ if ($_SESSION['tipo_usuario'] === 'administrador') {
                     <span>Préstamos</span>
                 </a>
 
+                <a href="index.php?ruta=calificaciones_usuarios" class="nav-item <?php echo $ruta_actual === 'calificaciones_usuarios' ? 'active' : ''; ?>">
+                    <i class="fas fa-star"></i>
+                    <span>Calificaciones</span>
+                </a>
+
                 <a href="index.php?ruta=solicitudes" class="nav-item <?php echo $ruta_actual === 'solicitudes' ? 'active' : ''; ?>">
                     <i class="fas fa-user-clock"></i>
                     <span>Solicitudes</span>
@@ -74,7 +68,6 @@ if ($_SESSION['tipo_usuario'] === 'administrador') {
                 </a>
 
             <?php else: ?>
-                <!-- MENU USUARIO -->
                 <a href="index.php?ruta=catalogo" class="nav-item <?php echo $ruta_actual === 'catalogo' ? 'active' : ''; ?>">
                     <i class="fas fa-book-open"></i>
                     <span>Catálogo</span>
@@ -84,9 +77,13 @@ if ($_SESSION['tipo_usuario'] === 'administrador') {
                     <i class="fas fa-bookmark"></i>
                     <span>Mis Préstamos</span>
                 </a>
+                
+                <a href="index.php?ruta=mi_calificacion" class="nav-item <?php echo $ruta_actual === 'mi_calificacion' ? 'active' : ''; ?>">
+                    <i class="fas fa-star"></i>
+                    <span>Mi Calificación</span>
+                </a>
             <?php endif; ?>
 
-            <!-- Selector de Temas - TEMAS TECNOLÓGICOS -->
             <div class="theme-selector-wrapper">
                 <button id="themeToggleBtn" class="theme-toggle-btn">
                     <span class="theme-icon">🎨</span>
@@ -95,50 +92,32 @@ if ($_SESSION['tipo_usuario'] === 'administrador') {
                 </button>
 
                 <div id="themeDropdown" class="theme-dropdown">
-                    <div class="theme-dropdown-title">Temas Tecnológicos</div>
-                    
-                    <!-- Tema Cyberpunk -->
-                    <div class="theme-option" data-theme="cyberpunk">
-                        <div class="theme-color-preview" style="background: linear-gradient(135deg, #00d9ff 0%, #ff00aa 100%);"></div>
-                        <span class="theme-name">⚡ Cyberpunk</span>
+                    <div class="theme-dropdown-title">Temas Profesionales</div>
+
+                    <div class="theme-option" data-theme="dark">
+                        <div class="theme-color-preview" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);"></div>
+                        <span class="theme-name">🌙 Dark Professional</span>
                         <i class="fas fa-check theme-check"></i>
                     </div>
 
-                    <!-- Tema Matrix -->
-                    <div class="theme-option" data-theme="matrix">
-                        <div class="theme-color-preview" style="background: linear-gradient(135deg, #00ff41 0%, #39ff14 100%);"></div>
-                        <span class="theme-name">💻 Matrix</span>
+                    <div class="theme-option" data-theme="midnight">
+                        <div class="theme-color-preview" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);"></div>
+                        <span class="theme-name">🌌 Midnight Blue</span>
                         <i class="fas fa-check theme-check" style="display: none;"></i>
                     </div>
 
-                    <!-- Tema Neon City -->
-                    <div class="theme-option" data-theme="neon">
-                        <div class="theme-color-preview" style="background: linear-gradient(135deg, #ff00ff 0%, #ff1493 100%);"></div>
-                        <span class="theme-name">🌃 Neon City</span>
-                        <i class="fas fa-check theme-check" style="display: none;"></i>
-                    </div>
-
-                    <!-- Tema Deep Ocean -->
-                    <div class="theme-option" data-theme="ocean">
-                        <div class="theme-color-preview" style="background: linear-gradient(135deg, #1890ff 0%, #0050b3 100%);"></div>
-                        <span class="theme-name">🌊 Deep Ocean</span>
-                        <i class="fas fa-check theme-check" style="display: none;"></i>
-                    </div>
-
-                    <!-- Tema Sunset -->
-                    <div class="theme-option" data-theme="sunset">
-                        <div class="theme-color-preview" style="background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);"></div>
-                        <span class="theme-name">🌅 Sunset</span>
+                    <div class="theme-option" data-theme="carbon">
+                        <div class="theme-color-preview" style="background: linear-gradient(135deg, #00d4ff 0%, #00b8d4 100%);"></div>
+                        <span class="theme-name">⚫ Carbon</span>
                         <i class="fas fa-check theme-check" style="display: none;"></i>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Usuario y Logout - A LA DERECHA -->
         <div class="navbar-user">
             <div class="user-info">
-                <span class="user-name"><?php echo htmlspecialchars($_SESSION['nombre'] ?? 'Usuario'); ?></span>
+                <span class="user-name"><?php echo htmlspecialchars($_SESSION['usuario_nombre'] ?? 'Usuario'); ?></span>
                 <span class="user-role"><?php echo htmlspecialchars($_SESSION['tipo_usuario'] ?? 'Usuario'); ?></span>
             </div>
             <a href="index.php?ruta=logout" class="btn-logout">
@@ -187,7 +166,3 @@ if ($_SESSION['tipo_usuario'] === 'administrador') {
     box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
 }
 </style>
-
-<script src="assets/js/theme_system.js"></script>
-</body>
-</html>

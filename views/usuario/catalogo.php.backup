@@ -499,7 +499,7 @@ body {
                         </button>
                     <?php elseif ($libro_id > 0): ?>
                         <!-- ✅ Botón normal si no tiene atrasos -->
-                        <form method="POST" action="index.php?ruta=prestamo/solicitar" style="margin: 0;">
+                        <form method="POST" action="index.php?ruta=prestamos&accion=solicitar" style="margin: 0;">
                             <input type="hidden" name="libro_id" value="<?= $libro_id ?>">
                             <button type="submit" class="btn-solicitar" 
                                     onclick="return confirm('¿Confirmas que deseas solicitar este libro en préstamo por 15 días?')">
