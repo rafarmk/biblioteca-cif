@@ -3,7 +3,7 @@
    =================================================================== */
 
 /* Tema Dark Professional (Por defecto) */
-:root[data-theme="dark"],
+:root[data-theme="dark"], 
 :root:not([data-theme]) {
     --bg-primary: #0f172a;
     --bg-secondary: #1e293b;
@@ -176,7 +176,7 @@ body {
 }
 
 /* ===================================================================
-   SELECTOR DE TEMAS - CORREGIDO
+   SELECTOR DE TEMAS
    =================================================================== */
 
 .theme-selector-wrapper {
@@ -204,13 +204,12 @@ body {
     box-shadow: 0 5px 15px var(--shadow-color);
 }
 
-/* DROPDOWN CORREGIDO - SIEMPRE OSCURO */
 .theme-dropdown {
     position: absolute;
     top: calc(100% + 8px);
     right: 0;
-    background: #1f2937 !important;
-    border: 1px solid rgba(99, 102, 241, 0.3) !important;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 12px;
     min-width: 220px;
@@ -228,9 +227,8 @@ body {
     transform: translateY(0);
 }
 
-/* TÍTULO CORREGIDO - SIEMPRE GRIS CLARO */
 .theme-dropdown-title {
-    color: #9ca3af !important;
+    color: var(--text-secondary);
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -249,9 +247,8 @@ body {
     margin-bottom: 4px;
 }
 
-/* HOVER CORREGIDO - SIEMPRE VISIBLE */
 .theme-option:hover {
-    background: rgba(59, 130, 246, 0.15) !important;
+    background: rgba(59, 130, 246, 0.1);
     transform: translateX(5px);
 }
 
@@ -267,16 +264,15 @@ body {
     border: 2px solid var(--border-color);
 }
 
-/* NOMBRE CORREGIDO - SIEMPRE BLANCO */
 .theme-name {
-    color: #ffffff !important;
+    color: var(--text-primary);
     font-size: 14px;
     font-weight: 500;
 }
 
 .theme-check {
     margin-left: auto;
-    color: #10b981;
+    color: var(--accent-primary);
     font-size: 18px;
 }
 

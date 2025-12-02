@@ -139,6 +139,21 @@ switch ($ruta) {
                 require_once __DIR__ . '/views/usuario/mis_prestamos.php';
                 break;
 
+            case 'mi_calificacion':
+                require_once __DIR__ . '/views/usuario/mi_calificacion.php';
+                break;
+
+            case 'usuario/devolver':
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    require_once __DIR__ . '/controllers/PrestamoController.php';
+                    $controller = new PrestamoController();
+                    $controller->procesarDevolucion();
+                } else {
+                    header('Location: index.php?ruta=mis_prestamos');
+                    exit;
+                }
+                break;
+
             case 'categorias':
                 require_once __DIR__ . '/controllers/CategoriaController.php';
                 $controller = new CategoriaController();

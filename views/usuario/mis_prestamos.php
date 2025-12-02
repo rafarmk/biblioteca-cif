@@ -1,4 +1,3 @@
-Set-Content -Path "views\prestamos\mis_prestamos.php" -Value @'
 <?php
 $page_title = "Mis Préstamos - Biblioteca CIF";
 require_once __DIR__ . '/../layouts/header.php';
@@ -125,7 +124,7 @@ body {
 }
 
 .prestamo-card {
-    background: var(--bg-card);
+    background: var(--bg-secondary);
     border-radius: 15px;
     padding: 25px;
     box-shadow: 0 4px 15px var(--shadow-color);
@@ -165,7 +164,7 @@ body {
     gap: 8px;
     margin: 15px 0;
     padding: 15px;
-    background: var(--bg-secondary);
+    background: var(--bg-tertiary);
     border-radius: 10px;
 }
 
@@ -276,15 +275,88 @@ body {
     margin-bottom: 10px;
 }
 
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    animation: fadeIn 0.3s;
+}
+
+.modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: var(--bg-secondary);
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 500px;
+    width: 90%;
+    animation: slideUp 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-header {
+    margin-bottom: 20px;
+}
+
+.modal-header h2 {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    color: var(--text-primary);
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 2px solid var(--border-color);
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
 @media (max-width: 768px) {
     .prestamos-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .tabs {
         overflow-x: auto;
     }
-    
+
     .prestamo-actions {
         flex-direction: column;
     }
@@ -298,7 +370,7 @@ body {
     </div>
 
     <?php if (isset($_SESSION['mensaje'])): ?>
-        <?php 
+        <?php
         $mensaje_tipo = is_array($_SESSION['mensaje']) ? $_SESSION['mensaje']['tipo'] : 'success';
         $mensaje_texto = is_array($_SESSION['mensaje']) ? $_SESSION['mensaje']['texto'] : $_SESSION['mensaje'];
         ?>
@@ -335,7 +407,7 @@ body {
                     $dias = $prestamo['dias_restantes'];
                     $clase_estado = '';
                     $badge_texto = '';
-                    
+
                     if ($dias < 0) {
                         $clase_estado = 'atrasado';
                         $badge_clase = 'badge-atrasado';
@@ -349,7 +421,7 @@ body {
                         $badge_texto = '✅ Activo (' . $dias . ' días restantes)';
                     }
                     ?>
-                    
+
                     <div class="prestamo-card <?= $clase_estado ?>">
                         <div class="libro-titulo">
                             📖 <?= htmlspecialchars($prestamo['titulo']) ?>
@@ -357,7 +429,7 @@ body {
                         <div class="libro-autor">
                             ✍️ <?= htmlspecialchars($prestamo['autor']) ?>
                         </div>
-                        
+
                         <div class="prestamo-info">
                             <div class="info-row">
                                 <span>ISBN:</span>
@@ -376,16 +448,15 @@ body {
                                 <strong><?= date('d/m/Y', strtotime($prestamo['fecha_devolucion_esperada'])) ?></strong>
                             </div>
                         </div>
-                        
+
                         <span class="badge <?= $badge_clase ?>">
                             <?= $badge_texto ?>
                         </span>
-                        
+
                         <div class="prestamo-actions">
-                            <a href="index.php?ruta=prestamos&accion=devolver&id=<?= $prestamo['id'] ?>" 
-                               class="btn btn-success">
+                            <button onclick="abrirModalDevolucion(<?= $prestamo['id'] ?>, <?= $prestamo['libro_id'] ?>, '<?= htmlspecialchars($prestamo['titulo']) ?>')" class="btn btn-success">
                                 ✅ Devolver Libro
-                            </a>
+                            </button>
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -411,7 +482,7 @@ body {
                         <div class="libro-autor">
                             ✍️ <?= htmlspecialchars($prestamo['autor']) ?>
                         </div>
-                        
+
                         <div class="prestamo-info">
                             <div class="info-row">
                                 <span>Fecha préstamo:</span>
@@ -422,7 +493,7 @@ body {
                                 <strong><?= $prestamo['fecha_devolucion_real'] ? date('d/m/Y', strtotime($prestamo['fecha_devolucion_real'])) : 'N/A' ?></strong>
                             </div>
                         </div>
-                        
+
                         <span class="badge badge-devuelto">
                             ✅ Devuelto
                         </span>
@@ -433,26 +504,91 @@ body {
     </div>
 </div>
 
+<!-- Modal de Devolución -->
+<div id="modalDevolucion" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>📖 Devolver Libro</h2>
+        </div>
+        <form method="POST" action="index.php?ruta=usuario/devolver" id="formDevolucion">
+            <input type="hidden" name="prestamo_id" id="prestamo_id">
+            <input type="hidden" name="libro_id" id="libro_id">
+            
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                Estás a punto de devolver: <strong id="libro_titulo" style="color: var(--text-primary);"></strong>
+            </p>
+
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" name="sin_resena" id="sin_resena" onchange="toggleResena()">
+                    Devolver sin reseña
+                </label>
+            </div>
+
+            <div id="resena-section">
+                <div class="form-group">
+                    <label>Calificación (1-5 estrellas)</label>
+                    <input type="number" name="calificacion" min="1" max="5" value="5">
+                </div>
+
+                <div class="form-group">
+                    <label>Comentario (opcional)</label>
+                    <textarea name="comentario" rows="3" placeholder="¿Qué te pareció el libro?"></textarea>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" onclick="cerrarModal()" class="btn btn-secondary">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn btn-success">
+                    ✅ Confirmar Devolución
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const tabs = document.querySelectorAll('.tab');
     const tabContents = document.querySelectorAll('.tab-content');
-    
+
     tabs.forEach(tab => {
         tab.addEventListener('click', function() {
             const tabId = this.dataset.tab;
-            
-            // Remover active de todos
+
             tabs.forEach(t => t.classList.remove('active'));
             tabContents.forEach(tc => tc.classList.remove('active'));
-            
-            // Agregar active al seleccionado
+
             this.classList.add('active');
             document.getElementById(tabId).classList.add('active');
         });
     });
 });
+
+function abrirModalDevolucion(prestamoId, libroId, titulo) {
+    document.getElementById('prestamo_id').value = prestamoId;
+    document.getElementById('libro_id').value = libroId;
+    document.getElementById('libro_titulo').textContent = titulo;
+    document.getElementById('modalDevolucion').classList.add('active');
+}
+
+function cerrarModal() {
+    document.getElementById('modalDevolucion').classList.remove('active');
+}
+
+function toggleResena() {
+    const sinResena = document.getElementById('sin_resena').checked;
+    document.getElementById('resena-section').style.display = sinResena ? 'none' : 'block';
+}
+
+// Cerrar modal al hacer clic fuera
+document.getElementById('modalDevolucion').addEventListener('click', function(e) {
+    if (e.target === this) {
+        cerrarModal();
+    }
+});
 </script>
 
 <?php require_once __DIR__ . '/../layouts/footer.php'; ?>
-'@

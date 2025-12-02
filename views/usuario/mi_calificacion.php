@@ -94,7 +94,7 @@ body { padding-top: 100px; padding-bottom: 50px; background: var(--bg-primary); 
 }
 
 .stat-card {
-    background: var(--bg-card);
+    background: var(--bg-secondary);
     border-radius: 15px;
     padding: 25px;
     text-align: center;
@@ -114,7 +114,7 @@ body { padding-top: 100px; padding-bottom: 50px; background: var(--bg-primary); 
 .stat-label { color: var(--text-secondary); font-size: 0.95rem; }
 
 .niveles-info, .historial {
-    background: var(--bg-card);
+    background: var(--bg-secondary);
     border-radius: 15px;
     padding: 30px;
     margin-bottom: 30px;
@@ -137,7 +137,7 @@ body { padding-top: 100px; padding-bottom: 50px; background: var(--bg-primary); 
     padding: 15px;
     margin-bottom: 10px;
     border-radius: 10px;
-    background: var(--bg-secondary);
+    background: var(--bg-tertiary);
     transition: all 0.3s ease;
 }
 
@@ -187,7 +187,7 @@ body { padding-top: 100px; padding-bottom: 50px; background: var(--bg-primary); 
     padding: 15px;
     margin-bottom: 10px;
     border-radius: 10px;
-    background: var(--bg-secondary);
+    background: var(--bg-tertiary);
     transition: all 0.3s ease;
 }
 
